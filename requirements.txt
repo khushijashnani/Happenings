@@ -10,3 +10,4 @@ numpy
 pytesseract
 opencv-python
 urllib3
+gunicorn
