@@ -9,4 +9,4 @@ pandas
 numpy
 pytesseract
 opencv-python
-urllib
+urllib3
