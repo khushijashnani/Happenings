@@ -1,0 +1,11 @@
+Flask
+Flask-Migrate
+Flask-RESTful
+Flask-SQLAlchemy
+Flask-JWT-Extended
+uwsgi
+psycopg2
+numpy
+pytesseract
+cv2
+urllib
