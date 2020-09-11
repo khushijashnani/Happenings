@@ -55,7 +55,7 @@ class User(db.Model):
     username = db.Column(db.String(20), nullable = False)
     password = db.Column(db.String(20), nullable = False)
     address = db.Column(db.Text,nullable = False)
-    phone = db.Column(db.Integer, nullable = False)
+    phone = db.Column(db.String(10), nullable = False)
     email_id = db.Column(db.String(50),nullable = False)
     image = db.Column(db.Text, nullable = False)
     
