@@ -184,7 +184,7 @@ class AadharApi(Resource):
         url_response = urllib.request.urlopen(url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
         img = cv2.imdecode(img_array, -1)
-        cv2.imshow("OCR", img)
+        #cv2.imshow("OCR", img)
         text = pytesseract.image_to_string(img)
         print(text)
         aadharData = getAadharData(text)
