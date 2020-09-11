@@ -5,6 +5,7 @@ Flask-SQLAlchemy
 Flask-JWT-Extended
 uwsgi
 psycopg2
+pandas
 numpy
 pytesseract
 opencv-python
