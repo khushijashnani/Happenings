@@ -11,8 +11,13 @@ from flask_restful import Resource, Api
 from flask_jwt_extended import create_access_token, jwt_required, get_raw_jwt
 from flask_jwt_extended import JWTManager
 from werkzeug.security import safe_str_cmp
-
+import dateutil.parser
 import datetime
+import urllib
+import cv2
+import pytesseract
+from getAadharData import getAadharData
+from aadhar_verification import aadharNumVerify
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'assembler'
@@ -33,6 +38,8 @@ app.config['JWT_BLACKLIST_ENABLED'] = True  # enable blacklist feature
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 jwt = JWTManager(app)
 
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract'
+
 
 ########### MODELS ##########
 
@@ -40,7 +47,7 @@ registration = db.Table('registration',
         db.Column('attendee_id', db.Integer, db.ForeignKey('attendee.id'), nullable = False ),
         db.Column('event_id', db.Integer, db.ForeignKey('event.id'), nullable = False ),
         db.Column('unique_key', db.Text, nullable = False),
-        db.Column('status',db.String(6), nullable = False ))
+        db.Column('status',db.String(6), nullable = False))
 
 class User(db.Model):
     __abstract__ = True
@@ -71,7 +78,8 @@ class Attendee(User):
     events = db.relationship('Event',secondary=registration, backref = db.backref('attendees', lazy = True))
     favourites = db.relationship('Favourites',backref='attendees')
     reviews = db.relationship('Reviews',backref='attendees')
-    
+    verification_image = db.Column(db.Text)
+
     def __init__(self, username, password, address, phone, email_id, image, name, age, gender):
         super().__init__(username, password, address, phone, email_id, image)
 
@@ -124,6 +132,7 @@ class Event(db.Model):
         self.image = image
         self.start_date = start_date
         self.end_date = end_date
+        self.organiser_id = organiser_id
 
         
    
@@ -167,11 +176,30 @@ def addToDatabase(objectname):
 
 #####################  API'S  ########################
 
+class AadharApi(Resource):
+    def post(self):
+        data = request.get_json()
+        print(data)
+        url = data["url"]
+        url_response = urllib.request.urlopen(url)
+        img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
+        img = cv2.imdecode(img_array, -1)
+        cv2.imshow("OCR", img)
+        text = pytesseract.image_to_string(img)
+        print(text)
+        aadharData = getAadharData(text)
+        print(aadharData)
+        verification = aadharNumVerify(aadharData["Aadhar"])
+        print(verification)
+        # cv2.imshow("OCR", img)
+        # cv2.waitKey(0)
+        return {"verification" : verification, 'aadhar_details' : aadharData}
+        
+
 class UserRegister(Resource):
     
     def post(self):
         data = request.get_json()
-
         
         if data['type'] == ATTENDEE:
             user = Attendee(
@@ -225,8 +253,68 @@ class UserLogin(Resource):
             }, 200
         return {"message": 'Invalid credentials'}, 401
 
+def addEvent(row):
+    d = {}
+    for column in row.__table__.columns:
+        d[column.name] = str(getattr(row, column.name))
+
+    return d
+
+
+class EventApi(Resource):
+
+    def get(self, org_id):
+        org = Organisation.query.get(org_id)
+        events = org.events
+        e = []
+        for event in events :
+            e.append(addEvent(event))
+            
+        return e
+        
+    def post(self, org_id):
+        
+        data = request.get_json()
+        event = Event(
+            title = data["title"],
+            description = data["description"],
+            start_date = dateutil.parser.parse(data["start_date"]),
+            end_date = dateutil.parser.parse(data["end_date"]),
+            category = data["category"],
+            speciality = data["speciality"],
+            entry_amount = data["entry_amount"],
+            image = data["image"],
+            location = data["location"],
+            organiser_id = org_id
+        )
+        addToDatabase(event)
+        return addEvent(event)
+
+    def put(self, org_id):
+        data = request.get_json()
+        event_id = data["event_id"]
+
+        event = Event.query.get(event_id)
+        event.title = data["title"]
+        event.description = data["description"]
+        event.start_date = dateutil.parser.parse(data["start_date"])
+        event.end_date = dateutil.parser.parse(data["end_date"])
+        event.location = data["location"]
+        event.category = data["category"]
+        event.speciality = data["speciality"]
+        event.entry_amount = data["entry_amount"]
+        event.image = data["image"]
+
+        db.session.commit()
+        return addEvent(event)
+
+
+    def delete(self):
+        pass
+
 class UserDetails(Resource):
     
+
     def get(self, user_id, type):
 
         if type == ATTENDEE:
@@ -240,19 +328,8 @@ class UserDetails(Resource):
             reviews_list = []
             
             for event in events:
-                attended_events_data.append({
-                    'id' : event.id,
-                    'title' :event.title,
-                    'description' :event.description,
-                    'start_date' :event.start_date,
-                    'end_date' :event.end_date,
-                    'location' :event.location,
-                    'category':event.category,
-                    'speciality' :event.speciality,
-                    'entry_amount':event.entry_amount,
-                    'image':event.image,
-                    'org_name': event.organisation.name
-                })
+                e = addEvent(event)
+                attended_events_data.append(e)
             
             for rev in reviews:
                 reviews_list.append({'review': rev.review,
@@ -272,19 +349,7 @@ class UserDetails(Resource):
             for favourite in favourites:
                 event_id = favourite.event_id
                 event = Event.query.filter_by(id = event_id).first()
-                favourite_list.append({
-                    'id' : event.id,
-                    'title' :event.title,
-                    'description' :event.description,
-                    'start_date' :event.start_date,
-                    'end_date' :event.end_date,
-                    'location' :event.location,
-                    'category':event.category,
-                    'speciality' :event.speciality,
-                    'entry_amount':event.entry_amount,
-                    'image':event.image,
-                    'org_name': event.organisation.name
-                })
+                favourite_list.append()
 
             return {
                 'user_details' : user_dict,
@@ -300,19 +365,8 @@ class UserDetails(Resource):
             events_data=[]
             
             for event in events:
-                events_data.append({
-                    'id' : event.id,
-                    'title' :event.title,
-                    'description' :event.description,
-                    'start_date' :event.start_date,
-                    'end_date' :event.end_date,
-                    'location' :event.location,
-                    'category':event.category,
-                    'speciality' :event.speciality,
-                    'entry_amount':event.entry_amount,
-                    'image':event.image,
-                    'org_name': event.organisation.name
-                })
+                e = addEvent(event)
+                events_data.append(e)
             
             user_dict = {'name': user.name,
                         'phone': user.phone,
@@ -329,7 +383,40 @@ class UserDetails(Resource):
                 "events" : events_data
             }
 
+    def put(self, user_id, type):
+        data = request.get_json()
+        if type == ATTENDEE:
+            user = Attendee.query.get(user_id)
+            user.name = data['name']
+            user.phone = data['phone']
+            user.image = data['image']
+            user.address = data['address']
+            
+            user.email_id = data['email_id']
+            user.password = data['password']
+            user.username = data['username']
+            user.age = data['age']
+            user.gender = data['gender']
 
+        else:
+            user = Organisation.query.get(user_id)
+            user.name = data['name']
+            user.phone = data['phone']
+            user.image = data['image']
+            user.address = data['address']
+            user.org_details = data["details"]
+            user.email_id = data['email_id']
+            user.password = data['password']
+            user.username = data['username']
+            
+            
+        db.session.commit()
+        
+
+        return addEvent(user)
+        
+
+            
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     return decrypted_token['jti'] in BLACKLIST
@@ -383,21 +470,12 @@ BLACKLIST = []
 #     db.create_all()
 
 api = Api(app)
-api.add_resource(UserDetails ,"/<string:type>/<int:user_id>")
-api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, "/login")
+api.add_resource(AadharApi, '/verification')
+api.add_resource(UserRegister, "/register")
+api.add_resource(UserDetails ,"/<string:type>/<int:user_id>")
+api.add_resource(EventApi, '/events/<int:org_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-
 
