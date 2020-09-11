@@ -7,5 +7,5 @@ uwsgi
 psycopg2
 numpy
 pytesseract
-cv2
+opencv-python
 urllib
