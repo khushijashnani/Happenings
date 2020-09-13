@@ -38,7 +38,7 @@ app.config['JWT_BLACKLIST_ENABLED'] = True  # enable blacklist feature
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 jwt = JWTManager(app)
 
-pytesseract.pytesseract.tesseract_cmd = os.environ.get('TESSDATA_PREFIX','C:\\Program Files\\Tesseract-OCR\\tesseract')
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract'
 
 
 ########### MODELS ##########
@@ -235,7 +235,7 @@ class UserLogin(Resource):
 
     def post(self):
         data = request.get_json()
-
+        print(data)
         if data['type'] == ATTENDEE:
             user = Attendee.query.filter_by(username=data['username']).first()
         elif data['type'] == ORGANISATION:
