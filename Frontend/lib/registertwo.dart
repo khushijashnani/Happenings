@@ -9,7 +9,11 @@ import 'package:uvento/login.dart';
 
 class RegisterPart2 extends StatefulWidget {
   String imageUrl;
-  RegisterPart2({this.imageUrl});
+  String name;
+  int age;
+  String phone_no;
+  String gender;
+  RegisterPart2({this.imageUrl, this.age,this.phone_no,this.gender, this.name});
 
   @override
   _RegisterPart2State createState() => _RegisterPart2State(imageUrl: imageUrl);
@@ -87,7 +91,7 @@ class _RegisterPart2State extends State<RegisterPart2> {
                   child: InkWell(
                     child: Icon(
                       Icons.keyboard_backspace, 
-                      color: Colors.yellow[600],
+                      color: Colors.yellow[800],
                       size: 30,
                     ),
                     onTap: (){
@@ -168,7 +172,7 @@ class _RegisterPart2State extends State<RegisterPart2> {
                           Text(
                             "2",
                             style: TextStyle(
-                              color: Colors.yellow[600],
+                              color: Colors.yellow[800],
                               fontWeight: FontWeight.bold,
                               fontSize: 25
                             ),
@@ -205,43 +209,87 @@ class _RegisterPart2State extends State<RegisterPart2> {
                 padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: screenWidth - 180,
-                              child: TextFormField(
-                                maxLines: 1,
-                                controller: nameController,
-                                onChanged: (value) => name = value,
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please enter your name';
-                                  }
-                                  return null;
-                                },
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.person, color: Colors.grey),
-                                  border: new OutlineInputBorder(
-                                    borderRadius: new BorderRadius.circular(25.0),
-                                    borderSide: new BorderSide(),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.yellow[600]),
-                                  //icon: Icon(Icons.person, color: Colors.white),
-                                  hintText: "Name",
-                                  hintStyle: TextStyle(color: Colors.grey)
-                                ),
-                              )
-                            ),
 
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   crossAxisAlignment: CrossAxisAlignment.center,
+                    //   children: [
+                        // Column(
+                        //   children: [
+                            // Container(
+                            //   width: screenWidth - 180,
+                            //   child: TextFormField(
+                            //     maxLines: 1,
+                            //     controller: nameController,
+                            //     onChanged: (value) => name = value,
+                            //     validator: (value) {
+                            //       if (value.isEmpty) {
+                            //         return 'Please enter your name';
+                            //       }
+                            //       return null;
+                            //     },
+                            //     style: TextStyle(color: Colors.white),
+                            //     decoration: InputDecoration(
+                            //       prefixIcon: Icon(Icons.person, color: Colors.grey),
+                            //       border: new OutlineInputBorder(
+                            //         borderRadius: new BorderRadius.circular(25.0),
+                            //         borderSide: new BorderSide(),
+                            //       ),
+                            //       labelStyle: TextStyle(color: Colors.yellow[600]),
+                            //       //icon: Icon(Icons.person, color: Colors.white),
+                            //       hintText: "Name",
+                            //       hintStyle: TextStyle(color: Colors.grey)
+                            //     ),
+                            //   )
+                            // ),
+                            image == "" ? 
+                            Container(
+                              width:  110,
+                              height: 110,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(55)),
+                                image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  //colorFilter: new ColorFilter.mode(Colors.white, BlendMode.srcOver),
+                                  image: AssetImage(
+                                    "assets/profilepic.jpg"
+                                  ),
+                                ),
+                              ),
+                              child:  Center(),
+                            ) : 
+                            Container(
+                              width: 110,
+                              height: 110,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(55)),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(55)),
+                                child: Image.network(
+                                  imageUrl,
+                                  height: 90,
+                                  width : 90,
+                                  fit: BoxFit.fill,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded /loadingProgress.expectedTotalBytes : null,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                             SizedBox(height: 10,),
 
                             Container(
-                              width: screenWidth - 180,
+                              width: screenWidth - 60,
                               child: TextFormField(
                                 maxLines: 1,
                                 controller: usernameController,
@@ -259,61 +307,18 @@ class _RegisterPart2State extends State<RegisterPart2> {
                                     borderRadius: new BorderRadius.circular(25.0),
                                     borderSide: new BorderSide(),
                                   ),
-                                  labelStyle: TextStyle(color: Colors.yellow[600]),
+                                  labelStyle: TextStyle(color: Colors.yellow[800]),
                                   //icon: Icon(Icons.person, color: Colors.white),
                                   hintText: "Userame",
                                   hintStyle: TextStyle(color: Colors.grey)
                                 ),
                               )
-                            )
-                          ],
-                        ),
-                        image == "" ? 
-                        Container(
-                          width:  110,
-                          height: 110,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(55)),
-                            image: new DecorationImage(
-                              fit: BoxFit.fill,
-                              //colorFilter: new ColorFilter.mode(Colors.white, BlendMode.srcOver),
-                              image: AssetImage(
-                                "assets/profilepic.jpg"
-                              ),
                             ),
-                          ),
-                          child:  Center(),
-                        ) : 
-                        Container(
-                          width: 110,
-                          height: 110,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(55)),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(55)),
-                            child: Image.network(
-                              imageUrl,
-                              height: 90,
-                              width : 90,
-                              fit: BoxFit.fill,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded /loadingProgress.expectedTotalBytes : null,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                        //   ],
+                        // ),
+                       
+                    //   ],
+                    // ),
 
                     SizedBox(height: 15,),
 
@@ -328,6 +333,11 @@ class _RegisterPart2State extends State<RegisterPart2> {
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please enter your Password';
+                          }
+                          if (!RegExp(
+                                      r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+                                  .hasMatch(passController.text)) {
+                                return "Please include atleast 1 lowercase, 1 uppercase,\n1 digit and 1 special character";
                           }
                           return null;
                         },
@@ -389,36 +399,36 @@ class _RegisterPart2State extends State<RegisterPart2> {
 
                     SizedBox(height: 15,),
 
-                    Container(
-                      width: screenWidth - 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.phone,
-                        maxLines: 1,
-                        controller: phoneController,
-                        onChanged: (value) => phone = value,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter your Contact Number';
-                          }
-                          return null;
-                        },
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.phone, color: Colors.grey),
+                    // Container(
+                    //   width: screenWidth - 60,
+                    //   child: TextFormField(
+                    //     keyboardType: TextInputType.phone,
+                    //     maxLines: 1,
+                    //     controller: phoneController,
+                    //     onChanged: (value) => phone = value,
+                    //     validator: (value) {
+                    //       if (value.isEmpty) {
+                    //         return 'Please enter your Contact Number';
+                    //       }
+                    //       return null;
+                    //     },
+                    //     style: TextStyle(color: Colors.white),
+                    //     decoration: InputDecoration(
+                    //       prefixIcon: Icon(Icons.phone, color: Colors.grey),
                           
-                          border: new OutlineInputBorder(
-                            borderRadius: new BorderRadius.circular(25.0),
-                            borderSide: new BorderSide(),
-                          ),
-                          labelStyle: TextStyle(color: Colors.yellow[600]),
-                          //icon: Icon(Icons.person, color: Colors.white),
-                          hintText: "Phone",
-                          hintStyle: TextStyle(color: Colors.grey)
-                        ),
-                      )
-                    ),
+                    //       border: new OutlineInputBorder(
+                    //         borderRadius: new BorderRadius.circular(25.0),
+                    //         borderSide: new BorderSide(),
+                    //       ),
+                    //       labelStyle: TextStyle(color: Colors.yellow[600]),
+                    //       //icon: Icon(Icons.person, color: Colors.white),
+                    //       hintText: "Phone",
+                    //       hintStyle: TextStyle(color: Colors.grey)
+                    //     ),
+                    //   )
+                    // ),
                     
-                    SizedBox(height: 15,),
+                    // SizedBox(height: 15,),
 
                     Container(
                       width: screenWidth - 60,
@@ -488,72 +498,74 @@ class _RegisterPart2State extends State<RegisterPart2> {
                     SizedBox(height: 15,),
 
                     type == "ATTENDEE" ? 
-                    Row(
-                      children: [
-                        Container(
-                          width: screenWidth*0.3,
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            controller: ageController,
-                            onChanged: (value) => age = value,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Enter Age';
-                              }
-                              return null;
-                            },
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.perm_contact_calendar, color: Colors.grey),
+                    Container(height: 0,width: 0,)
+                    // Row(
+                    //   children: [
+                    //     Container(
+                    //       width: screenWidth*0.3,
+                    //       child: TextFormField(
+                    //         keyboardType: TextInputType.number,
+                    //         maxLines: 1,
+                    //         controller: ageController,
+                    //         onChanged: (value) => age = value,
+                    //         validator: (value) {
+                    //           if (value.isEmpty) {
+                    //             return 'Enter Age';
+                    //           }
+                    //           return null;
+                    //         },
+                    //         style: TextStyle(color: Colors.white),
+                    //         decoration: InputDecoration(
+                    //           prefixIcon: Icon(Icons.perm_contact_calendar, color: Colors.grey),
                               
-                              border: new OutlineInputBorder(
-                                borderRadius: new BorderRadius.circular(25.0),
-                                borderSide: new BorderSide(),
-                              ),
-                              labelStyle: TextStyle(color: Colors.yellow[600]),
-                              //icon: Icon(Icons.person, color: Colors.white),
-                              hintText: "Age",
-                              hintStyle: TextStyle(color: Colors.grey)
-                            ),
-                          )
-                        ),
+                    //           border: new OutlineInputBorder(
+                    //             borderRadius: new BorderRadius.circular(25.0),
+                    //             borderSide: new BorderSide(),
+                    //           ),
+                    //           labelStyle: TextStyle(color: Colors.yellow[600]),
+                    //           //icon: Icon(Icons.person, color: Colors.white),
+                    //           hintText: "Age",
+                    //           hintStyle: TextStyle(color: Colors.grey)
+                    //         ),
+                    //       )
+                    //     ),
 
-                        Row(
-                          children: [
-                            Radio(
-                              value: "Male",
-                              groupValue: gender,
-                              onChanged: (value){
-                                setState(() {
-                                  gender = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'Male',
-                              style: new TextStyle(fontSize: 16.0, color: Colors.grey),
-                            ),
-                            Radio(
-                              value: "Female",
-                              groupValue: gender,
-                              onChanged: (value) {
-                                setState(() {
-                                  gender = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              'Female',
-                              style: new TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.grey
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ) : 
+                    //     Row(
+                    //       children: [
+                    //         Radio(
+                    //           value: "Male",
+                    //           groupValue: gender,
+                    //           onChanged: (value){
+                    //             setState(() {
+                    //               gender = value;
+                    //             });
+                    //           },
+                    //         ),
+                    //         Text(
+                    //           'Male',
+                    //           style: new TextStyle(fontSize: 16.0, color: Colors.grey),
+                    //         ),
+                    //         Radio(
+                    //           value: "Female",
+                    //           groupValue: gender,
+                    //           onChanged: (value) {
+                    //             setState(() {
+                    //               gender = value;
+                    //             });
+                    //           },
+                    //         ),
+                    //         Text(
+                    //           'Female',
+                    //           style: new TextStyle(
+                    //             fontSize: 16.0,
+                    //             color: Colors.grey
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     )
+                    //   ],
+                    // ) 
+                    : 
                     Container(
                       width: screenWidth - 60,
                       child: TextFormField(
@@ -577,7 +589,7 @@ class _RegisterPart2State extends State<RegisterPart2> {
                           ),
                           labelStyle: TextStyle(color: Colors.yellow[600]),
                           //icon: Icon(Icons.event_note, color: Colors.grey),
-                          hintText: "Organization Details...",
+                          hintText: "Organisation Details...",
                           hintStyle: TextStyle(color: Colors.grey,),
                           
                         ),
@@ -643,26 +655,27 @@ class _RegisterPart2State extends State<RegisterPart2> {
       if (type == "ATTENDEE"){
 
         data = {
-          'name' : name,
+          'name' : widget.name,
           'username': username, 
           'password': password, 
           'type': type,
-          'age' : int.parse(age),
-          'gender' : gender,
+          'age' : widget.age,
+          'gender' : widget.gender,
           'address' : address,
           'email_id' : email,
-          'phone' : phone,
-          'image' : imageUrl
+          'phone' : widget.phone_no,
+          'image' : imageUrl,
+          
         };
       } else {
         data = {
-          'name' : name,
+          'name' : widget.name,
           'username': username, 
           'password': password, 
           'type': type,
           'address' : address,
           'email_id' : email,
-          'phone' : phone,
+          'phone' : widget.phone_no,
           'image' : imageUrl,
           'details' : details
         };

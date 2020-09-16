@@ -419,7 +419,6 @@ class UserDetails(Resource):
             user.phone = data['phone']
             user.image = data['image']
             user.address = data['address']
-            
             user.email_id = data['email_id']
             user.password = data['password']
             user.username = data['username']

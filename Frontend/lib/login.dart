@@ -147,11 +147,11 @@ class _LoginPageState extends State<LoginPage> {
                               if (value.isEmpty) {
                                 return 'Please enter your password';
                               }
-                              // if (!RegExp(
-                              //         r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-                              //     .hasMatch(passController.text)) {
-                              //   return "Please include atleast 1 lowercase, 1 uppercase,\n1 digit and 1 special character";
-                              // }
+                              if (!RegExp(
+                                      r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+                                  .hasMatch(passController.text)) {
+                                return "Please include atleast 1 lowercase, 1 uppercase,\n1 digit and 1 special character";
+                              }
                               return null;
                             },
                             controller: passController,

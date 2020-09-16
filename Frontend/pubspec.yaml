@@ -30,6 +30,7 @@ dependencies:
   firebase_core:
   firebase_storage:
   fluttertoast:
+  firebase_ml_vision:
 
 dev_dependencies:
   flutter_test:
