@@ -687,7 +687,7 @@ class _RegisterPart2State extends State<RegisterPart2> {
         });
 
         Fluttertoast.showToast(
-          msg: "Please Upload Profile Image...",
+          msg: "Registered successfully...\nPlease login now",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM
         );

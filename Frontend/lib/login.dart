@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -21,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   final _loginFormKey = GlobalKey<FormState>();
   final _scaffoldKey1 = GlobalKey<ScaffoldState>();
   String name = '';
+  String type = '';
 
   @override
   void initState() {
@@ -57,41 +59,41 @@ class _LoginPageState extends State<LoginPage> {
                       Container(
                         height: 120,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30.0, right: 10),
-                              child: Image.asset(
-                                "assets/logo.png",
-                                height: 35,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 30.0, right: 10),
+                                child: Image.asset(
+                                  "assets/logo.png",
+                                  height: 35,
+                                ),
                               ),
-                            ),
-                            
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30,right: 10.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    "UVE",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w800,
-                                        fontStyle: FontStyle.italic),
-                                  ),
-                                  Text(
-                                    "NTO",
-                                    style: TextStyle(
-                                        color: Color(0xffFFA700),
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w800,
-                                        fontStyle: FontStyle.italic),
-                                  )
-                                ],
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 30, right: 10.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "HAPPEN",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w800,
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                    Text(
+                                      "INGS",
+                                      style: TextStyle(
+                                          color: Color(0xffFFA700),
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w800,
+                                          fontStyle: FontStyle.italic),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ]
-                        ),
+                            ]),
                       ),
                       Container(
                         padding: EdgeInsets.fromLTRB(50, 0, 0, 30),
@@ -104,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       SizedBox(
-                        height: 50,
+                        height: 30,
                       ),
                       Center(
                           child: ConstrainedBox(
@@ -187,6 +189,40 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 20,
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Radio(
+                            value: "ATTENDEE",
+                            groupValue: type,
+                            onChanged: (value) {
+                              setState(() {
+                                type = value;
+                              });
+                            },
+                          ),
+                          Text(
+                            'ATTENDEE',
+                            style: new TextStyle(
+                                fontSize: 16.0, color: Colors.grey),
+                          ),
+                          Radio(
+                            value: "ORGANISATION",
+                            groupValue: type,
+                            onChanged: (value) {
+                              setState(() {
+                                type = value;
+                              });
+                            },
+                          ),
+                          Text(
+                            'ORGANISATION',
+                            style: new TextStyle(
+                                fontSize: 16.0, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
                       Center(
                         child: GestureDetector(
                           onTap: () {
@@ -222,7 +258,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Center(
                               child: Text("Log in",
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.yellow[600],
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17)),
                             ),
@@ -242,7 +278,10 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPart1()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RegisterPart1()));
                             },
                             child: Text(
                               "Sign Up",
@@ -299,6 +338,8 @@ class _LoginPageState extends State<LoginPage> {
         print(response.body);
       }
     } else {
+      // mes = response.body.["message"];
+      // Fluttertoast.showToast(msg: .toString());
       print(response.body);
     }
   }
