@@ -293,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   login(username, pass) async {
-    var data = {'username': username, 'password': pass, 'type': type};
+    var data = {'username': username, 'password': pass, 'type': "ATTENDEE"};
     var jsonData;
     Map<String, String> headers = {
       "Content-type": "application/json",

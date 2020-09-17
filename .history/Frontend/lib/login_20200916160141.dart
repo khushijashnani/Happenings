@@ -187,38 +187,38 @@ class _LoginPageState extends State<LoginPage> {
                       ),
 
                       Row(
-                        children: [
-                          Radio(
-                            value: "ATTENDEE",
-                            groupValue: type,
-                            onChanged: (value){
-                              setState(() {
-                                type = value;
-                              });
-                            },
+                      children: [
+                        Radio(
+                          value: "ATTENDEE",
+                          groupValue: type,
+                          onChanged: (value){
+                            setState(() {
+                              type = value;
+                            });
+                          },
+                        ),
+                        Text(
+                          'ATTENDEE',
+                          style: new TextStyle(fontSize: 16.0, color: Colors.grey),
+                        ),
+                        Radio(
+                          value: "ORGANISATION",
+                          groupValue: type,
+                          onChanged: (value) {
+                            setState(() {
+                              type = value;
+                            });
+                          },
+                        ),
+                        Text(
+                          'ORGANISATION',
+                          style: new TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey
                           ),
-                          Text(
-                            'ATTENDEE',
-                            style: new TextStyle(fontSize: 16.0, color: Colors.grey),
-                          ),
-                          Radio(
-                            value: "ORGANISATION",
-                            groupValue: type,
-                            onChanged: (value) {
-                              setState(() {
-                                type = value;
-                              });
-                            },
-                          ),
-                          Text(
-                            'ORGANISATION',
-                            style: new TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.grey
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
                       SizedBox(
                         height: 20,
                       ),
@@ -293,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   login(username, pass) async {
-    var data = {'username': username, 'password': pass, 'type': type};
+    var data = {'username': username, 'password': pass, 'type': "ATTENDEE"};
     var jsonData;
     Map<String, String> headers = {
       "Content-type": "application/json",
