@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:uvento/home.dart';
 import 'package:uvento/login.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
 class RegisterPart2 extends StatefulWidget {
   String imageUrl;
@@ -248,94 +247,40 @@ class _RegisterPart2State extends State<RegisterPart2> {
                             //   )
                             // ),
 
-                            Container(
-                              width: screenWidth - 60,
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    width: 110,
-                                    child: AutoSizeText(
-                                      "Welcome,  ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w800,
-                                          fontStyle: FontStyle.normal),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: screenWidth - 170,
-                                    child: AutoSizeText(
-                                      name,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          color: Color(0xffFFA700),
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w800,
-                                          fontStyle: FontStyle.italic),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20,),
-
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      width: screenWidth - 160,
-                                      child: AutoSizeText(
-                                        "Thank you for registering",
-                                        style: TextStyle(color: Colors.white, fontSize: 16),
-                                        maxLines: 1,
-                                      ),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Welcome  ",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w800,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                        Text(
+                                          name.toUpperCase(),
+                                          style: TextStyle(
+                                              color: Color(0xffFFA700),
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w800,
+                                              fontStyle: FontStyle.italic),
+                                        )
+                                      ],
                                     ),
-                                    Container(
-                                      width: screenWidth - 160,
-                                      child: AutoSizeText(
-                                        "with us",
-                                        style: TextStyle(color: Color(0xffFFA700), fontSize: 16),
-                                        maxLines: 1,
-                                      ),
-                                    )
-                                    // Container(
-                                    //   width: screenWidth - 160,
-                                    //   child: Row(
-                                    //     children: <Widget>[
-                                    //       AutoSizeText(
-                                    //         "HAPPEN",
-                                    //         style: TextStyle(
-                                    //             color: Colors.white,
-                                    //             fontSize: 20,
-                                    //             fontWeight: FontWeight.w800,
-                                    //             fontStyle: FontStyle.italic),
-                                    //       ),
-                                    //       AutoSizeText(
-                                    //         "INGS",
-                                    //         maxLines: 1,
-                                    //         style: TextStyle(
-                                    //             color: Color(0xffFFA700),
-                                    //             fontSize: 20,
-                                    //             fontWeight: FontWeight.w800,
-                                    //             fontStyle: FontStyle.italic),
-                                    //       )
-                                    //     ],
-                                    //   ),
-                                    // ),
                                   ],
                                 ),
                                 image == "" ? 
                                 Container(
-                                  width:  90,
-                                  height: 90,
+                                  width:  110,
+                                  height: 110,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(45)),
+                                    borderRadius: BorderRadius.all(Radius.circular(55)),
                                     image: new DecorationImage(
                                       fit: BoxFit.fill,
                                       //colorFilter: new ColorFilter.mode(Colors.white, BlendMode.srcOver),
@@ -347,14 +292,14 @@ class _RegisterPart2State extends State<RegisterPart2> {
                                   child:  Center(),
                                 ) : 
                                 Container(
-                                  width: 90,
-                                  height: 90,
+                                  width: 110,
+                                  height: 110,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(45)),
+                                    borderRadius: BorderRadius.all(Radius.circular(55)),
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.all(Radius.circular(45)),
+                                    borderRadius: BorderRadius.all(Radius.circular(55)),
                                     child: Image.network(
                                       imageUrl,
                                       height: 90,

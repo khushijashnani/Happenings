@@ -38,10 +38,11 @@ app.config['JWT_BLACKLIST_ENABLED'] = True  # enable blacklist feature
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 jwt = JWTManager(app)
 
-pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract'
+pytesseract.pytesseract.tesseract_cmd = os.environ.get('TESSDATA_PREFIX','C:\\Program Files\\Tesseract-OCR\\tesseract')
 
 
-########### MODELS ##########
+########################## MODELS ################################
+
 
 registration = db.Table('registration',
         db.Column('attendee_id', db.Integer, db.ForeignKey('attendee.id'), nullable = False ),
@@ -65,7 +66,7 @@ class User(db.Model):
         self.address = address
         self.phone = phone
         self.email_id = email_id
-        self.image = image
+        self.image = image       
         
 
 class Attendee(User):
@@ -87,6 +88,48 @@ class Attendee(User):
         self.age = age
         self.gender = gender
     
+    def get_userdetails(self, user):
+        
+        events = user.events
+        reviews = user.reviews
+        favourites = user.favourites
+        
+        favourite_list = []
+        attended_events_data=[]
+        reviews_list = []
+        
+        for event in events:
+            e = addEvent(event)
+            attended_events_data.append(e)
+        
+        for rev in reviews:
+            reviews_list.append({'review': rev.review,
+                                'rating': rev.rating,})
+        
+        user_dict = {'name': user.name,
+                    'phone': user.phone,
+                    'image': user.image,
+                    'address': user.address,
+                    'email_id': user.email_id,
+                    'password': user.password,
+                    'username': user.username,
+                    'age':user.age,
+                    'gender': user.gender}
+                    
+        
+        for favourite in favourites:
+            event_id = favourite.event_id
+            event = Event.query.filter_by(id = event_id).first()
+            favourite_list.append()
+
+        return {
+            'user_details' : user_dict,
+            'events' : attended_events_data,
+            'reviews' : reviews_list,
+            'favourites' : favourite_list
+        }
+
+    
 
 class Organisation(User):
     __tablename__ = 'organisation'
@@ -103,6 +146,29 @@ class Organisation(User):
         self.name = name
         self.subscription = subscription
         self.org_details = org_details
+        
+    def get_orgdetails(self, organisation):
+        events = organisation.events
+        events_data=[]
+        
+        for event in events:
+            e = addEvent(event)
+            events_data.append(e)
+        
+        user_dict = {'name': organisation.name,
+                    'phone': organisation.phone,
+                    'image': organisation.image,
+                    'address':organisation.address,
+                    'email_id': organisation.email_id,
+                    'password': organisation.password,
+                    'username': organisation.username,
+                    'subscription':organisation.subscription,
+                    'details': organisation.org_details}
+                    
+        return {
+            "user_details" : user_dict,
+            "events" : events_data
+        }
     
 
 class Event(db.Model):
@@ -151,6 +217,8 @@ class Reviews(db.Model):
         self.attendee_id = attendee_id
         self.review = review
         self.rating = rating
+
+    
         
 
 class Favourites(db.Model):
@@ -163,6 +231,8 @@ class Favourites(db.Model):
     def __init__(self, attendee_id, event_id):
         self.attendee_id = attendee_id
         self.event_id = event_id
+
+    
 
 
 def addToDatabase(objectname):
@@ -212,7 +282,7 @@ class UserRegister(Resource):
                 image=data['image'],
                 age=data['age'],
                 gender=data['gender'])
-
+                
         elif data['type'] == ORGANISATION:
             user = Organisation(
                 name=data['name'], 
@@ -257,7 +327,6 @@ def addEvent(row):
     d = {}
     for column in row.__table__.columns:
         d[column.name] = str(getattr(row, column.name))
-
     return d
 
 
@@ -312,6 +381,18 @@ class EventApi(Resource):
     def delete(self):
         pass
 
+
+class Events(Resource):
+
+    def get(self):
+        events = Events.query.all()
+
+        events_json = []
+        for event in events :
+            events_json.append(addEvent(event))
+        
+        return events_json
+
 class UserDetails(Resource):
     
 
@@ -319,69 +400,16 @@ class UserDetails(Resource):
 
         if type == ATTENDEE:
             user = Attendee.query.get(user_id)
-            events = user.events
-            reviews = user.reviews
-            favourites = user.favourites
+            print(user)
+            details = user.get_userdetails(user)
             
-            favourite_list = []
-            attended_events_data=[]
-            reviews_list = []
-            
-            for event in events:
-                e = addEvent(event)
-                attended_events_data.append(e)
-            
-            for rev in reviews:
-                reviews_list.append({'review': rev.review,
-                                 'rating': rev.rating,})
-            
-            user_dict = {'name': user.name,
-                        'phone': user.phone,
-                        'image': user.image,
-                        'address': user.address,
-                        'email_id': user.email_id,
-                        'password': user.password,
-                        'username': user.username,
-                        'age':user.age,
-                        'gender': user.gender}
-                        
-            
-            for favourite in favourites:
-                event_id = favourite.event_id
-                event = Event.query.filter_by(id = event_id).first()
-                favourite_list.append()
-
-            return {
-                'user_details' : user_dict,
-                'events' : attended_events_data,
-                'reviews' : reviews_list,
-                'favourites' : favourite_list
-            }
-
         else :
-            organisation = Organisation.query.get(id = user_id).first()
+            organisation = Organisation.query.filter_by(id = user_id).first()
+            details = organisation.get_orgdetails(organisation)
+            
+        return details
 
-            events = organisation.events
-            events_data=[]
             
-            for event in events:
-                e = addEvent(event)
-                events_data.append(e)
-            
-            user_dict = {'name': user.name,
-                        'phone': user.phone,
-                        'image': user.image,
-                        'address': user.address,
-                        'email_id': user.email_id,
-                        'password': user.password,
-                        'username': user.username,
-                        'subscription':user.subscription,
-                        'details': user.org_details}
-                        
-            return {
-                "user_details" : user_dict,
-                "events" : events_data
-            }
 
     def put(self, user_id, type):
         data = request.get_json()
@@ -391,7 +419,6 @@ class UserDetails(Resource):
             user.phone = data['phone']
             user.image = data['image']
             user.address = data['address']
-            
             user.email_id = data['email_id']
             user.password = data['password']
             user.username = data['username']
@@ -411,10 +438,9 @@ class UserDetails(Resource):
             
             
         db.session.commit()
-        
-
         return addEvent(user)
         
+
 
             
 @jwt.token_in_blacklist_loader
@@ -473,6 +499,7 @@ api = Api(app)
 api.add_resource(UserLogin, "/login")
 api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
+api.add_resource(Events, '/events')
 api.add_resource(UserDetails ,"/<string:type>/<int:user_id>")
 api.add_resource(EventApi, '/events/<int:org_id>')
 

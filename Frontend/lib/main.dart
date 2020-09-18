@@ -41,17 +41,19 @@ class SplashScreen extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Text(
-                    "UVE",
+                    "HAPPEN",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 25,
+                        fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w800),
                   ),
                   Text(
-                    "NTO",
+                    "INGS",
                     style: TextStyle(
                         color: Color(0xffFFA700),
                         fontSize: 25,
+                        fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w800),
                   )
                 ],

@@ -17,7 +17,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
   File _profile, _aadhar;
   String name;
   int age;
-  String phone_no = "";
+  String phone_no;
   String gender;
   String aadhar_no;
   bool isuploading = false;
@@ -78,7 +78,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
       }
       print(index);
 
-      name = textLines[index - 1].split(" ")[0] + " " + textLines[index - 1].split(" ")[2];
+      name = textLines[index - 1].split(" ")[0] + textLines[index - 1].split(" ")[2];
       print(name);
 
       String year = textLines[index].split(":")[1];
@@ -100,10 +100,35 @@ class _RegisterPart1State extends State<RegisterPart1> {
         index++;
       }
 
-      aadhar_no = textLines[index].split(" ")[0] + textLines[index].split(" ")[1] + textLines[index].split(" ")[2];
-      print(aadhar_no);
+      //aadhar_no = textLines[index].split(" ")[0] + textLines[index].split(" ")[1] + textLines[index].split(" ")[2];
+
+      // print(name);
+      // print(age);
+      // print(aadhar_no);
+      // print(phone_no);
+      // print(gender);
+      // print(index);
+      // print(textLines);
+      // name = text.blocks[1].lines[0].text;
+      // print(name);
+      // age = DateTime.now().year -
+      //     int.parse(text.blocks[1].lines[1].text.split("/")[3].toString());
+      // print(age);
+      // phone_no = text.blocks[2].lines[0].text.split(" ")[2];
+      // print(phone_no);
+      // gender = text.blocks[1].lines[2].text.split("/")[1];
+      // print(gender);
       return true;
     });
+    // print()
+
+    // print(name);
+    // print(age);
+    // //print(aadhar_no);
+    // print(phone_no);
+    // print(gender);
+    // return true;
+
   }
 
   Future<void> uploadImages() async {
@@ -112,41 +137,41 @@ class _RegisterPart1State extends State<RegisterPart1> {
         isuploading = true;
       });
 
-      //bool rc = await readText();
+      bool rc = await readText();
 
-      String profileImageUrl;
-      final String picture1 =
-          "${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-      FirebaseStorage storage = FirebaseStorage.instance;
-      StorageUploadTask task1 = storage.ref().child(picture1).putFile(_profile);
+      // String profileImageUrl;
+      // final String picture1 =
+      //     "${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+      // FirebaseStorage storage = FirebaseStorage.instance;
+      // StorageUploadTask task1 = storage.ref().child(picture1).putFile(_profile);
       
-      task1.onComplete.then((snapshot) async {
+      // task1.onComplete.then((snapshot) async {
 
-        bool rc = await readText();
+      //   bool rc = await readText();
 
-        setState(() {
-          verify_Aadhar = rc;
-          isuploading = false;
-        });
+      //   setState(() {
+      //     verify_Aadhar = rc;
+      //     isuploading = false;
+      //   });
 
-        profileImageUrl = await snapshot.ref.getDownloadURL();
-        print(profileImageUrl);
+      //   profileImageUrl = await snapshot.ref.getDownloadURL();
+      //   print(profileImageUrl);
 
-        Fluttertoast.showToast(
-            msg: "Aadhar verified, Profile Image uploaded.",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    RegisterPart2(imageUrl: profileImageUrl, name:name, age:age,gender:gender, phone_no: phone_no)));
-      }).catchError((e) {
-        Fluttertoast.showToast(
-            msg: e.toString(),
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM);
-      });
+      //   Fluttertoast.showToast(
+      //       msg: "Aadhar verified, Profile Image uploaded.",
+      //       toastLength: Toast.LENGTH_LONG,
+      //       gravity: ToastGravity.BOTTOM);
+      //   // Navigator.pushReplacement(
+      //   //     context,
+      //   //     MaterialPageRoute(
+      //   //         builder: (context) =>
+      //   //             RegisterPart2(imageUrl: profileImageUrl, name:name, age:age,gender:gender, phone_no: phone_no)));
+      // }).catchError((e) {
+      //   Fluttertoast.showToast(
+      //       msg: e.toString(),
+      //       toastLength: Toast.LENGTH_LONG,
+      //       gravity: ToastGravity.BOTTOM);
+      // });
     } else if (_profile == null) {
       Fluttertoast.showToast(
           msg: "Please Upload Profile Image...",

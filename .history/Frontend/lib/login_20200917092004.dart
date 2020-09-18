@@ -187,39 +187,39 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
-                      // Row(
-                      //   children: [
-                      //     Radio(
-                      //       value: "ATTENDEE",
-                      //       groupValue: type,
-                      //       onChanged: (value){
-                      //         setState(() {
-                      //           type = value;
-                      //         });
-                      //       },
-                      //     ),
-                      //     Text(
-                      //       'ATTENDEE',
-                      //       style: new TextStyle(fontSize: 16.0, color: Colors.grey),
-                      //     ),
-                      //     Radio(
-                      //       value: "ORGANISATION",
-                      //       groupValue: type,
-                      //       onChanged: (value) {
-                      //         setState(() {
-                      //           type = value;
-                      //         });
-                      //       },
-                      //     ),
-                      //     Text(
-                      //       'ORGANISATION',
-                      //       style: new TextStyle(
-                      //         fontSize: 16.0,
-                      //         color: Colors.grey
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: "ATTENDEE",
+                            groupValue: type,
+                            onChanged: (value){
+                              setState(() {
+                                type = value;
+                              });
+                            },
+                          ),
+                          Text(
+                            'ATTENDEE',
+                            style: new TextStyle(fontSize: 16.0, color: Colors.grey),
+                          ),
+                          Radio(
+                            value: "ORGANISATION",
+                            groupValue: type,
+                            onChanged: (value) {
+                              setState(() {
+                                type = value;
+                              });
+                            },
+                          ),
+                          Text(
+                            'ORGANISATION',
+                            style: new TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.grey
+                            ),
+                          ),
+                        ],
+                      ),
                       SizedBox(
                         height: 20,
                       ),

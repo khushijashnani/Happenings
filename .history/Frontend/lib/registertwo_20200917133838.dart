@@ -252,25 +252,22 @@ class _RegisterPart2State extends State<RegisterPart2> {
                               width: screenWidth - 60,
                               child: Row(
                                 children: <Widget>[
-                                  Container(
-                                    width: 110,
-                                    child: AutoSizeText(
-                                      "Welcome,  ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w800,
-                                          fontStyle: FontStyle.normal),
-                                    ),
+                                  AutoSizeText(
+                                    "Welcome,  ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w800,
+                                        fontStyle: FontStyle.normal),
                                   ),
                                   Container(
-                                    width: screenWidth - 170,
+                                    width: screenWidth - 180,
                                     child: AutoSizeText(
                                       name,
                                       maxLines: 1,
                                       style: TextStyle(
                                           color: Color(0xffFFA700),
-                                          fontSize: 23,
+                                          fontSize: 25,
                                           fontWeight: FontWeight.w800,
                                           fontStyle: FontStyle.italic),
                                     ),
@@ -299,7 +296,7 @@ class _RegisterPart2State extends State<RegisterPart2> {
                                       width: screenWidth - 160,
                                       child: AutoSizeText(
                                         "with us",
-                                        style: TextStyle(color: Color(0xffFFA700), fontSize: 16),
+                                        style: TextStyle(color: Colors.yellow[600], fontSize: 16),
                                         maxLines: 1,
                                       ),
                                     )

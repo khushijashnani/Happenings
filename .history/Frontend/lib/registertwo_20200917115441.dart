@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:uvento/home.dart';
 import 'package:uvento/login.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
 class RegisterPart2 extends StatefulWidget {
   String imageUrl;
@@ -247,135 +246,50 @@ class _RegisterPart2State extends State<RegisterPart2> {
                             //     ),
                             //   )
                             // ),
-
+                            image == "" ? 
                             Container(
-                              width: screenWidth - 60,
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    width: 110,
-                                    child: AutoSizeText(
-                                      "Welcome,  ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w800,
-                                          fontStyle: FontStyle.normal),
-                                    ),
+                              width:  110,
+                              height: 110,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(55)),
+                                image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  //colorFilter: new ColorFilter.mode(Colors.white, BlendMode.srcOver),
+                                  image: AssetImage(
+                                    "assets/profilepic.jpg"
                                   ),
-                                  Container(
-                                    width: screenWidth - 170,
-                                    child: AutoSizeText(
-                                      name,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          color: Color(0xffFFA700),
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w800,
-                                          fontStyle: FontStyle.italic),
-                                    ),
-                                  )
-                                ],
+                                ),
+                              ),
+                              child:  Center(),
+                            ) : 
+                            Container(
+                              width: 110,
+                              height: 110,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(55)),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(55)),
+                                child: Image.network(
+                                  imageUrl,
+                                  height: 90,
+                                  width : 90,
+                                  fit: BoxFit.fill,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded /loadingProgress.expectedTotalBytes : null,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                            SizedBox(height: 20,),
-
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: screenWidth - 160,
-                                      child: AutoSizeText(
-                                        "Thank you for registering",
-                                        style: TextStyle(color: Colors.white, fontSize: 16),
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                    Container(
-                                      width: screenWidth - 160,
-                                      child: AutoSizeText(
-                                        "with us",
-                                        style: TextStyle(color: Color(0xffFFA700), fontSize: 16),
-                                        maxLines: 1,
-                                      ),
-                                    )
-                                    // Container(
-                                    //   width: screenWidth - 160,
-                                    //   child: Row(
-                                    //     children: <Widget>[
-                                    //       AutoSizeText(
-                                    //         "HAPPEN",
-                                    //         style: TextStyle(
-                                    //             color: Colors.white,
-                                    //             fontSize: 20,
-                                    //             fontWeight: FontWeight.w800,
-                                    //             fontStyle: FontStyle.italic),
-                                    //       ),
-                                    //       AutoSizeText(
-                                    //         "INGS",
-                                    //         maxLines: 1,
-                                    //         style: TextStyle(
-                                    //             color: Color(0xffFFA700),
-                                    //             fontSize: 20,
-                                    //             fontWeight: FontWeight.w800,
-                                    //             fontStyle: FontStyle.italic),
-                                    //       )
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-                                image == "" ? 
-                                Container(
-                                  width:  90,
-                                  height: 90,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(45)),
-                                    image: new DecorationImage(
-                                      fit: BoxFit.fill,
-                                      //colorFilter: new ColorFilter.mode(Colors.white, BlendMode.srcOver),
-                                      image: AssetImage(
-                                        "assets/profilepic.jpg"
-                                      ),
-                                    ),
-                                  ),
-                                  child:  Center(),
-                                ) : 
-                                Container(
-                                  width: 90,
-                                  height: 90,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(45)),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(Radius.circular(45)),
-                                    child: Image.network(
-                                      imageUrl,
-                                      height: 90,
-                                      width : 90,
-                                      fit: BoxFit.fill,
-                                      loadingBuilder: (BuildContext context,
-                                          Widget child,
-                                          ImageChunkEvent loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded /loadingProgress.expectedTotalBytes : null,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            
                             SizedBox(height: 10,),
 
                             Container(
@@ -489,36 +403,36 @@ class _RegisterPart2State extends State<RegisterPart2> {
 
                     SizedBox(height: 15,),
 
-                    phone == "" ? Container(
-                      width: screenWidth - 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.phone,
-                        maxLines: 1,
-                        controller: phoneController,
-                        onChanged: (value) => phone = value,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter your Contact Number';
-                          }
-                          return null;
-                        },
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.phone, color: Colors.grey),
+                    // Container(
+                    //   width: screenWidth - 60,
+                    //   child: TextFormField(
+                    //     keyboardType: TextInputType.phone,
+                    //     maxLines: 1,
+                    //     controller: phoneController,
+                    //     onChanged: (value) => phone = value,
+                    //     validator: (value) {
+                    //       if (value.isEmpty) {
+                    //         return 'Please enter your Contact Number';
+                    //       }
+                    //       return null;
+                    //     },
+                    //     style: TextStyle(color: Colors.white),
+                    //     decoration: InputDecoration(
+                    //       prefixIcon: Icon(Icons.phone, color: Colors.grey),
                           
-                          border: new OutlineInputBorder(
-                            borderRadius: new BorderRadius.circular(25.0),
-                            borderSide: new BorderSide(),
-                          ),
-                          labelStyle: TextStyle(color: Colors.yellow[600]),
-                          //icon: Icon(Icons.person, color: Colors.white),
-                          hintText: "Phone",
-                          hintStyle: TextStyle(color: Colors.grey)
-                        ),
-                      )
-                    ) : Container(),
+                    //       border: new OutlineInputBorder(
+                    //         borderRadius: new BorderRadius.circular(25.0),
+                    //         borderSide: new BorderSide(),
+                    //       ),
+                    //       labelStyle: TextStyle(color: Colors.yellow[600]),
+                    //       //icon: Icon(Icons.person, color: Colors.white),
+                    //       hintText: "Phone",
+                    //       hintStyle: TextStyle(color: Colors.grey)
+                    //     ),
+                    //   )
+                    // ),
                     
-                    phone == "" ? SizedBox(height: 15,) : Container(),
+                    // SizedBox(height: 15,),
 
                     Container(
                       width: screenWidth - 60,
@@ -745,27 +659,27 @@ class _RegisterPart2State extends State<RegisterPart2> {
       if (type == "ATTENDEE"){
 
         data = {
-          'name' : name,
+          'name' : widget.name,
           'username': username, 
           'password': password, 
           'type': type,
-          'age' : age,
-          'gender' : gender,
+          'age' : widget.age,
+          'gender' : widget.gender,
           'address' : address,
           'email_id' : email,
-          'phone' : phone,
+          'phone' : widget.phone_no,
           'image' : imageUrl,
           
         };
       } else {
         data = {
-          'name' : name,
-          'username': username,
-          'password': password,
+          'name' : widget.name,
+          'username': username, 
+          'password': password, 
           'type': type,
           'address' : address,
           'email_id' : email,
-          'phone' : phone,
+          'phone' : widget.phone_no,
           'image' : imageUrl,
           'details' : details
         };

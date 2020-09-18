@@ -17,9 +17,8 @@ class _RegisterPart1State extends State<RegisterPart1> {
   File _profile, _aadhar;
   String name;
   int age;
-  String phone_no = "";
+  String phone_no;
   String gender;
-  String aadhar_no;
   bool isuploading = false;
   bool verify_Aadhar = false;
   List<String> textLines = [];
@@ -58,13 +57,13 @@ class _RegisterPart1State extends State<RegisterPart1> {
 
     setState(() {
       int len1 = text.blocks.length;
-      //print(len1);
+      print(len1);
       for (int i = 0; i < len1; i++){
         int len = text.blocks[i].lines.length;
-        //print(len);
+        print(len);
         for (int j = 0; j < len; j++){
           String text1 = text.blocks[i].lines[j].text;
-          //print(text1);
+          print(text1);
           textLines.add(text1);
         }
       }
@@ -77,33 +76,27 @@ class _RegisterPart1State extends State<RegisterPart1> {
         }
       }
       print(index);
-
-      name = textLines[index - 1].split(" ")[0] + " " + textLines[index - 1].split(" ")[2];
+      print(textLines);
+      name = text.blocks[1].lines[0].text;
       print(name);
-
-      String year = textLines[index].split(":")[1];
-      int len = year.length;
-      year = year.substring(len - 4,len);
-      print(year);
-
-      age = DateTime.now().year - int.parse(year);
+      age = DateTime.now().year -
+          int.parse(text.blocks[1].lines[1].text.split("/")[3].toString());
       print(age);
-      index++;
-
-      gender = textLines[index].split("/")[1].trim();
+      phone_no = text.blocks[2].lines[0].text.split(" ")[2];
+      print(phone_no);
+      gender = text.blocks[1].lines[2].text.split("/")[1];
       print(gender);
-      index++;
-
-      if (textLines[index].contains("Mobile")){
-        phone_no = textLines[index].split(":")[1].trim();
-        print(phone_no);
-        index++;
-      }
-
-      aadhar_no = textLines[index].split(" ")[0] + textLines[index].split(" ")[1] + textLines[index].split(" ")[2];
-      print(aadhar_no);
       return true;
     });
+    // print()
+
+    // print(name);
+    // print(age);
+    // //print(aadhar_no);
+    // print(phone_no);
+    // print(gender);
+    // return true;
+
   }
 
   Future<void> uploadImages() async {
@@ -111,8 +104,6 @@ class _RegisterPart1State extends State<RegisterPart1> {
       setState(() {
         isuploading = true;
       });
-
-      //bool rc = await readText();
 
       String profileImageUrl;
       final String picture1 =
@@ -136,11 +127,11 @@ class _RegisterPart1State extends State<RegisterPart1> {
             msg: "Aadhar verified, Profile Image uploaded.",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    RegisterPart2(imageUrl: profileImageUrl, name:name, age:age,gender:gender, phone_no: phone_no)));
+        // Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) =>
+        //             RegisterPart2(imageUrl: profileImageUrl, name:name, age:age,gender:gender, phone_no: phone_no)));
       }).catchError((e) {
         Fluttertoast.showToast(
             msg: e.toString(),

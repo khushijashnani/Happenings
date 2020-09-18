@@ -270,7 +270,7 @@ class _RegisterPart2State extends State<RegisterPart2> {
                                       maxLines: 1,
                                       style: TextStyle(
                                           color: Color(0xffFFA700),
-                                          fontSize: 23,
+                                          fontSize: 25,
                                           fontWeight: FontWeight.w800,
                                           fontStyle: FontStyle.italic),
                                     ),

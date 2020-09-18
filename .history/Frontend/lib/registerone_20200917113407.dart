@@ -17,7 +17,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
   File _profile, _aadhar;
   String name;
   int age;
-  String phone_no = "";
+  String phone_no;
   String gender;
   String aadhar_no;
   bool isuploading = false;
@@ -78,7 +78,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
       }
       print(index);
 
-      name = textLines[index - 1].split(" ")[0] + " " + textLines[index - 1].split(" ")[2];
+      name = textLines[index - 1].split(" ")[0] + textLines[index - 1].split(" ")[2];
       print(name);
 
       String year = textLines[index].split(":")[1];
@@ -89,10 +89,9 @@ class _RegisterPart1State extends State<RegisterPart1> {
       age = DateTime.now().year - int.parse(year);
       print(age);
       index++;
+      print(textLines[index]);
 
       gender = textLines[index].split("/")[1].trim();
-      print(gender);
-      index++;
 
       if (textLines[index].contains("Mobile")){
         phone_no = textLines[index].split(":")[1].trim();
@@ -101,9 +100,34 @@ class _RegisterPart1State extends State<RegisterPart1> {
       }
 
       aadhar_no = textLines[index].split(" ")[0] + textLines[index].split(" ")[1] + textLines[index].split(" ")[2];
+
+      print(name);
+      print(age);
       print(aadhar_no);
+      print(phone_no);
+      print(gender);
+      // print(index);
+      // print(textLines);
+      // name = text.blocks[1].lines[0].text;
+      // print(name);
+      // age = DateTime.now().year -
+      //     int.parse(text.blocks[1].lines[1].text.split("/")[3].toString());
+      // print(age);
+      // phone_no = text.blocks[2].lines[0].text.split(" ")[2];
+      // print(phone_no);
+      // gender = text.blocks[1].lines[2].text.split("/")[1];
+      // print(gender);
       return true;
     });
+    // print()
+
+    // print(name);
+    // print(age);
+    // //print(aadhar_no);
+    // print(phone_no);
+    // print(gender);
+    // return true;
+
   }
 
   Future<void> uploadImages() async {
@@ -112,7 +136,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
         isuploading = true;
       });
 
-      //bool rc = await readText();
+      bool rc = await readText();
 
       String profileImageUrl;
       final String picture1 =
@@ -136,11 +160,11 @@ class _RegisterPart1State extends State<RegisterPart1> {
             msg: "Aadhar verified, Profile Image uploaded.",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    RegisterPart2(imageUrl: profileImageUrl, name:name, age:age,gender:gender, phone_no: phone_no)));
+        // Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) =>
+        //             RegisterPart2(imageUrl: profileImageUrl, name:name, age:age,gender:gender, phone_no: phone_no)));
       }).catchError((e) {
         Fluttertoast.showToast(
             msg: e.toString(),

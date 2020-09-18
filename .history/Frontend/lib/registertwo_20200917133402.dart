@@ -252,25 +252,22 @@ class _RegisterPart2State extends State<RegisterPart2> {
                               width: screenWidth - 60,
                               child: Row(
                                 children: <Widget>[
-                                  Container(
-                                    width: 110,
-                                    child: AutoSizeText(
-                                      "Welcome,  ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w800,
-                                          fontStyle: FontStyle.normal),
-                                    ),
+                                  AutoSizeText(
+                                    "Welcome  ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w800,
+                                        fontStyle: FontStyle.normal),
                                   ),
                                   Container(
-                                    width: screenWidth - 170,
+                                    width: screenWidth - 160,
                                     child: AutoSizeText(
-                                      name,
+                                      name.toUpperCase(),
                                       maxLines: 1,
                                       style: TextStyle(
                                           color: Color(0xffFFA700),
-                                          fontSize: 23,
+                                          fontSize: 25,
                                           fontWeight: FontWeight.w800,
                                           fontStyle: FontStyle.italic),
                                     ),
@@ -290,43 +287,35 @@ class _RegisterPart2State extends State<RegisterPart2> {
                                     Container(
                                       width: screenWidth - 160,
                                       child: AutoSizeText(
-                                        "Thank you for registering",
+                                        "Thank you for registering on ",
                                         style: TextStyle(color: Colors.white, fontSize: 16),
                                         maxLines: 1,
                                       ),
                                     ),
                                     Container(
                                       width: screenWidth - 160,
-                                      child: AutoSizeText(
-                                        "with us",
-                                        style: TextStyle(color: Color(0xffFFA700), fontSize: 16),
-                                        maxLines: 1,
+                                      child: Row(
+                                        children: <Widget>[
+                                          AutoSizeText(
+                                            "HAPPEN",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w800,
+                                                fontStyle: FontStyle.italic),
+                                          ),
+                                          AutoSizeText(
+                                            "INGS",
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: Color(0xffFFA700),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w800,
+                                                fontStyle: FontStyle.italic),
+                                          )
+                                        ],
                                       ),
-                                    )
-                                    // Container(
-                                    //   width: screenWidth - 160,
-                                    //   child: Row(
-                                    //     children: <Widget>[
-                                    //       AutoSizeText(
-                                    //         "HAPPEN",
-                                    //         style: TextStyle(
-                                    //             color: Colors.white,
-                                    //             fontSize: 20,
-                                    //             fontWeight: FontWeight.w800,
-                                    //             fontStyle: FontStyle.italic),
-                                    //       ),
-                                    //       AutoSizeText(
-                                    //         "INGS",
-                                    //         maxLines: 1,
-                                    //         style: TextStyle(
-                                    //             color: Color(0xffFFA700),
-                                    //             fontSize: 20,
-                                    //             fontWeight: FontWeight.w800,
-                                    //             fontStyle: FontStyle.italic),
-                                    //       )
-                                    //     ],
-                                    //   ),
-                                    // ),
+                                    ),
                                   ],
                                 ),
                                 image == "" ? 
