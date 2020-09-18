@@ -6,7 +6,6 @@ import 'dart:convert';
 
 import 'package:uvento/home.dart';
 
-import 'AttendeeHomeScreen.dart';
 import 'registerone.dart';
 
 class LoginPage extends StatefulWidget {
@@ -352,19 +351,21 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       var response2 = await http.get(
-          'https://rpk-happenings.herokuapp.com/$type/' +
+          'https://rpk-happenings.herokuapp.com/ATTENDEE/' +
               sharedPreferences.getString("id"),
           headers: {"Authorization": sharedPreferences.getString("token")});
       if (response2.statusCode == 200) {
         var userDetails = json.decode(response2.body)['user_details'];
         print(userDetails['name'].runtimeType);
+        setState(() {
+          name = userDetails['name'];
+        });
         print(name);
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => Home(
-                  // attendee: attendee,
-                  // organiser : organiser,
+              builder: (BuildContext context) => AttendeeHomeScreen(
+                    name: name,
                   )),
         );
       } else {

@@ -38,7 +38,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar: BottomNavyBar(
+        bottomNavigationBar: 
+        BottomNavyBar(
           selectedIndex: _page,
           showElevation: true,
           itemCornerRadius: 20,

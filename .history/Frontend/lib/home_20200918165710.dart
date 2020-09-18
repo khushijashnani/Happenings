@@ -9,6 +9,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
   int currentIndex = 0;
   PageController _pageController;
 
@@ -26,19 +27,20 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    _pageOption = [
+    _pageOption =  [
       // MenuDashBoard(uid:uid, notifier: profileRefresh,),
       // Exploration(uid:uid),
       // Admission(uid:uid),
       // ProfilePage(uid: uid, notifier: profileRefresh,)
+
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        bottomNavigationBar: BottomNavyBar(
+       child: Scaffold(
+          bottomNavigationBar: BottomNavyBar(
           selectedIndex: _page,
           showElevation: true,
           itemCornerRadius: 20,
@@ -48,41 +50,41 @@ class _HomeState extends State<Home> {
             // _pageController.animateToPage(index,
             //         duration: Duration(milliseconds: 1000), curve: Curves.ease);
           }),
-          items: [
-            BottomNavyBarItem(
-              icon: Icon(Icons.apps),
-              title: Text('Home'),
-              activeColor: Colors.blue,
-              textAlign: TextAlign.center,
+        items: [
+          BottomNavyBarItem(
+            icon: Icon(Icons.apps),
+            title: Text('Home'),
+            activeColor: Colors.blue,
+            textAlign: TextAlign.center,
+          ),
+          BottomNavyBarItem(
+            icon: Icon(Icons.explore),
+            title: Text('Explore'),
+            activeColor: Colors.blue,
+            textAlign: TextAlign.center,
+          ),
+          BottomNavyBarItem(
+            icon: Icon(Icons.edit),
+            title: Text(
+              'Admissions',
             ),
-            BottomNavyBarItem(
-              icon: Icon(Icons.explore),
-              title: Text('Explore'),
-              activeColor: Colors.blue,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Icon(Icons.edit),
-              title: Text(
-                'Admissions',
-              ),
-              activeColor: Colors.blue,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Icon(Icons.account_circle),
-              title: Text('Profile'),
-              activeColor: Colors.blue,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ), // This trailing comma makes auto-formatting nicer for build methods.,
+            activeColor: Colors.blue,
+            textAlign: TextAlign.center,
+          ),
+          BottomNavyBarItem(
+            icon: Icon(Icons.account_circle),
+            title: Text('Profile'),
+            activeColor: Colors.blue,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ), // This trailing comma makes auto-formatting nicer for build methods.,
 
-        body: IndexedStack(
-          index: _page,
-          children: _pageOption,
-        ),
+      body:IndexedStack(
+        index: _page,
+        children: _pageOption,
       ),
+       ),
     );
   }
 }

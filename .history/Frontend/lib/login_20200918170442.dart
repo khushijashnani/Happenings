@@ -358,13 +358,16 @@ class _LoginPageState extends State<LoginPage> {
       if (response2.statusCode == 200) {
         var userDetails = json.decode(response2.body)['user_details'];
         print(userDetails['name'].runtimeType);
+        setState(() {
+          name = userDetails['name'];
+        });
         print(name);
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (BuildContext context) => Home(
-                  // attendee: attendee,
-                  // organiser : organiser,
+                    // attendee: attendee,
+                    // organiser : organiser,
                   )),
         );
       } else {
