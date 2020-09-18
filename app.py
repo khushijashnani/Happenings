@@ -356,7 +356,7 @@ class EventApi(Resource):
             entry_amount = data["entry_amount"],
             image = data["image"],
             location = data["location"],
-            organiser_id = org_id
+            organiser_id = data['org_id']
         )
         addToDatabase(event)
         return addEvent(event)
@@ -383,11 +383,11 @@ class EventApi(Resource):
         pass
 
 class ClassicGet(Resource):
-
-    def get(self,id,resource):
+    def get(self,type,id,resource):
         data = request.get_json()
-        type = data['type']
+        #type = data['type']
         #resource = data['resource']
+        print(type, resource, id)
         if type == ATTENDEE :
             user = Attendee.query.get(id)
             if resource == "favs":
@@ -411,7 +411,7 @@ class ClassicGet(Resource):
 class Events(Resource):
 
     def get(self):
-        events = Events.query.all()
+        events = Event.query.all()
 
         events_json = []
         for event in events :
@@ -527,7 +527,8 @@ api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
 api.add_resource(Events, '/events')
 api.add_resource(UserDetails ,"/<string:type>/<int:user_id>")
-api.add_resource(EventApi, '/events/<int:org_id>')
+api.add_resource(EventApi, '/event')
+api.add_resource(ClassicGet, '/<string:type>/<int:id>/<string:resource>')
 
 if __name__ == '__main__':
     app.run(debug=True)

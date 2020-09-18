@@ -4,7 +4,6 @@ import 'package:uvento/models/date_model.dart';
 import 'package:uvento/models/event_type_model.dart';
 import 'package:uvento/models/events_model.dart';
 
-
 class AttendeeHomeScreen extends StatefulWidget {
   String name;
   AttendeeHomeScreen({Key key, this.name}) : super(key: key);
@@ -23,6 +22,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
   void initState() {
     super.initState();
     print(widget.name);
+    getEvents();
     dates = getDates();
     eventsType = getEventTypes();
     events = getEvents();

@@ -145,9 +145,7 @@ class _HomeState extends State<Home> {
                     )
                   ]
                 : <Widget>[
-                    // Container(
-                    //   child: Center(child: Text("SEARCH")),
-                    // ),
+
                     AttendeeHomeScreen(name:widget.organisation.name),
                     Container(
                       child: Center(child: Text("SEARCH")),
