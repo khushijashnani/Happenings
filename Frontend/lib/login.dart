@@ -3,10 +3,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:uvento/home.dart';
+import 'package:uvento/models/attendee.dart';
+import 'package:uvento/models/organisation.dart';
 
-import 'AttendeeHomeScreen.dart';
 import 'registerone.dart';
 
 class LoginPage extends StatefulWidget {
@@ -148,11 +148,11 @@ class _LoginPageState extends State<LoginPage> {
                               if (value.isEmpty) {
                                 return 'Please enter your password';
                               }
-                              if (!RegExp(
-                                      r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-                                  .hasMatch(passController.text)) {
-                                return "Please include atleast 1 lowercase, 1 uppercase,\n1 digit and 1 special character";
-                              }
+                              // if (!RegExp(
+                              //         r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+                              //     .hasMatch(passController.text)) {
+                              //   return "Please include atleast 1 lowercase, 1 uppercase,\n1 digit and 1 special character";
+                              // }
                               return null;
                             },
                             controller: passController,
@@ -357,22 +357,46 @@ class _LoginPageState extends State<LoginPage> {
           headers: {"Authorization": sharedPreferences.getString("token")});
       if (response2.statusCode == 200) {
         var userDetails = json.decode(response2.body)['user_details'];
-        print(userDetails['name'].runtimeType);
-        print(name);
+        // print(userDetails['name'].runtimeType);
+        Attendee attendee;
+        Organisation organisation;
+        if (userDetails['type'] == 'ATTENDEE') {
+          attendee = Attendee(
+              username: userDetails['username'],
+              password: userDetails['password'],
+              id: userDetails['id'],
+              age: userDetails['age'],
+              gender: userDetails['gender'],
+              name: userDetails['name'],
+              phone_no: userDetails['phone_no'],
+              address: userDetails['address'],
+              imageUrl: userDetails['image']);
+        } else {
+          organisation = Organisation(
+              username: userDetails['username'],
+              password: userDetails['password'],
+              id: userDetails['id'],
+              details: userDetails['details'],
+              subscription: userDetails['subscription'],
+              name: userDetails['name'],
+              phone_no: userDetails['phone_no'],
+              address: userDetails['address'],
+              imageUrl: userDetails['image']);
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (BuildContext context) => Home(
-                  // attendee: attendee,
-                  // organiser : organiser,
+                    attendee: attendee,
+                    organisation: organisation,
                   )),
         );
       } else {
         print(response.body);
       }
     } else {
-      // mes = response.body.["message"];
-      // Fluttertoast.showToast(msg: .toString());
+      // String mes = response.body["Error"].toString();
+      // Fluttertoast.showToast(msg:mes);
       print(response.body);
     }
   }

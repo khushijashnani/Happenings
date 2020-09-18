@@ -106,7 +106,9 @@ class Attendee(User):
             reviews_list.append({'review': rev.review,
                                 'rating': rev.rating,})
         
-        user_dict = {'name': user.name,
+        user_dict = {
+                    'id' : user.id, 
+                    'name': user.name,
                     'phone': user.phone,
                     'image': user.image,
                     'address': user.address,
@@ -155,7 +157,9 @@ class Organisation(User):
             e = addEvent(event)
             events_data.append(e)
         
-        user_dict = {'name': organisation.name,
+        user_dict = {
+                    'id' : organisation.id, 
+                    'name': organisation.name,
                     'phone': organisation.phone,
                     'image': organisation.image,
                     'address':organisation.address,
@@ -332,16 +336,14 @@ def addEvent(row):
 
 class EventApi(Resource):
 
-    def get(self, org_id):
-        org = Organisation.query.get(org_id)
-        events = org.events
-        e = []
-        for event in events :
-            e.append(addEvent(event))
-            
+    def get(self):
+
+        event_id = request.get_json()['event_id']
+        event = Event.query.get(event_id)
+        e = addEvent(event) 
         return e
         
-    def post(self, org_id):
+    def post(self):
         
         data = request.get_json()
         event = Event(
@@ -359,10 +361,9 @@ class EventApi(Resource):
         addToDatabase(event)
         return addEvent(event)
 
-    def put(self, org_id):
+    def put(self):
         data = request.get_json()
         event_id = data["event_id"]
-
         event = Event.query.get(event_id)
         event.title = data["title"]
         event.description = data["description"]
@@ -380,6 +381,31 @@ class EventApi(Resource):
 
     def delete(self):
         pass
+
+class ClassicGet(Resource):
+
+    def get(self,id,resource):
+        data = request.get_json()
+        type = data['type']
+        #resource = data['resource']
+        if type == ATTENDEE :
+            user = Attendee.query.get(id)
+            if resource == "favs":
+                d = user.favourites
+            elif resource == 'reviews':
+                d = user.reviews
+            elif resource == 'registeredevents':
+                d = user.events
+        else :
+            user = Organisation.query.get(id)
+            if resource == "events":
+                d = user.events
+        l = []
+        for item in d:
+            l.append(addEvent(item))
+        return l
+        
+               
 
 
 class Events(Resource):

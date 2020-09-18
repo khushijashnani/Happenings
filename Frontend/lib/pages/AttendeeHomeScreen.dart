@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:uvento/data/data.dart';
+import 'package:uvento/models/date_model.dart';
+import 'package:uvento/models/event_type_model.dart';
+import 'package:uvento/models/events_model.dart';
 
-import 'models/date_model.dart';
-import 'models/event_type_model.dart';
-import 'models/events_model.dart';
 
 class AttendeeHomeScreen extends StatefulWidget {
   String name;
@@ -177,8 +177,13 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                       "Popular Events",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
+                    SizedBox(
+                      height: 16,
+                    ),
                     Container(
                       child: ListView.builder(
+                          primary: false,
+                          physics: NeverScrollableScrollPhysics(),
                           itemCount: events.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
