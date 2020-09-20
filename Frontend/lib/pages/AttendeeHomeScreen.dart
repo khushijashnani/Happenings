@@ -180,21 +180,21 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                     SizedBox(
                       height: 16,
                     ),
-                    Container(
-                      child: ListView.builder(
-                          primary: false,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: events.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return PopularEventTile(
-                              desc: events[index].desc,
-                              imgeAssetPath: events[index].imgeAssetPath,
-                              date: events[index].date,
-                              address: events[index].address,
-                            );
-                          }),
-                    )
+                    // Container(
+                    //   child: ListView.builder(
+                    //       primary: false,
+                    //       physics: NeverScrollableScrollPhysics(),
+                    //       itemCount: events.length,
+                    //       shrinkWrap: true,
+                    //       itemBuilder: (context, index) {
+                    //         return PopularEventTile(
+                    //           desc: events[index].desc,
+                    //           imgeAssetPath: events[index].imageUrl,
+                    //           date: events[index].date,
+                    //           address: events[index].address,
+                    //         );
+                    //       }),
+                    // )
                   ],
                 ),
               ),
@@ -351,7 +351,7 @@ class PopularEventTile extends StatelessWidget {
               borderRadius: BorderRadius.only(
                   topRight: Radius.circular(8),
                   bottomRight: Radius.circular(8)),
-              child: Image.asset(
+              child: Image.network(
                 imgeAssetPath,
                 height: 100,
                 width: 120,

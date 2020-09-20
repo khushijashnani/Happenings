@@ -1,5 +1,5 @@
 class Organisation {
-  String id;
+  int id;
   String name;
   String details;
   String username;

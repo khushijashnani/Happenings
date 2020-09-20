@@ -4,6 +4,7 @@ import 'package:uvento/constants.dart';
 import 'package:uvento/models/attendee.dart';
 import 'package:uvento/models/organisation.dart';
 import 'package:uvento/pages/AttendeeHomeScreen.dart';
+import 'package:uvento/pages/MyEvents.dart';
 
 class Home extends StatefulWidget {
   Attendee attendee;
@@ -147,9 +148,7 @@ class _HomeState extends State<Home> {
                 : <Widget>[
 
                     AttendeeHomeScreen(name:widget.organisation.name),
-                    Container(
-                      child: Center(child: Text("SEARCH")),
-                    ),
+                    EventsList(id:widget.organisation.id,type:type),
                     Container(
                       child: Center(child: Text("PROFILE")),
                     )

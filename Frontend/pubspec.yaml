@@ -33,6 +33,7 @@ dependencies:
   firebase_ml_vision:
   auto_size_text: ^2.1.0
   bottom_navy_bar:
+  google_fonts: ^1.1.0
 
 dev_dependencies:
   flutter_test:

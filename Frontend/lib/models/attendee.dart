@@ -1,5 +1,5 @@
 class Attendee {
-  String id;
+  int id;
   String name;
   String gender;
   int age;
