@@ -1,0 +1,2 @@
+final String ATTENDEE = 'ATTENDEE';
+final String ORGANISATION = 'ORGANISATION';
