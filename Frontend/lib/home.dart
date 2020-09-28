@@ -11,6 +11,7 @@ import 'package:uvento/pages/AttendeeHomeScreen.dart';
 import 'package:uvento/pages/OrganisationProfile.dart';
 import 'package:uvento/pages/MyEvents.dart';
 import 'package:http/http.dart' as http;
+import 'package:uvento/pages/OrganiserHomeScreen.dart';
 
 class Home extends StatefulWidget {
   // Attendee attendee;
@@ -44,6 +45,7 @@ class _HomeState extends State<Home> {
   var _pageOption;
 
   Future<void> getUserDetails() async {
+    print("Here");
     setState(() {
       loading = true;
     });
@@ -225,8 +227,8 @@ class _HomeState extends State<Home> {
             )
           ]
           : <Widget>[
-            AttendeeHomeScreen(name:organisation.name),
-            EventsList(id:organisation.id,type:type),
+            OrganiserHomeScreen(organisation: organisation,),
+            EventsList(id:organisation.id,type:type,name:organisation.name),
             OrganisationProfile(organisation: organisation),
           ]
         ),

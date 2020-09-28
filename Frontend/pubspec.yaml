@@ -35,6 +35,10 @@ dependencies:
   bottom_navy_bar:
   font_awesome_flutter:
   google_fonts: ^1.1.0
+  pie_chart: ^4.0.1
+  chart_components: ^0.1.6
+  charts_flutter: ^0.9.0
+  bezier_chart: "^1.0.6"
 
 dev_dependencies:
   flutter_test:
