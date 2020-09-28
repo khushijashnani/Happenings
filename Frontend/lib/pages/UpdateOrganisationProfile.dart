@@ -427,7 +427,7 @@ class _UpdateOrganisationProfileState extends State<UpdateOrganisationProfile> {
                         child: Text(
                           "Update Profile",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: CARD,
                             fontWeight: FontWeight.bold,
                             fontSize: 20
                           ),

@@ -11,7 +11,7 @@ class Event {
   String speciality;
 
   Event(
-      {
+      {this.id,
       this.category,
       this.description,
       this.startDate,
@@ -21,9 +21,10 @@ class Event {
       this.location,
       this.speciality,
       this.title});
-  
+
   factory Event.fromMap(Map doc) {
     return Event(
+        id: doc['id'],
         title: doc['title'],
         imageUrl: doc['image'],
         category: doc['category'],
@@ -37,6 +38,7 @@ class Event {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['title'] = this.title;
     data['description'] = this.description;
     data['start_date'] = this.startDate.toString();

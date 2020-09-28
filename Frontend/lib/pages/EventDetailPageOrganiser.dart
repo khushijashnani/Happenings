@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uvento/eventform.dart';
 import 'package:uvento/models/event.dart';
 import 'package:uvento/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -90,7 +92,10 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                   child: Padding(
                     padding: const EdgeInsets.all(3.0),
                     child: InkWell(
-                      onTap: (){},
+                      onTap: () async{
+                        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => EventForm(org_id: int.parse(sharedPreferences.getString('id')),e : widget.event )));
+                      },
                       child: Icon(
                         Icons.edit, color: Colors.white,size: 20,
                       ),
@@ -166,6 +171,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                   ),
                 ],
               ),
+              
             ],
           ),
         ),

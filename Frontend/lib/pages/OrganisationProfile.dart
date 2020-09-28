@@ -91,9 +91,10 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                     child: AutoSizeText(
                       widget.organisation.name,
                       style: TextStyle(
-                        color: Colors.yellow[600],
+                        color: Colors.yellow[800],
                         fontSize: 25,
-                        fontStyle: FontStyle.italic
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold
                       ),
                       maxLines: 1,
                     ),
@@ -106,7 +107,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                     children: [
                       Icon(Icons.location_on, color: Colors.white,),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(5.0, 0, 0,0),
+                        padding: const EdgeInsets.fromLTRB(7.0, 0, 0,0),
                         child: Container(
                           width: screenWidth*0.7,
                           child: Text(
@@ -153,7 +154,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
             Container(
               width: screenWidth * 0.8,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(10.0,10,0,10),
+                padding: const EdgeInsets.fromLTRB(12.0,12,0,12),
                 child: Text(
                   widget.organisation.details,
                   style: TextStyle(
@@ -198,7 +199,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                 Container(
                   width: screenWidth * 0.75,
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: AutoSizeText(
                       "Phone : +91 " + widget.organisation.phone_no,
                       style: TextStyle(
@@ -211,7 +212,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                 Container(
                   width: screenWidth * 0.75,
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: AutoSizeText(
                       
                       "Email : " + widget.organisation.email,
@@ -321,7 +322,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                     children: [
                       SizedBox(height: 20,),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -348,7 +349,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10,10,10,0),
+                        padding: const EdgeInsets.fromLTRB(12,10,10,0),
                         child: Row(
                           children: [
                             Icon(Icons.person_pin, color: Colors.white, size : 30),
@@ -358,7 +359,8 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                                 "Organisation Details : ",
                                 style: TextStyle(
                                   color: Colors.yellow[800],
-                                  fontSize: 18
+                                  fontSize: 20,
+                                  // fontWeight: FontWeight.bold
                                 ),
                               ),
                             )
@@ -369,7 +371,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                       nameAndAddress(),
                       details(),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10,20,10,0),
+                        padding: const EdgeInsets.fromLTRB(12,20,10,0),
                         child: Row(
                           children: [
                             Icon(Icons.phone, color: Colors.white, size : 30),
@@ -389,7 +391,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
                       contactDetails(),
 
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10,20,10,0),
+                        padding: const EdgeInsets.fromLTRB(12,20,10,0),
                         child: Row(
                           children: [
                             Icon(Icons.lock, color: Colors.white, size : 30),
