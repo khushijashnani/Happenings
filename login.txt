@@ -1,0 +1,18 @@
+TYPE    Username   Password
+O       zomato      zomato
+A       khushijashnani  Khushi@123
+A       priyav       Priyav@123
+
+Categories : 
+Health & Wellness
+Photography
+Cultural
+Outdoor & Adventure
+Tech
+Sports
+Music & Arts
+Social
+Educational
+Sci-fi & Games
+Career & Business
+Others

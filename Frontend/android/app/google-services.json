@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "876596572208",
+    "firebase_url": "https://happenings-d27e7.firebaseio.com",
+    "project_id": "happenings-d27e7",
+    "storage_bucket": "happenings-d27e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876596572208:android:adef34eacedae79975bdf5",
+        "android_client_info": {
+          "package_name": "com.example.uvento"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876596572208-bdpvtjua1k4lr97p196kdt0dbqt4sr0k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAP5zYtsSf9I9_GezLlGoQbnbQdO_tXQJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876596572208-bdpvtjua1k4lr97p196kdt0dbqt4sr0k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

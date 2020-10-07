@@ -3,11 +3,11 @@
 
 # pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract'
 
-# img = cv2.imread('aadhar.jpeg')
+# img = cv2.imread('text.jpeg')
 # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 # text = pytesseract.image_to_string(img)
-
+# print(text)
 def getAadharData(text):
     list_of_text = text.split('\n')
     print("Now we will print other things")

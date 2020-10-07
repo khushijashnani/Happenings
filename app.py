@@ -18,6 +18,9 @@ import cv2
 import pytesseract
 from getAadharData import getAadharData
 from aadhar_verification import aadharNumVerify
+from flask_mail import Mail
+import pickle
+from textblob import TextBlob
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'assembler'
@@ -38,18 +41,26 @@ app.config['JWT_BLACKLIST_ENABLED'] = True  # enable blacklist feature
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 jwt = JWTManager(app)
 
-pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract'
+pytesseract.pytesseract.tesseract_cmd = os.environ.get(
+    'TESSDATA_PREFIX', 'C:\\Program Files\\Tesseract-OCR\\tesseract')
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'rpk.happenings@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Happenings123'
+app.config['MAIL_DEFAULT_SENDER'] = 'rpk.happenings@gmail.com'
+app.config['MAIL_ASCII_ATTACHMENTS'] = False
+app.config['MAIL_MAX_EMAILS'] = None
 
 
-########### MODELS ##########
+########################## MODELS ################################
+
 
 registration = db.Table('registration',
                         db.Column('attendee_id', db.Integer, db.ForeignKey(
                             'attendee.id'), nullable=False),
-                        db.Column('event_id', db.Integer, db.ForeignKey(
-                            'event.id'), nullable=False),
-                        db.Column('unique_key', db.Text, nullable=False),
-                        db.Column('status', db.String(6), nullable=False))
+                        db.Column('event_id', db.Integer, db.ForeignKey('event.id'), nullable=False))
 
 
 class User(db.Model):
@@ -58,7 +69,7 @@ class User(db.Model):
     username = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(20), nullable=False)
     address = db.Column(db.Text, nullable=False)
-    phone = db.Column(db.Integer, nullable=False)
+    phone = db.Column(db.String(10), nullable=False)
     email_id = db.Column(db.String(50), nullable=False)
     image = db.Column(db.Text, nullable=False)
 
@@ -91,6 +102,126 @@ class Attendee(User):
         self.age = age
         self.gender = gender
 
+    def get_userdetails(self, user):
+
+        events = user.events
+        reviews = user.reviews
+        favourites = user.favourites
+
+        favourite_list = []
+        attended_events_data = []
+        reviews_list = []
+
+        for event in events:
+            e = addEvent(event)
+            attended_events_data.append(e)
+
+        for rev in reviews:
+            reviews_list.append(addEvent(rev))
+
+        user_dict = {
+            'id': user.id,
+            'name': user.name,
+            'phone': user.phone,
+            'image': user.image,
+            'address': user.address,
+            'email_id': user.email_id,
+            'password': user.password,
+            'username': user.username,
+            'age': user.age,
+            'gender': user.gender}
+
+        for favourite in favourites:
+            event_id = favourite.event_id
+            event = Event.query.filter_by(id=event_id).first()
+            favourite_list.append(addEvent(event))
+
+        return {
+            'user_details': user_dict,
+            'events': attended_events_data,
+            'reviews': reviews_list,
+            'favourites': favourite_list
+        }
+
+
+def getPieData(events):  # categories vs events
+
+    data = dict()
+    for event in events:
+        cat = event.category
+        if cat not in data:
+            data[cat] = 0
+
+        data[cat] = data[cat] + 1
+
+    categories = []
+    events = []
+    for category, eventCount in data.items():
+        categories.append(category)
+        events.append(eventCount)
+    data.clear()
+    data['labels'] = categories
+    data['data'] = events
+    return data
+
+
+def getLineData(events):  # attendees vs events
+    data = dict()
+    eventNames = []
+    eventCount = []
+    for event in events:
+        eventNames.append(event.title)
+        eventCount.append(event.current_count)
+
+    data['labels'] = eventNames
+    data['data'] = eventCount
+    return data
+
+
+def getBarDataCategories(events):  # attendees vs categories
+    data = dict()
+    label_data = dict()
+    for event in events:
+        if event.category not in label_data:
+            label_data[event.category] = 0
+        label_data[event.category] += int(event.current_count)
+
+    eventCat = []
+    eventCount = []
+    for key in label_data:
+        eventCat.append(key)
+        eventCount.append(label_data[key])
+
+    data['labels'] = eventCat
+    data['data'] = eventCount
+    return data
+
+
+def getBarDataReviews(events):  # events vs reviews
+    data = dict()
+    eventNames = []
+    positive = []
+    negative = []
+    for event in events:
+        reviews = event.reviews
+        pos = 0
+        neg = 0
+        for review in reviews:
+            sentiment = review.sentiment
+            if 'positive' in sentiment.lower():
+                pos += 1
+            if 'negative' in sentiment.lower():
+                neg += 1
+
+        eventNames.append(event.title)
+        positive.append(pos)
+        negative.append(neg)
+
+    data['labels'] = eventNames
+    data['positive'] = positive
+    data['negative'] = negative
+    return data
+
 
 class Organisation(User):
     __tablename__ = 'organisation'
@@ -108,6 +239,50 @@ class Organisation(User):
         self.subscription = subscription
         self.org_details = org_details
 
+    def get_orgdetails(self, organisation):
+        events = organisation.events
+        events_data = []
+        attendees = 0
+        reviews = 0
+        revenue = 0
+        pieData = getPieData(events)
+        reviewGraph = getBarDataReviews(events)
+        catGraph = getBarDataCategories(events)
+        lineGraph = getLineData(events)
+
+        for event in events:
+            e = addEvent(event)
+            events_data.append(e)
+            attendees += len(event.attendee)
+            reviews += len(event.reviews)
+
+            revenue += len(event.attendees) * event.entry_amount
+
+        user_dict = {
+            'id': organisation.id,
+            'name': organisation.name,
+            'phone': organisation.phone,
+            'image': organisation.image,
+            'address': organisation.address,
+            'email_id': organisation.email_id,
+            'password': organisation.password,
+            'username': organisation.username,
+            'subscription': organisation.subscription,
+            'details': organisation.org_details}
+
+        return {
+            "user_details": user_dict,
+            "events": events_data,
+            "no_of_events": len(events),
+            "attendees": attendees,
+            "reviews": reviews,
+            "revenue": revenue,
+            'pie_data': pieData,
+            'reviewGraph': reviewGraph,
+            'catGraph': catGraph,
+            'lineGraph': lineGraph
+        }
+
 
 class Event(db.Model):
     __tablename__ = 'event'
@@ -121,13 +296,15 @@ class Event(db.Model):
     category = db.Column(db.String(100), nullable=False)
     speciality = db.Column(db.Text, nullable=False)
     entry_amount = db.Column(db.Integer, nullable=False)
+    max_count = db.Column(db.Integer, nullable=False)
+    current_count = db.Column(db.Integer, nullable=False)
     attendee = db.relationship(
         'Attendee', secondary=registration, backref=db.backref('event', lazy=True))
     image = db.Column(db.Text, nullable=False)
     organiser_id = db.Column(db.Integer, db.ForeignKey('organisation.id'))
     reviews = db.relationship('Reviews', backref='event')
 
-    def __init__(self, title, description, start_date, end_date, location, category, speciality, entry_amount, image, organiser_id):
+    def __init__(self, title, description, start_date, end_date, location, category, speciality, entry_amount, image, organiser_id, current_count, max_count):
         self.title = title
         self.description = description
         self.location = location
@@ -138,6 +315,8 @@ class Event(db.Model):
         self.start_date = start_date
         self.end_date = end_date
         self.organiser_id = organiser_id
+        self.current_count = current_count
+        self.max_count = max_count
 
 
 class Reviews(db.Model):
@@ -149,13 +328,15 @@ class Reviews(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     review = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
+    sentiment = db.Column(db.String(20), nullable=False)
 
-    def __init__(self, event_id, attendee_id, review, rating):
+    def __init__(self, event_id, attendee_id, review, rating, sentiment):
 
         self.event_id = event_id
         self.attendee_id = attendee_id
         self.review = review
         self.rating = rating
+        self.sentiment = sentiment
 
 
 class Favourites(db.Model):
@@ -176,7 +357,12 @@ def addToDatabase(objectname):
     db.session.commit()
 
 
+def deleteFromDatabase(objectname):
+    db.session.delete(objectname)
+    db.session.commit()
+
 #####################  API'S  ########################
+
 
 class AadharApi(Resource):
     def post(self):
@@ -186,7 +372,7 @@ class AadharApi(Resource):
         url_response = urllib.request.urlopen(url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
         img = cv2.imdecode(img_array, -1)
-        cv2.imshow("OCR", img)
+        #cv2.imshow("OCR", img)
         text = pytesseract.image_to_string(img)
         print(text)
         aadharData = getAadharData(text)
@@ -236,7 +422,7 @@ class UserLogin(Resource):
 
     def post(self):
         data = request.get_json()
-
+        print(data)
         if data['type'] == ATTENDEE:
             user = Attendee.query.filter_by(username=data['username']).first()
         elif data['type'] == ORGANISATION:
@@ -260,22 +446,29 @@ def addEvent(row):
     d = {}
     for column in row.__table__.columns:
         d[column.name] = str(getattr(row, column.name))
-
     return d
 
 
 class EventApi(Resource):
 
-    def get(self, org_id):
-        org = Organisation.query.get(org_id)
-        events = org.events
-        e = []
-        for event in events:
-            e.append(addEvent(event))
+    def get(self):
 
+        event_id = request.get_json()['event_id']
+        event = Event.query.get(event_id)
+        e = addEvent(event)
+        attendees = event.attendee
+        reviews = event.reviews
+        attendeesList = []
+        reviewList = []
+        for attendee in attendees:
+            attendeesList.append(addEvent(attendee))
+        for review in reviews:
+            reviewList.append(addEvent(review))
+        e["attendees"] = attendeesList
+        e["reviews"] = reviewList
         return e
 
-    def post(self, org_id):
+    def post(self):
 
         data = request.get_json()
         event = Event(
@@ -288,15 +481,16 @@ class EventApi(Resource):
             entry_amount=data["entry_amount"],
             image=data["image"],
             location=data["location"],
-            organiser_id=org_id
+            organiser_id=data['org_id'],
+            current_count=0,
+            max_count=data['max_count']
         )
         addToDatabase(event)
         return addEvent(event)
 
-    def put(self, org_id):
+    def put(self):
         data = request.get_json()
         event_id = data["event_id"]
-
         event = Event.query.get(event_id)
         event.title = data["title"]
         event.description = data["description"]
@@ -307,7 +501,8 @@ class EventApi(Resource):
         event.speciality = data["speciality"]
         event.entry_amount = data["entry_amount"]
         event.image = data["image"]
-
+        event.current_count = data['current_count']
+        event.max_count = data['max_count']
         db.session.commit()
         return addEvent(event)
 
@@ -315,74 +510,73 @@ class EventApi(Resource):
         pass
 
 
-class UserDetails(Resource):
-
-    def get(self, user_id, type):
+class ClassicGet(Resource):
+    def get(self, type, id, resource):
+        data = request.get_json()
+        #type = data['type']
+        #resource = data['resource']
+        print(type, resource, id)
 
         if type == ATTENDEE:
-            user = Attendee.query.get(user_id)
-            events = user.events
-            reviews = user.reviews
-            favourites = user.favourites
+            user = Attendee.query.get(id)
+            if resource == "favs":
+                d = user.favourites
+            elif resource == 'reviews':
+                d = user.reviews
+            elif resource == 'registeredevents':
+                d = user.events
+            elif resource == 'popular_events':
+                events = Event.query.all()
+                eventList = {}
+                for event in events:
+                    attendees = len(event.attendee)
+                    eventList[event] = attendees
 
-            favourite_list = []
-            attended_events_data = []
-            reviews_list = []
+                eventList = {k: v for k, v in sorted(
+                    eventList.items(), key=lambda item: item[1])}
+                user_events = user.events
+                count = 0
+                d = []
+                for event in eventList:
+                    if event not in user_events:
+                        d.append(event)
+                        count += 1
 
-            for event in events:
-                e = addEvent(event)
-                attended_events_data.append(e)
-
-            for rev in reviews:
-                reviews_list.append({'review': rev.review,
-                                     'rating': rev.rating, })
-
-            user_dict = {'name': user.name,
-                         'phone': user.phone,
-                         'image': user.image,
-                         'address': user.address,
-                         'email_id': user.email_id,
-                         'password': user.password,
-                         'username': user.username,
-                         'age': user.age,
-                         'gender': user.gender}
-
-            for favourite in favourites:
-                event_id = favourite.event_id
-                event = Event.query.filter_by(id=event_id).first()
-                favourite_list.append()
-
-            return {
-                'user_details': user_dict,
-                'events': attended_events_data,
-                'reviews': reviews_list,
-                'favourites': favourite_list
-            }
-
+                    if count == 10:
+                        break
         else:
-            organisation = Organisation.query.get(id=user_id).first()
+            user = Organisation.query.get(id)
+            if resource == "events":
+                d = user.events
+        l = []
+        for item in d:
+            l.append(addEvent(item))
+        return l
 
-            events = organisation.events
-            events_data = []
 
-            for event in events:
-                e = addEvent(event)
-                events_data.append(e)
+class Events(Resource):
 
-            user_dict = {'name': user.name,
-                         'phone': user.phone,
-                         'image': user.image,
-                         'address': user.address,
-                         'email_id': user.email_id,
-                         'password': user.password,
-                         'username': user.username,
-                         'subscription': user.subscription,
-                         'details': user.org_details}
+    def get(self):
+        events = Event.query.all()
 
-            return {
-                "user_details": user_dict,
-                "events": events_data
-            }
+        events_json = []
+        for event in events:
+            events_json.append(addEvent(event))
+
+        return events_json
+
+
+class UserDetails(Resource):
+    def get(self, user_id, type):
+        if type == ATTENDEE:
+            user = Attendee.query.get(user_id)
+            print(user)
+            details = user.get_userdetails(user)
+        else:
+            organisation = Organisation.query.filter_by(id=user_id).first()
+            details = organisation.get_orgdetails(organisation)
+
+        return details
 
     def put(self, user_id, type):
         data = request.get_json()
@@ -410,8 +604,80 @@ class UserDetails(Resource):
             user.username = data['username']
 
         db.session.commit()
-
         return addEvent(user)
+
+
+class ManageReviews(Resource):
+
+    def post(self, user_id):
+
+        data = request.get_json()
+        polarity = TextBlob(data['review']).polarity
+        #polarity = sum(polarities)/len(polarities)
+        # review = ""
+        if polarity >= -1 and polarity < -0.6:
+            review = "Strongly Negative"
+        elif polarity >= -0.6 and polarity < -0.2:
+            review = "Slightly Negative"
+        elif polarity >= -0.2 and polarity < 0.2:
+            review = "Neutral"
+        elif polarity >= 0.2 and polarity < 0.6:
+            review = "Slightly Positive"
+        else:
+            review = "Strongly Positive"
+
+        reviews = Reviews(
+            event_id=data['event_id'],
+            attendee_id=user_id,
+            review=data['review'],
+            rating=data['rating'],
+            sentiment=review
+        )
+
+        addToDatabase(reviews)
+        return {"message": "Review Added"}
+
+
+class ManageFavourites(Resource):
+
+    def post(self, user_id, event_id):
+        favourite = Favourites(user_id, event_id)
+        addToDatabase(favourite)
+        return {'message': 'Favourite added'}
+
+    def delete(self, user_id, event_id):
+        favourite = Favourites.query.filter(
+            attendee_id=user_id, event_id=event_id)
+        deleteFromDatabase(favourite)
+        return {'message': 'Favourite removed'}
+
+
+class RegisterForEvent(Resource):
+    def post(self, user_id, event_id):
+        user = Attendee.query.get(user_id)
+        event = Event.query.get(event_id)
+        event.attendee.append(user)
+        event.current_count = int(event.current_count) + 1
+        db.session.commit()
+        body = 'Your unique id is ' + \
+            str(event.id) + ', for ' + event.name + \
+            '\non : ' + \
+            event.start_date.strftime('%d %B, %Y') + \
+            '\nVenue: ' + event.location
+        msg = Message(subject='Event Confirmation from Happenings',
+                      body=body, recipients=[user.email_id])
+        mail.send(msg)
+        return {'message': 'Successfully registered for Event'}
+
+
+class UserLogout(Resource):
+
+    @jwt_required
+    @cross_origin(origin='*', support_credentials=True)
+    def post(self):
+        jti = get_raw_jwt()['jti']
+        BLACKLIST.append(jti)
+        return {"message": "Successfully logged out"}, 200
 
 
 @jwt.token_in_blacklist_loader
@@ -470,8 +736,17 @@ api = Api(app)
 api.add_resource(UserLogin, "/login")
 api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
+api.add_resource(Events, '/events')
 api.add_resource(UserDetails, "/<string:type>/<int:user_id>")
-api.add_resource(EventApi, '/events/<int:org_id>')
+api.add_resource(EventApi, '/event')
+api.add_resource(RegisterForEvent,
+                 '/register_for_event/event/<int:event_id>/user/<int:user_id>')
+api.add_resource(ClassicGet, '/<string:type>/<int:id>/<string:resource>')
+api.add_resource(ManageReviews, '/add_review/<int:user_id>')
+api.add_resource(ManageFavourites,
+                 '/add_to_favourite/user/<int:user_id>/event/<int:event_id>')
+
+api.add_resource(UserLogout, '/logout')
 
 if __name__ == '__main__':
     app.run(debug=True)
