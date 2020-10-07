@@ -77,6 +77,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
         }
       }
       print(index);
+      print(textLines);
 
       name = textLines[index - 1].split(" ")[0] + " " + textLines[index - 1].split(" ")[2];
       print(name);
@@ -90,7 +91,13 @@ class _RegisterPart1State extends State<RegisterPart1> {
       print(age);
       index++;
 
-      gender = textLines[index].split("/")[1].trim();
+      print(textLines[index]);
+      if (textLines[index].contains("Male") || textLines[index].contains("MALE")) {
+        gender = "Male";
+      } else {
+        gender = "Female";
+      }
+      //gender = textLines[index].split("/")[1].trim();
       print(gender);
       index++;
 

@@ -2,9 +2,9 @@ import 'package:uvento/models/date_model.dart';
 import 'package:uvento/models/event_type_model.dart';
 import 'package:uvento/models/events_model.dart';
 
-List<DateModel> getDates(){
-
+List<DateModel> getDates() {
   List<DateModel> dates = new List<DateModel>();
+  DateTime current_date = DateTime.now();
   DateModel dateModel = new DateModel();
 
   //1
@@ -21,7 +21,6 @@ List<DateModel> getDates(){
 
   dateModel = new DateModel();
 
-
   //1
   dateModel.date = "12";
   dateModel.weekDay = "Tue";
@@ -36,7 +35,6 @@ List<DateModel> getDates(){
 
   dateModel = new DateModel();
 
-
   //1
   dateModel.date = "14";
   dateModel.weekDay = "Thu";
@@ -44,14 +42,12 @@ List<DateModel> getDates(){
 
   dateModel = new DateModel();
 
-
   //1
   dateModel.date = "15";
   dateModel.weekDay = "Fri";
   dates.add(dateModel);
 
   dateModel = new DateModel();
-
 
   //1
   dateModel.date = "16";
@@ -61,11 +57,9 @@ List<DateModel> getDates(){
   dateModel = new DateModel();
 
   return dates;
-
 }
 
-List<EventTypeModel> getEventTypes(){
-
+List<EventTypeModel> getEventTypes() {
   List<EventTypeModel> events = new List();
   EventTypeModel eventModel = new EventTypeModel();
 
@@ -90,11 +84,28 @@ List<EventTypeModel> getEventTypes(){
 
   eventModel = new EventTypeModel();
 
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Technology";
+  events.add(eventModel);
+
+  eventModel = new EventTypeModel();
+
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Medical";
+  events.add(eventModel);
+
+  eventModel = new EventTypeModel();
+
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Others";
+  events.add(eventModel);
+
+  eventModel = new EventTypeModel();
+
   return events;
 }
 
-List<EventsModel> getEvents(){
-
+List<EventsModel> getEvents() {
   List<EventsModel> events = new List<EventsModel>();
   EventsModel eventsModel = new EventsModel();
 
@@ -111,7 +122,7 @@ List<EventsModel> getEvents(){
   eventsModel.imgeAssetPath = "assets/second.png";
   eventsModel.date = "Jan 12, 2019";
   eventsModel.desc = "Art & Meet in Street Plaza";
-      eventsModel.address = "Galaxyfields, Sector 22, Faridabad";
+  eventsModel.address = "Galaxyfields, Sector 22, Faridabad";
   events.add(eventsModel);
 
   eventsModel = new EventsModel();
@@ -120,13 +131,10 @@ List<EventsModel> getEvents(){
   eventsModel.imgeAssetPath = "assets/music_event.png";
   eventsModel.date = "Jan 12, 2019";
   eventsModel.address = "Galaxyfields, Sector 22, Faridabad";
-      eventsModel.desc = "Youth Music in Gwalior";
+  eventsModel.desc = "Youth Music in Gwalior";
   events.add(eventsModel);
 
   eventsModel = new EventsModel();
 
-
   return events;
-
-
 }

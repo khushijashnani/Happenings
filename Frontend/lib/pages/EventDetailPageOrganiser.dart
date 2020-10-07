@@ -12,7 +12,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class EventDetailPageOrganiser extends StatefulWidget {
   Event event;
-  EventDetailPageOrganiser({this.event});
+  String type;
+  EventDetailPageOrganiser({this.event, this.type});
 
   @override
   _EventDetailPageOrganiserState createState() =>
@@ -75,15 +76,18 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
               ),
             ],
           ),
-          Padding(
+          Container(
+            height: 60,
             padding: const EdgeInsets.fromLTRB(13.0, 15, 13, 15),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Material(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     color: Colors.black.withOpacity(0.3),
                     child: InkWell(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
                         onTap: () {
                           Navigator.pop(context);
                         },
@@ -95,10 +99,12 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                             size: 20,
                           ),
                         ))),
-                Material(
+                widget.type == ORGANISATION
+                ? Material(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     color: Colors.black.withOpacity(0.3),
                     child: InkWell(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
                         onTap: () async {
                           SharedPreferences sharedPreferences =
                               await SharedPreferences.getInstance();
@@ -117,7 +123,8 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                             color: Colors.white,
                             size: 20,
                           ),
-                        ))),
+                        )))
+                : Container(),
               ],
             ),
           )
@@ -132,7 +139,10 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
         padding: const EdgeInsets.fromLTRB(30, 10, 20, 20),
         child: AutoSizeText(
           widget.event.title,
-          style: GoogleFonts.raleway(color: Colors.yellow[800],fontWeight: FontWeight.w600, fontSize: 30),
+          style: GoogleFonts.raleway(
+              color: Colors.yellow[800],
+              fontWeight: FontWeight.w600,
+              fontSize: 30),
           maxLines: 3,
         ),
       ),
@@ -202,10 +212,8 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   //       ));
   // }
 
-  Widget dateAndTime(icon,date) {
-    
+  Widget dateAndTime(icon, date) {
     int startWeek = date.weekday;
-    
 
     return Padding(
         padding: const EdgeInsets.fromLTRB(30, 2, 30, 2),
@@ -229,10 +237,12 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             padding: EdgeInsets.fromLTRB(20, 15, 30, 15),
             child: AutoSizeText(
               dateMapper[startWeek] +
-              ", " +
-              DateFormat('d MMM, yyyy').format(widget.event.endDate) +
-              " at " +
-              date.hour.toString() + ":" + date.minute.toString(),
+                  ", " +
+                  DateFormat('d MMM, yyyy').format(widget.event.endDate) +
+                  " at " +
+                  date.hour.toString() +
+                  ":" +
+                  date.minute.toString(),
               style: TextStyle(color: Colors.white),
               maxLines: 2,
             ),
@@ -268,23 +278,18 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             ),
           ),
           Expanded(
-            child: Container(
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.all(5),
-              child: InkWell(
-                onTap: (){},
-                child: Text(
-                  "Get location",
-                  style: TextStyle(
-                    color: Colors.grey
-                  ),
-                ),
+              child: Container(
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.all(5),
+            child: InkWell(
+              onTap: () {},
+              child: Text(
+                "Get location",
+                style: TextStyle(color: Colors.grey),
               ),
-            )
-          )
-        ]
-      )
-    );
+            ),
+          ))
+        ]));
     //       child: Row(
     //             children: [
     //               Padding(
@@ -327,7 +332,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
     // );
   }
 
-  Widget ticketPrice(){
+  Widget ticketPrice() {
     return Padding(
         padding: const EdgeInsets.fromLTRB(30, 5, 30, 2),
         child: Row(children: [
@@ -339,12 +344,11 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: InkWell(
-                  child:FaIcon(
-                      FontAwesomeIcons.rupeeSign,
-                      color: Colors.white,
-                      size: 20,
-                    )
-                ),
+                    child: FaIcon(
+                  FontAwesomeIcons.rupeeSign,
+                  color: Colors.white,
+                  size: 20,
+                )),
               )),
           // SizedBox(
           //   width: 10,
@@ -429,137 +433,170 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
     // String enddate = DateFormat('d MMM, yyyy').format(widget.event.endDate);
 
     return Scaffold(
-      body:ListView(
-      children: [
-        Stack(
-          children: [
-            eventImage(),
-            Column(
-              children: [
-                SizedBox(
-                  height: screenHeight * 0.29,
-                ),
-                Material(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    ),
-                    color: BACKGROUND,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            eventName(),
-                            Container(
-                                margin: EdgeInsets.fromLTRB(30, 0, 30, 15),
-                                child: Material(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    color: CARD,
-                                    elevation: 5,
-                                    shadowColor: Colors.black,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
+      body: ListView(
+        children: [
+          Stack(
+            children: [
+              eventImage(),
+              Column(
+                children: [
+                  SizedBox(
+                    height: screenHeight * 0.29,
+                  ),
+                  Material(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
+                      ),
+                      color: BACKGROUND,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              eventName(),
+                              Container(
+                                  margin: EdgeInsets.fromLTRB(30, 0, 30, 15),
+                                  child: Material(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      color: CARD,
+                                      elevation: 5,
+                                      shadowColor: Colors.black,
                                       child: InkWell(
-                                        child: Icon(Icons.favorite_border,
-                                            color: Colors.red),
-                                      ),
-                                    )))
-                          ],
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.all(10),
-                          child: Material(
-                            borderRadius: BorderRadius.all(Radius.circular(40),
-                            ),
-                            color: CARD,
-                            child: Container(
-                             // width: screenWidth/2,
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.local_offer,color: Colors.white.withOpacity(0.7),size: 20,),
-                                  SizedBox(width: 10,),
-                                  Text(widget.event.category, style: TextStyle(color: Colors.white))
-                                ],
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        onTap: () {},
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Icon(Icons.favorite_border,
+                                              color: Colors.red),
+                                        ),
+                                      )))
+                            ],
+                          ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.all(10),
+                            child: Material(
+                              elevation: 5,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                              color: CARD,
+                              child: Container(
+                                // width: screenWidth/2,
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.local_offer,
+                                      color: Colors.white.withOpacity(0.7),
+                                      size: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(widget.event.category,
+                                        style: TextStyle(color: Colors.white))
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        dateAndTime(Icon(Icons.hourglass_top_rounded,
-                          color: Colors.white,),widget.event.startDate),
-                        dateAndTime(Icon(Icons.hourglass_bottom_rounded,
-                          color: Colors.white,),widget.event.endDate),
-                        address(),
-                        ticketPrice(),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
-                          child: Container(
-                            width: screenWidth - 60,
-                            child: Text(
-                              "About",
-                              style: GoogleFonts.raleway(color: Colors.yellow[800], fontWeight: FontWeight.w500,fontSize: 20),
+                          dateAndTime(
+                              Icon(
+                                Icons.hourglass_top_rounded,
+                                color: Colors.white,
+                              ),
+                              widget.event.startDate),
+                          dateAndTime(
+                              Icon(
+                                Icons.hourglass_bottom_rounded,
+                                color: Colors.white,
+                              ),
+                              widget.event.endDate),
+                          address(),
+                          ticketPrice(),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                            child: Container(
+                              width: screenWidth - 60,
+                              child: Text(
+                                "About",
+                                style: GoogleFonts.raleway(
+                                    color: Colors.yellow[800],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20),
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
-                          child: Container(
-                            width: screenWidth - 60,
-                            child: Text(
-                              widget.event.description,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                              textAlign: TextAlign.left,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
+                            child: Container(
+                              width: screenWidth - 60,
+                              child: Text(
+                                widget.event.description,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
-                          child: Container(
-                            width: screenWidth - 60,
-                            child: Text(
-                              "Speciality",
-                              style: GoogleFonts.raleway(color: Colors.yellow[800],fontWeight: FontWeight.w500, fontSize: 20),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                            child: Container(
+                              width: screenWidth - 60,
+                              child: Text(
+                                "Speciality",
+                                style: GoogleFonts.raleway(
+                                    color: Colors.yellow[800],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20),
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
-                          child: Container(
-                            width: screenWidth - 60,
-                            child: Text(
-                              widget.event.speciality,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                              textAlign: TextAlign.left,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
+                            child: Container(
+                              width: screenWidth - 60,
+                              child: Text(
+                                widget.event.speciality,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 50,)
-                      ],
-                    )
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    ),
-    floatingActionButton:FloatingActionButton.extended(
+                          SizedBox(
+                            height: 50,
+                          )
+                        ],
+                      )),
+                ],
+              ),
+            ],
+          ),
+          
+        ],
+      ),
+      floatingActionButton:
+      widget.type == ATTENDEE 
+      ?  FloatingActionButton.extended(
         onPressed: () {
           // Add your onPressed code here!
         },
-        label: Text('Register',style: TextStyle(color: BACKGROUND)),
-        icon: Icon(Icons.how_to_reg,),
-        backgroundColor:Colors.yellow[800],
-      ), 
-    //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-  );
+        label: Text('Register', style: TextStyle(color: BACKGROUND)),
+        icon: Icon(
+          Icons.how_to_reg,
+        ),
+        backgroundColor: Colors.yellow[800],
+      )
+      : Container(),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
   }
 }

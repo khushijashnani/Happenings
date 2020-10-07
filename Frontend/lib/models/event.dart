@@ -2,12 +2,12 @@ class Event {
   String id;
   String title;
   String description;
-  int entryamount;
-  DateTime startDate;
-  DateTime endDate;
-  String category;
+  int entryamount;  //rangeslider
+  DateTime startDate; //datetile
+  DateTime endDate;   //datetile
+  String category;  //checkbox
   String imageUrl;
-  String location;
+  String location;    
   String speciality;
 
   Event(

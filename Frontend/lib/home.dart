@@ -8,10 +8,12 @@ import 'package:uvento/constants.dart';
 import 'package:uvento/models/attendee.dart';
 import 'package:uvento/models/organisation.dart';
 import 'package:uvento/pages/AttendeeHomeScreen.dart';
+import 'package:uvento/pages/AttendeeProfile.dart';
 import 'package:uvento/pages/OrganisationProfile.dart';
 import 'package:uvento/pages/MyEvents.dart';
 import 'package:http/http.dart' as http;
 import 'package:uvento/pages/OrganiserHomeScreen.dart';
+import 'package:uvento/pages/filterPage.dart';
 
 class Home extends StatefulWidget {
   // Attendee attendee;
@@ -67,7 +69,7 @@ class _HomeState extends State<Home> {
               age: userDetails['age'],
               gender: userDetails['gender'],
               name: userDetails['name'],
-              phone_no: userDetails['phone_no'],
+              phone_no: userDetails['phone'],
               address: userDetails['address'],
               imageUrl: userDetails['image'],
               email: userDetails['email_id']);
@@ -219,12 +221,8 @@ class _HomeState extends State<Home> {
           children: type == ATTENDEE ? 
           <Widget>[
             AttendeeHomeScreen(name: attendee.name),
-            Container(
-              child: Center(child: Text("SEARCH")),
-            ),
-            Container(
-              child: Center(child: Text("PROFILE")),
-            )
+            FilterPage(),
+            AttendeeProfile(attendee:attendee)
           ]
           : <Widget>[
             OrganiserHomeScreen(organisation: organisation,),

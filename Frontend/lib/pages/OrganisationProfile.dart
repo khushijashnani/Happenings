@@ -305,7 +305,6 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
 
     return ListView(
       children: [
-        
         Stack(
           children: [
             profileImage(),
