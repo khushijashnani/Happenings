@@ -12,3 +12,5 @@ opencv-python
 urllib3
 gunicorn
 opencv-python-headless
+textblob
+Flask-Mail
