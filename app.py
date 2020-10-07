@@ -673,7 +673,6 @@ class RegisterForEvent(Resource):
 class UserLogout(Resource):
 
     @jwt_required
-    @cross_origin(origin='*', support_credentials=True)
     def post(self):
         jti = get_raw_jwt()['jti']
         BLACKLIST.append(jti)
