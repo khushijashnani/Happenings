@@ -40,7 +40,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
         for (Map l in data) {
           allEvents.add(Event.fromMap(l));
         }
-        print(allEvents[0].toJson());
+       // print(allEvents[0].toJson());
       });
     } else {
       print(response.body);

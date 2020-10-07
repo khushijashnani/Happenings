@@ -26,7 +26,7 @@ class _FilterPageState extends State<FilterPage> {
     screenWidth = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
-        child: Column(
+      child: Stack(
       children: [
         Container(
             padding: const EdgeInsets.all(10.0),
@@ -37,11 +37,13 @@ class _FilterPageState extends State<FilterPage> {
               child: Column(
                 children: [
                   Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    width: screenWidth,
+                    //alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: Text("Search by filter",
+                    textAlign: TextAlign.center,
                         style: GoogleFonts.raleway(
-                          fontSize: 25,
+                          fontSize: 20,
                           color: Colors.white,
                         )),
                   ),
@@ -69,25 +71,43 @@ class _FilterPageState extends State<FilterPage> {
                 ],
               ),
             )),
-        Container(
-            height: 50,
-            margin: EdgeInsets.fromLTRB(20,10,20,10),
-            alignment: Alignment.centerRight,
-            child: Material(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              color: Colors.yellow[800],
-              elevation: 5,
-              child: InkWell(
-                  child: Container(
-                    alignment: Alignment.center,
-                      height: 50,
-                      width: screenWidth/3,
-                      child: Text("Search",style: GoogleFonts.raleway(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: BACKGROUND,
-                        )))),
-            ))
+
+            // Container(
+            // child : DraggableScrollableSheet(
+            //   initialChildSize: 0.1,
+            //   minChildSize: 0.1,
+            //   maxChildSize: 0.8,
+            //   builder: (BuildContext context, ScrollController scrollController){
+            //     return Container(
+            //       color: Colors.white,
+            //       child: ListView.builder(
+            //         controller: scrollController,
+            //         itemCount: 20,
+            //         itemBuilder: (BuildContext context, int index){
+            //           return ListTile(title : Text('Item $index'),);
+            //         }),
+            //     );
+            //   },
+            // ))
+        // Container(
+        //     height: 50,
+        //     margin: EdgeInsets.fromLTRB(20,10,20,10),
+        //     alignment: Alignment.centerRight,
+        //     child: Material(
+        //       borderRadius: BorderRadius.all(Radius.circular(20)),
+        //       color: Colors.yellow[800],
+        //       elevation: 5,
+        //       child: InkWell(
+        //           child: Container(
+        //             alignment: Alignment.center,
+        //               height: 50,
+        //               width: screenWidth/3,
+        //               child: Text("Search",style: GoogleFonts.raleway(
+        //                   fontSize: 20,
+        //                   fontWeight: FontWeight.bold,
+        //                   color: BACKGROUND,
+        //                 )))),
+        //     ))
       ],
     ));
   }

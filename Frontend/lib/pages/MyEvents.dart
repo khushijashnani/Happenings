@@ -34,7 +34,7 @@ class _EventsListState extends State<EventsList> {
       for (Map l in data) {
         list.add(Event.fromMap(l));
       }
-      print(list[0].toJson());
+      print(list[1].toJson());
     } else {
       print(response.body);
     }
@@ -66,6 +66,7 @@ class _EventsListState extends State<EventsList> {
                 MaterialPageRoute(
                   builder: (context) => EventDetailPageOrganiser(
                     event: e,
+                    type: ORGANISATION,
                   ),
                 ));
           },

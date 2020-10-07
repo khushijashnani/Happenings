@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -26,6 +27,7 @@ class _EventFormState extends State<EventForm> {
   TextEditingController title;
   TextEditingController desc;
   TextEditingController entryamount;
+  TextEditingController maxCount;
   DateTime startDate;
   DateTime endDate;
   TimeOfDay startTime;
@@ -48,6 +50,7 @@ class _EventFormState extends State<EventForm> {
       endDate = DateTime.now();
       title = TextEditingController();
       desc = TextEditingController();
+      maxCount = TextEditingController();
       location = TextEditingController();
       category = "Others";
       speciality = TextEditingController();
@@ -55,7 +58,7 @@ class _EventFormState extends State<EventForm> {
       startTime = TimeOfDay.now();
       endTime = TimeOfDay.now();
     } else {
-      print(widget.e.toJson());
+      print(widget.e.maxCount);
       startDate = widget.e.startDate;
       endDate = widget.e.endDate;
       title = TextEditingController(text: widget.e.title);
@@ -69,6 +72,7 @@ class _EventFormState extends State<EventForm> {
           hour: widget.e.startDate.hour, minute: widget.e.startDate.minute);
       endTime = TimeOfDay(
           hour: widget.e.endDate.hour, minute: widget.e.endDate.minute);
+      maxCount = TextEditingController(text: widget.e.maxCount.toString());
     }
   }
 
@@ -672,15 +676,54 @@ class _EventFormState extends State<EventForm> {
                                             TextStyle(color: Colors.grey)),
                                   )),
                             )),
+                        Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            child: Material(
+                              borderRadius: new BorderRadius.circular(25.0),
+                              color: CARD,
+                              elevation: 5,
+                              shadowColor: Colors.black,
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        new BorderRadius.circular(25.0),
+                                    color: CARD,
+                                  ),
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    maxLines: 1,
+                                    controller: maxCount,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please enter a max count for your event';
+                                      }
+                                      return null;
+                                    },
+                                    style: TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                        prefixIcon: Icon(Icons.people,
+                                            color: Colors.grey),
+                                        border: new OutlineInputBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(25.0),
+                                        ),
+                                        labelStyle:
+                                            TextStyle(color: Colors.white),
+                                        //icon: Icon(Icons.title, color: Colors.white),
+                                        hintText: "Max count",
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey)),
+                                  )),
+                            )),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: 140,
+                                width: 120,
                                 padding: EdgeInsets.fromLTRB(30, 5, 10, 5),
                                 child: Text("Category :",
                                     style: TextStyle(
-                                        color: Colors.white, fontSize: 20)),
+                                        color: Colors.white, fontSize: 17)),
                               ),
                               Expanded(
                                   child: Padding(
@@ -714,12 +757,18 @@ class _EventFormState extends State<EventForm> {
                                               "Category",
                                             ),
                                             items: <String>[
-                                              'Technology',
+                                              'Health & Wellness',
+                                              'Photography',
+                                              'Cultural',
+                                              'Outdoor & Adventure',
+                                              'Tech',
                                               'Sports',
-                                              'Medical',
-                                              'Education',
-                                              'Concert',
-                                              'Others'
+                                              'Music & Arts',
+                                              'Social',
+                                              'Educational',
+                                              'Sci-fi & Games',
+                                              'Career & Business',
+                                              'Others',
                                             ].map<DropdownMenuItem<String>>(
                                                 (String value) {
                                               return DropdownMenuItem<String>(
@@ -822,6 +871,7 @@ class _EventFormState extends State<EventForm> {
             "image": imageUrl,
             "location": location.text,
             "speciality": speciality.text,
+            "max_count": int.parse(maxCount.text),
             "entry_amount": int.parse(entryamount.text),
             "org_id": widget.org_id
           };
@@ -928,6 +978,7 @@ class _EventFormState extends State<EventForm> {
     widget.e.startDate = startDate;
     widget.e.endDate = endDate;
     widget.e.category = category;
+    widget.e.maxCount = int.parse(maxCount.text);
     print(widget.e.category);
     print(widget.e.description);
     print(widget.e.endDate);
@@ -937,7 +988,8 @@ class _EventFormState extends State<EventForm> {
     print(widget.e.imageUrl);
     print(widget.e.location);
     print(widget.e.title);
-
+    print(widget.e.maxCount);
+    print(widget.e.currentCount);
     var data = widget.e.toJson();
     var id = data['id'];
     data.remove('id');

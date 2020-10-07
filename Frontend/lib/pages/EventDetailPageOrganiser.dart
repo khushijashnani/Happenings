@@ -269,12 +269,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
           //   width: 10,
           // ),
           Container(
+            width: screenWidth * 0.5,
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.fromLTRB(20, 15, 30, 15),
+            padding: EdgeInsets.fromLTRB(20, 15, 15, 15),
             child: AutoSizeText(
               widget.event.location,
               style: TextStyle(color: Colors.white),
-              maxLines: 2,
+              maxLines: 4,
             ),
           ),
           Expanded(

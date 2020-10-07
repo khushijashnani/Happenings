@@ -3,9 +3,12 @@ import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uvento/constants.dart';
 import 'package:uvento/models/attendee.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AttendeeProfile extends StatefulWidget {
   Attendee attendee;
@@ -59,9 +62,22 @@ class _AttendeeProfileState extends State<AttendeeProfile>
     );
   }
 
-  void choiceAction(String choice) {
+  void choiceAction(String choice) async {
     if (choice == "Log Out") {
-      print("logout"); 
+      print("logout");
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      Map<String, String> headers = {
+        "Authorisation": sharedPreferences.getString("token")
+      };
+      var response = await http.post(
+          'https://rpk-happenings.herokuapp.com/logout',
+          headers: headers);
+      if (response.statusCode == 200) {
+        print("Logged out");
+      } else {
+        print(response.body);
+      }
     }
   }
 
@@ -94,14 +110,18 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                     //Navigator.pop(context);
                   },
                   child: PopupMenuButton(
-                    icon: Icon(Icons.more_vert,color: Colors.white,),
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                    ),
                     color: BACKGROUND,
                     onSelected: choiceAction,
                     itemBuilder: (BuildContext context) {
                       return choices.map((String choice) {
                         return PopupMenuItem(
-                          textStyle: TextStyle(color: Colors.white),
-                            value: choice, child: Text(choice));
+                            textStyle: TextStyle(color: Colors.white),
+                            value: choice,
+                            child: Text(choice));
                       }).toList();
                     },
                   ),
@@ -387,88 +407,81 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                      child: Container(
-                        width: screenWidth * 0.8,
-                        child: AutoSizeText("Marathon Bounce",
-                            maxLines: 2,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20)))
-                    ),
+                        padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                        child: Container(
+                            width: screenWidth * 0.8,
+                            child: AutoSizeText("Marathon Bounce",
+                                maxLines: 2,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20)))),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(15, 0, 15, 5),
-                      child : Container(
-                        width : screenWidth * 0.8,
-                        child : AutoSizeText(
-                          "Mon, 26 July 2000 - Wed, 28 July 2020",
-                          style : TextStyle (
-                            color : Colors.grey, 
-                          )
-                        )
-                      )
-                    ),
-
+                        padding: EdgeInsets.fromLTRB(15, 0, 15, 5),
+                        child: Container(
+                            width: screenWidth * 0.8,
+                            child: AutoSizeText(
+                                "Mon, 26 July 2000 - Wed, 28 July 2020",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                )))),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(15, 8, 15, 5),
-                      child : Container(
-                        width : screenWidth * 0.8,
-                        child : Text(
-                          "It was a wonderful event!! Enjoyed a lott and hope to see more such events...Thank You so much for it",
-                          style : TextStyle (
-                            color : Colors.white, fontSize : 15
-                          )
-                        )
-                      )
-                    ),
-
+                        padding: EdgeInsets.fromLTRB(15, 8, 15, 5),
+                        child: Container(
+                            width: screenWidth * 0.8,
+                            child: Text(
+                                "It was a wonderful event!! Enjoyed a lott and hope to see more such events...Thank You so much for it",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15)))),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                      child : Container(
-                        width : screenWidth * 0.8,
-                        child : Row(
-                          children: [
-                            Icon(Icons.star, color: Colors.yellow[800],),
-                            SizedBox(width: 5),
-
-                            Icon(Icons.star, color: Colors.yellow[800],),
-                            SizedBox(width: 5),
-
-                            Icon(Icons.star, color: Colors.yellow[800],),
-                            SizedBox(width: 5),
-
-                            Icon(Icons.star_half, color: Colors.yellow[800],),
-                            SizedBox(width: 5),
-                          ],
-                        )
-                      )
-                    ),
-
+                        padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                        child: Container(
+                            width: screenWidth * 0.8,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.yellow[800],
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.yellow[800],
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.yellow[800],
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.star_half,
+                                  color: Colors.yellow[800],
+                                ),
+                                SizedBox(width: 5),
+                              ],
+                            ))),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(15, 5, 15, 10),
-                      child : Container(
-                        width : screenWidth * 0.8,
-                        child : Row(
-                          mainAxisAlignment : MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Positive",
-                              style: TextStyle(
-                                color: Colors.white, fontWeight : FontWeight.bold, fontSize : 16
-                              ),
-                            ),
-
-                            Text(
-                              "- Priyav Mehta",
-                              style : TextStyle (
-                                color : Colors.grey, fontStyle : FontStyle.italic, fontSize : 14
-                              )
-                            )
-                          ],
-                        )
-                      )
-                    ),
+                        padding: EdgeInsets.fromLTRB(15, 5, 15, 10),
+                        child: Container(
+                            width: screenWidth * 0.8,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Positive",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                Text("- Priyav Mehta",
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 14))
+                              ],
+                            ))),
                   ],
                 ))));
   }

@@ -62,45 +62,39 @@ List<DateModel> getDates() {
 List<EventTypeModel> getEventTypes() {
   List<EventTypeModel> events = new List();
   EventTypeModel eventModel = new EventTypeModel();
-
-  //1
   eventModel.imgAssetPath = "assets/concert.png";
   eventModel.eventType = "Concert";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
-
-  //1
   eventModel.imgAssetPath = "assets/sports.png";
   eventModel.eventType = "Sports";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
-
-  //1
   eventModel.imgAssetPath = "assets/education.png";
   eventModel.eventType = "Education";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
-
   eventModel.imgAssetPath = "assets/education.png";
   eventModel.eventType = "Technology";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
-
   eventModel.imgAssetPath = "assets/education.png";
   eventModel.eventType = "Medical";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
-
   eventModel.imgAssetPath = "assets/education.png";
   eventModel.eventType = "Others";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Others";
+  events.add(eventModel);
 
   return events;
 }
