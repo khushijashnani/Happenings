@@ -44,40 +44,44 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
 ########### MODELS ##########
 
 registration = db.Table('registration',
-        db.Column('attendee_id', db.Integer, db.ForeignKey('attendee.id'), nullable = False ),
-        db.Column('event_id', db.Integer, db.ForeignKey('event.id'), nullable = False ),
-        db.Column('unique_key', db.Text, nullable = False),
-        db.Column('status',db.String(6), nullable = False))
+                        db.Column('attendee_id', db.Integer, db.ForeignKey(
+                            'attendee.id'), nullable=False),
+                        db.Column('event_id', db.Integer, db.ForeignKey(
+                            'event.id'), nullable=False),
+                        db.Column('unique_key', db.Text, nullable=False),
+                        db.Column('status', db.String(6), nullable=False))
+
 
 class User(db.Model):
     __abstract__ = True
 
-    username = db.Column(db.String(20), nullable = False)
-    password = db.Column(db.String(20), nullable = False)
-    address = db.Column(db.Text,nullable = False)
-    phone = db.Column(db.Integer, nullable = False)
-    email_id = db.Column(db.String(50),nullable = False)
-    image = db.Column(db.Text, nullable = False)
-    
-    def __init__(self, username, password,address,phone,email_id,image):
+    username = db.Column(db.String(20), nullable=False)
+    password = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.Text, nullable=False)
+    phone = db.Column(db.Integer, nullable=False)
+    email_id = db.Column(db.String(50), nullable=False)
+    image = db.Column(db.Text, nullable=False)
+
+    def __init__(self, username, password, address, phone, email_id, image):
         self.username = username
         self.password = password
         self.address = address
         self.phone = phone
         self.email_id = email_id
         self.image = image
-        
+
 
 class Attendee(User):
     __tablename__ = 'attendee'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    age = db.Column(db.Integer, nullable = False)
+    age = db.Column(db.Integer, nullable=False)
     gender = db.Column(db.String(10), nullable=False)
-    events = db.relationship('Event',secondary=registration, backref = db.backref('attendees', lazy = True))
-    favourites = db.relationship('Favourites',backref='attendees')
-    reviews = db.relationship('Reviews',backref='attendees')
+    events = db.relationship(
+        'Event', secondary=registration, backref=db.backref('attendees', lazy=True))
+    favourites = db.relationship('Favourites', backref='attendees')
+    reviews = db.relationship('Reviews', backref='attendees')
     verification_image = db.Column(db.Text)
 
     def __init__(self, username, password, address, phone, email_id, image, name, age, gender):
@@ -86,7 +90,7 @@ class Attendee(User):
         self.name = name
         self.age = age
         self.gender = gender
-    
+
 
 class Organisation(User):
     __tablename__ = 'organisation'
@@ -94,8 +98,8 @@ class Organisation(User):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     subscription = db.Column(db.Boolean,  nullable=False, default=False)
-    org_details = db.Column(db.Text, nullable = False)
-    events = db.relationship('Event',backref='organisation')
+    org_details = db.Column(db.Text, nullable=False)
+    events = db.relationship('Event', backref='organisation')
 
     def __init__(self, username, password, address, phone, email_id, image, name, subscription, org_details):
         super().__init__(username, password, address, phone, email_id, image)
@@ -103,24 +107,25 @@ class Organisation(User):
         self.name = name
         self.subscription = subscription
         self.org_details = org_details
-    
+
 
 class Event(db.Model):
     __tablename__ = 'event'
 
-    id = db.Column(db.Integer,primary_key=True)
-    title = db.Column(db.String(100),nullable=False)
-    description = db.Column(db.Text,nullable=False)
-    start_date = db.Column(db.DateTime,nullable=False)
-    end_date = db.Column(db.DateTime,nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    start_date = db.Column(db.DateTime, nullable=False)
+    end_date = db.Column(db.DateTime, nullable=False)
     location = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(100), nullable=False)
     speciality = db.Column(db.Text, nullable=False)
     entry_amount = db.Column(db.Integer, nullable=False)
-    attendee = db.relationship('Attendee',secondary=registration, backref = db.backref('event', lazy = True))
-    image = db.Column(db.Text, nullable = False)
-    organiser_id = db.Column(db.Integer,db.ForeignKey('organisation.id'))
-    reviews = db.relationship('Reviews',backref='event')
+    attendee = db.relationship(
+        'Attendee', secondary=registration, backref=db.backref('event', lazy=True))
+    image = db.Column(db.Text, nullable=False)
+    organiser_id = db.Column(db.Integer, db.ForeignKey('organisation.id'))
+    reviews = db.relationship('Reviews', backref='event')
 
     def __init__(self, title, description, start_date, end_date, location, category, speciality, entry_amount, image, organiser_id):
         self.title = title
@@ -134,31 +139,32 @@ class Event(db.Model):
         self.end_date = end_date
         self.organiser_id = organiser_id
 
-        
-   
+
 class Reviews(db.Model):
     __tablename__ = 'reviews'
 
-    id = db.Column(db.Integer,primary_key=True)
-    attendee_id = db.Column(db.Integer,db.ForeignKey('attendee.id'), nullable=False)
-    event_id = db.Column(db.Integer,db.ForeignKey('event.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    attendee_id = db.Column(db.Integer, db.ForeignKey(
+        'attendee.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     review = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    
+
     def __init__(self, event_id, attendee_id, review, rating):
-        
+
         self.event_id = event_id
         self.attendee_id = attendee_id
         self.review = review
         self.rating = rating
-        
+
 
 class Favourites(db.Model):
     __tablename__ = 'favourites'
 
-    id = db.Column(db.Integer,primary_key=True)
-    attendee_id = db.Column(db.Integer,db.ForeignKey('attendee.id'), nullable=False)
-    event_id = db.Column(db.Integer,nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    attendee_id = db.Column(db.Integer, db.ForeignKey(
+        'attendee.id'), nullable=False)
+    event_id = db.Column(db.Integer, nullable=False)
 
     def __init__(self, attendee_id, event_id):
         self.attendee_id = attendee_id
@@ -168,10 +174,6 @@ class Favourites(db.Model):
 def addToDatabase(objectname):
     db.session.add(objectname)
     db.session.commit()
-
-
-
-
 
 
 #####################  API'S  ########################
@@ -193,18 +195,18 @@ class AadharApi(Resource):
         print(verification)
         # cv2.imshow("OCR", img)
         # cv2.waitKey(0)
-        return {"verification" : verification, 'aadhar_details' : aadharData}
-        
+        return {"verification": verification, 'aadhar_details': aadharData}
+
 
 class UserRegister(Resource):
-    
+
     def post(self):
         data = request.get_json()
-        
+
         if data['type'] == ATTENDEE:
             user = Attendee(
-                name=data['name'], 
-                username=data['username'], 
+                name=data['name'],
+                username=data['username'],
                 password=data['password'],
                 address=data['address'],
                 phone=data['phone'],
@@ -215,8 +217,8 @@ class UserRegister(Resource):
 
         elif data['type'] == ORGANISATION:
             user = Organisation(
-                name=data['name'], 
-                username=data['username'], 
+                name=data['name'],
+                username=data['username'],
                 password=data['password'],
                 address=data['address'],
                 phone=data['phone'],
@@ -224,11 +226,10 @@ class UserRegister(Resource):
                 image=data['image'],
                 subscription=False,
                 org_details=data['details'])
-        
+
         addToDatabase(user)
 
         return {'message': 'User created successfully'}
-
 
 
 class UserLogin(Resource):
@@ -239,8 +240,9 @@ class UserLogin(Resource):
         if data['type'] == ATTENDEE:
             user = Attendee.query.filter_by(username=data['username']).first()
         elif data['type'] == ORGANISATION:
-            user = Organisation.query.filter_by(username=data['username']).first()
-            
+            user = Organisation.query.filter_by(
+                username=data['username']).first()
+
         if user is None:
             return {'message': 'User doesn\'t exist.'}
         if user and safe_str_cmp(user.password, data['password']):
@@ -252,6 +254,7 @@ class UserLogin(Resource):
                 'id': user.id,
             }, 200
         return {"message": 'Invalid credentials'}, 401
+
 
 def addEvent(row):
     d = {}
@@ -267,25 +270,25 @@ class EventApi(Resource):
         org = Organisation.query.get(org_id)
         events = org.events
         e = []
-        for event in events :
+        for event in events:
             e.append(addEvent(event))
-            
+
         return e
-        
+
     def post(self, org_id):
-        
+
         data = request.get_json()
         event = Event(
-            title = data["title"],
-            description = data["description"],
-            start_date = dateutil.parser.parse(data["start_date"]),
-            end_date = dateutil.parser.parse(data["end_date"]),
-            category = data["category"],
-            speciality = data["speciality"],
-            entry_amount = data["entry_amount"],
-            image = data["image"],
-            location = data["location"],
-            organiser_id = org_id
+            title=data["title"],
+            description=data["description"],
+            start_date=dateutil.parser.parse(data["start_date"]),
+            end_date=dateutil.parser.parse(data["end_date"]),
+            category=data["category"],
+            speciality=data["speciality"],
+            entry_amount=data["entry_amount"],
+            image=data["image"],
+            location=data["location"],
+            organiser_id=org_id
         )
         addToDatabase(event)
         return addEvent(event)
@@ -308,12 +311,11 @@ class EventApi(Resource):
         db.session.commit()
         return addEvent(event)
 
-
     def delete(self):
         pass
 
+
 class UserDetails(Resource):
-    
 
     def get(self, user_id, type):
 
@@ -322,65 +324,64 @@ class UserDetails(Resource):
             events = user.events
             reviews = user.reviews
             favourites = user.favourites
-            
+
             favourite_list = []
-            attended_events_data=[]
+            attended_events_data = []
             reviews_list = []
-            
+
             for event in events:
                 e = addEvent(event)
                 attended_events_data.append(e)
-            
+
             for rev in reviews:
                 reviews_list.append({'review': rev.review,
-                                 'rating': rev.rating,})
-            
+                                     'rating': rev.rating, })
+
             user_dict = {'name': user.name,
-                        'phone': user.phone,
-                        'image': user.image,
-                        'address': user.address,
-                        'email_id': user.email_id,
-                        'password': user.password,
-                        'username': user.username,
-                        'age':user.age,
-                        'gender': user.gender}
-                        
-            
+                         'phone': user.phone,
+                         'image': user.image,
+                         'address': user.address,
+                         'email_id': user.email_id,
+                         'password': user.password,
+                         'username': user.username,
+                         'age': user.age,
+                         'gender': user.gender}
+
             for favourite in favourites:
                 event_id = favourite.event_id
-                event = Event.query.filter_by(id = event_id).first()
+                event = Event.query.filter_by(id=event_id).first()
                 favourite_list.append()
 
             return {
-                'user_details' : user_dict,
-                'events' : attended_events_data,
-                'reviews' : reviews_list,
-                'favourites' : favourite_list
+                'user_details': user_dict,
+                'events': attended_events_data,
+                'reviews': reviews_list,
+                'favourites': favourite_list
             }
 
-        else :
-            organisation = Organisation.query.get(id = user_id).first()
+        else:
+            organisation = Organisation.query.get(id=user_id).first()
 
             events = organisation.events
-            events_data=[]
-            
+            events_data = []
+
             for event in events:
                 e = addEvent(event)
                 events_data.append(e)
-            
+
             user_dict = {'name': user.name,
-                        'phone': user.phone,
-                        'image': user.image,
-                        'address': user.address,
-                        'email_id': user.email_id,
-                        'password': user.password,
-                        'username': user.username,
-                        'subscription':user.subscription,
-                        'details': user.org_details}
-                        
+                         'phone': user.phone,
+                         'image': user.image,
+                         'address': user.address,
+                         'email_id': user.email_id,
+                         'password': user.password,
+                         'username': user.username,
+                         'subscription': user.subscription,
+                         'details': user.org_details}
+
             return {
-                "user_details" : user_dict,
-                "events" : events_data
+                "user_details": user_dict,
+                "events": events_data
             }
 
     def put(self, user_id, type):
@@ -391,7 +392,6 @@ class UserDetails(Resource):
             user.phone = data['phone']
             user.image = data['image']
             user.address = data['address']
-            
             user.email_id = data['email_id']
             user.password = data['password']
             user.username = data['username']
@@ -408,15 +408,12 @@ class UserDetails(Resource):
             user.email_id = data['email_id']
             user.password = data['password']
             user.username = data['username']
-            
-            
+
         db.session.commit()
-        
 
         return addEvent(user)
-        
 
-            
+
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     return decrypted_token['jti'] in BLACKLIST
@@ -473,9 +470,8 @@ api = Api(app)
 api.add_resource(UserLogin, "/login")
 api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
-api.add_resource(UserDetails ,"/<string:type>/<int:user_id>")
+api.add_resource(UserDetails, "/<string:type>/<int:user_id>")
 api.add_resource(EventApi, '/events/<int:org_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)
-
