@@ -52,7 +52,7 @@ app.config['MAIL_PASSWORD'] = 'Happenings123'
 app.config['MAIL_DEFAULT_SENDER'] = 'rpk.happenings@gmail.com'
 app.config['MAIL_ASCII_ATTACHMENTS'] = False
 app.config['MAIL_MAX_EMAILS'] = None
-
+mail = Mail(app)
 
 ########################## MODELS ################################
 
