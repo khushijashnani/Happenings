@@ -660,7 +660,7 @@ class RegisterForEvent(Resource):
         event.current_count = int(event.current_count) + 1
         db.session.commit()
         body = 'Your unique id is ' + \
-            str(event.id) + ', for ' + event.name + \
+            str(event.id) + ', for ' + event.title + \
             '\non : ' + \
             event.start_date.strftime('%d %B, %Y') + \
             '\nVenue: ' + event.location
