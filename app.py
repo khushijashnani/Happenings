@@ -18,7 +18,7 @@ import cv2
 import pytesseract
 from getAadharData import getAadharData
 from aadhar_verification import aadharNumVerify
-from flask_mail import Mail
+from flask_mail import Mail,Message
 import pickle
 from textblob import TextBlob
 
