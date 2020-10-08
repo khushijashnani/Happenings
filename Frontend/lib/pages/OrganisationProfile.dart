@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uvento/login.dart';
 import 'package:uvento/models/organisation.dart';
 import 'package:flutter/painting.dart';
 import 'dart:ui';
@@ -6,6 +8,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:uvento/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uvento/pages/UpdateOrganisationProfile.dart';
+import 'package:http/http.dart' as http;
 
 class OrganisationProfile extends StatefulWidget {
 
@@ -18,6 +21,29 @@ class OrganisationProfile extends StatefulWidget {
 
 class _OrganisationProfileState extends State<OrganisationProfile> {
   double screenWidth, screenHeight;
+
+   void choiceAction(String choice) async {
+    if (choice == "Log Out") {
+      // print("logout");
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      Map<String, String> headers = {
+        "Authorization": sharedPreferences.getString("token")
+      };
+      var response = await http.post(
+          'https://rpk-happenings.herokuapp.com/logout',
+          headers: headers);
+      if (response.statusCode == 200) {
+        print("Logged out");
+        sharedPreferences.remove("token");
+        sharedPreferences.remove("id");
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
+      } else {
+        print(response.body);
+      }
+    }
+  }
 
   Widget profileImage() {
     return Container(
@@ -61,6 +87,43 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
               ),
             ],
           ),
+          Container(
+            alignment: Alignment.topRight,
+            padding: const EdgeInsets.all(10),
+            child: Material(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+                color: BACKGROUND,
+                child: InkWell(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  onTap: () {
+                    //Navigator.pop(context);
+                  },
+                  child: PopupMenuButton(
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                    ),
+                    color: BACKGROUND,
+                    onSelected: choiceAction,
+                    itemBuilder: (BuildContext context) {
+                      return choices.map((String choice) {
+                        return PopupMenuItem(
+                            textStyle: TextStyle(color: Colors.white),
+                            value: choice,
+                            child: Text(choice));
+                      }).toList();
+                    },
+                  ),
+                  // child: Container(
+                  //   padding: EdgeInsets.fromLTRB(7, 7, 7, 7),
+                  //   child: Icon(
+                  //     Icons.more_vert,
+                  //     color: Colors.white,
+                  //     size: 20,
+                  //   ),
+                  // )
+                )),
+          )
         ],
       ),
     );

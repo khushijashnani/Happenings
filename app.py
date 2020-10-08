@@ -613,6 +613,7 @@ class ManageReviews(Resource):
 
         data = request.get_json()
         polarity = TextBlob(data['review']).polarity
+        print(polarity)
         #polarity = sum(polarities)/len(polarities)
         # review = ""
         if polarity >= -1 and polarity < -0.6:
@@ -625,7 +626,7 @@ class ManageReviews(Resource):
             review = "Slightly Positive"
         else:
             review = "Strongly Positive"
-
+        print(review)
         reviews = Reviews(
             event_id=data['event_id'],
             attendee_id=user_id,

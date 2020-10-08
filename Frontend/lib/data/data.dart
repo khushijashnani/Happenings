@@ -63,38 +63,60 @@ List<EventTypeModel> getEventTypes() {
   List<EventTypeModel> events = new List();
   EventTypeModel eventModel = new EventTypeModel();
   eventModel.imgAssetPath = "assets/concert.png";
-  eventModel.eventType = "Concert";
+  eventModel.eventType = "Health & Wellness";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
   eventModel.imgAssetPath = "assets/sports.png";
+  eventModel.eventType = "Photography";
+  events.add(eventModel);
+
+  eventModel = new EventTypeModel();
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Cultural";
+  events.add(eventModel);
+
+  eventModel = new EventTypeModel();
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Outdoor & Adventure";
+  events.add(eventModel);
+
+  eventModel = new EventTypeModel();
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Tech";
+  events.add(eventModel);
+
+  eventModel = new EventTypeModel();
+  eventModel.imgAssetPath = "assets/education.png";
   eventModel.eventType = "Sports";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
   eventModel.imgAssetPath = "assets/education.png";
-  eventModel.eventType = "Education";
+  eventModel.eventType = "Music & Arts";
   events.add(eventModel);
 
   eventModel = new EventTypeModel();
   eventModel.imgAssetPath = "assets/education.png";
-  eventModel.eventType = "Technology";
+  eventModel.eventType = "Social";
   events.add(eventModel);
-
   eventModel = new EventTypeModel();
   eventModel.imgAssetPath = "assets/education.png";
-  eventModel.eventType = "Medical";
+  eventModel.eventType = "Educational";
   events.add(eventModel);
-
+  eventModel = new EventTypeModel();
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Sci-fi & Games";
+  events.add(eventModel);
+  eventModel = new EventTypeModel();
+  eventModel.imgAssetPath = "assets/education.png";
+  eventModel.eventType = "Career & Business";
+  events.add(eventModel);
   eventModel = new EventTypeModel();
   eventModel.imgAssetPath = "assets/education.png";
   eventModel.eventType = "Others";
   events.add(eventModel);
 
-  eventModel = new EventTypeModel();
-  eventModel.imgAssetPath = "assets/education.png";
-  eventModel.eventType = "Others";
-  events.add(eventModel);
 
   return events;
 }

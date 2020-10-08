@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uvento/eventform.dart';
+import 'package:uvento/home.dart';
 import 'package:uvento/models/event.dart';
 import 'package:uvento/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class EventDetailPageOrganiser extends StatefulWidget {
   Event event;
@@ -100,31 +102,31 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                           ),
                         ))),
                 widget.type == ORGANISATION
-                ? Material(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    color: Colors.black.withOpacity(0.3),
-                    child: InkWell(
+                    ? Material(
                         borderRadius: BorderRadius.all(Radius.circular(5)),
-                        onTap: () async {
-                          SharedPreferences sharedPreferences =
-                              await SharedPreferences.getInstance();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EventForm(
-                                      org_id: int.parse(
-                                          sharedPreferences.getString('id')),
-                                      e: widget.event)));
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        )))
-                : Container(),
+                        color: Colors.black.withOpacity(0.3),
+                        child: InkWell(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            onTap: () async {
+                              SharedPreferences sharedPreferences =
+                                  await SharedPreferences.getInstance();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EventForm(
+                                          org_id: int.parse(sharedPreferences
+                                              .getString('id')),
+                                          e: widget.event)));
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            )))
+                    : Container(),
               ],
             ),
           )
@@ -581,22 +583,88 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
               ),
             ],
           ),
-          
         ],
       ),
-      floatingActionButton:
-      widget.type == ATTENDEE 
-      ?  FloatingActionButton.extended(
-        onPressed: () {
-          // Add your onPressed code here!
-        },
-        label: Text('Register', style: TextStyle(color: BACKGROUND)),
-        icon: Icon(
-          Icons.how_to_reg,
-        ),
-        backgroundColor: Colors.yellow[800],
-      )
-      : Container(),
+      floatingActionButton: widget.type == ATTENDEE
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                // Add your onPressed code here!
+                print("On register");
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        backgroundColor: Colors.white.withOpacity(0.8),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        title: Text(
+                          'Are you sure about registering?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xff102733),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        children: <Widget>[
+                          Divider(
+                            thickness: 2,
+                            indent: 20,
+                            endIndent: 20,
+                          ),
+                          SimpleDialogOption(
+                              child: Text(
+                                "Yes",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: CARD),
+                              ),
+                              onPressed: () async {
+                                SharedPreferences sharedPreferences =
+                                    await SharedPreferences.getInstance();
+
+                                var response = await http.post(
+                                  'https://rpk-happenings.herokuapp.com/register_for_event/event/' +
+                                      widget.event.id.toString() +
+                                      '/user/' +
+                                      sharedPreferences.getString("id"),
+                                );
+                                if (response.statusCode == 200) {
+                                  print("Registered for the event");
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Home(type: ATTENDEE)));
+                                } else {
+                                  print(response.body);
+                                }
+                              }),
+                          SimpleDialogOption(
+                              child: Text(
+                                "No",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: CARD),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              }),
+                        ],
+                      );
+                    });
+                
+              },
+              label: Text('Register', style: TextStyle(color: BACKGROUND)),
+              icon: Icon(
+                Icons.how_to_reg,
+              ),
+              backgroundColor: Colors.yellow[800],
+            )
+          : Container(),
       //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }

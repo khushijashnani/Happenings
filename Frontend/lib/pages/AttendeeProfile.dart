@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uvento/constants.dart';
+import 'package:uvento/login.dart';
 import 'package:uvento/models/attendee.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -64,17 +65,21 @@ class _AttendeeProfileState extends State<AttendeeProfile>
 
   void choiceAction(String choice) async {
     if (choice == "Log Out") {
-      print("logout");
+      // print("logout");
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       Map<String, String> headers = {
-        "Authorisation": sharedPreferences.getString("token")
+        "Authorization": sharedPreferences.getString("token")
       };
       var response = await http.post(
           'https://rpk-happenings.herokuapp.com/logout',
           headers: headers);
       if (response.statusCode == 200) {
         print("Logged out");
+        sharedPreferences.remove("token");
+        sharedPreferences.remove("id");
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
       } else {
         print(response.body);
       }
