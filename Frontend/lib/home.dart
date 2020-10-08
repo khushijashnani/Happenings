@@ -220,7 +220,7 @@ class _HomeState extends State<Home> {
           index: _page,
           children: type == ATTENDEE ? 
           <Widget>[
-            AttendeeHomeScreen(name: attendee.name),
+            AttendeeHomeScreen(attendee: attendee),
             FilterPage(),
             AttendeeProfile(attendee:attendee)
           ]

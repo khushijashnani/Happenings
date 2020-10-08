@@ -647,7 +647,7 @@ class ManageFavourites(Resource):
         return {'message': 'Favourite added'}
 
     def delete(self, user_id, event_id):
-        favourite = Favourites.query.filter(
+        favourite = Favourites.query.filter_by(
             attendee_id=user_id, event_id=event_id)
         deleteFromDatabase(favourite)
         return {'message': 'Favourite removed'}

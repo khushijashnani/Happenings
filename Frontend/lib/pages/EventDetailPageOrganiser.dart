@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uvento/eventform.dart';
@@ -23,6 +25,68 @@ class EventDetailPageOrganiser extends StatefulWidget {
 }
 
 class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
+  List<int> favs = [];
+  List<int> registeredevents = [];
+
+  getUserDetails() async {
+    setState(() {
+      loading = true;
+    });
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    int id = int.parse(sharedPreferences.getString("id"));
+    var fav = await http.get(
+        'https://rpk-happenings.herokuapp.com/${widget.type}/$id/favs',
+        headers: {"Authorization": sharedPreferences.getString("token")});
+    if (fav.statusCode == 200) {
+      var data = json.decode(fav.body);
+      for (Map f in data) {
+        print(f);
+        favs.add(int.parse(f['id']));
+      }
+
+      var registers = await http.get(
+          'https://rpk-happenings.herokuapp.com/${widget.type}/$id/registeredevents',
+          headers: {"Authorization": sharedPreferences.getString("token")});
+      if (registers.statusCode == 200) {
+        var data = json.decode(fav.body);
+        for (Map f in data) {
+          print(f);
+          registeredevents.add(int.parse(f['id']));
+        }
+        print(registeredevents);
+        print(favs);
+        setState(() {
+          registered = registeredevents.contains(int.parse(widget.event.id));
+          favourite = favs.contains(int.parse(widget.event.id));
+        });
+        print(registered);
+        if (registered) {
+          DateTime d = DateTime.now();
+          diff = d.difference(widget.event.startDate);
+        }
+        setState(() {
+          loading = false;
+        });
+      } else {
+        Fluttertoast.showToast(msg: registers.body);
+      }
+    } else {
+      Fluttertoast.showToast(msg: fav.body);
+    }
+  }
+
+  bool registered = false;
+  bool favourite = false;
+  Duration diff;
+  bool loading = false;
+
+  @override
+  void initState() {
+    getUserDetails();
+
+    super.initState();
+  }
+
   double screenWidth, screenHeight;
   final dateMapper = {
     1: 'Mon',
@@ -432,240 +496,366 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
+
     // String startdate = DateFormat('d MMM, yyyy').format(widget.event.startDate);
     // String enddate = DateFormat('d MMM, yyyy').format(widget.event.endDate);
 
-    return Scaffold(
-      body: ListView(
-        children: [
-          Stack(
-            children: [
-              eventImage(),
-              Column(
-                children: [
-                  SizedBox(
-                    height: screenHeight * 0.29,
-                  ),
-                  Material(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
-                      ),
-                      color: BACKGROUND,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              eventName(),
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(30, 0, 30, 15),
-                                  child: Material(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      color: CARD,
-                                      elevation: 5,
-                                      shadowColor: Colors.black,
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10)),
-                                        onTap: () {},
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Icon(Icons.favorite_border,
-                                              color: Colors.red),
-                                        ),
-                                      )))
-                            ],
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.all(10),
-                            child: Material(
-                              elevation: 5,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(40),
-                              ),
-                              color: CARD,
-                              child: Container(
-                                // width: screenWidth/2,
-                                padding: EdgeInsets.all(10),
-                                child: Row(
+    return loading
+        ? Container(
+            height: screenHeight,
+            width: screenWidth,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : Scaffold(
+            body: ListView(
+              children: [
+                Stack(
+                  children: [
+                    eventImage(),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: screenHeight * 0.29,
+                        ),
+                        Material(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(40),
+                              topRight: Radius.circular(40),
+                            ),
+                            color: BACKGROUND,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Icon(
-                                      Icons.local_offer,
-                                      color: Colors.white.withOpacity(0.7),
-                                      size: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(widget.event.category,
-                                        style: TextStyle(color: Colors.white))
+                                    eventName(),
+                                    widget.type == ATTENDEE
+                                        ? !favourite
+                                            ? Container(
+                                                margin: EdgeInsets.fromLTRB(
+                                                    30, 0, 30, 15),
+                                                child: Material(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10)),
+                                                    color: CARD,
+                                                    elevation: 5,
+                                                    shadowColor: Colors.black,
+                                                    child: InkWell(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      onTap: () async {
+                                                        setState(() {
+                                                          loading = true;
+                                                        });
+                                                        SharedPreferences
+                                                            sharedPreferences =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        int id = int.parse(
+                                                            sharedPreferences
+                                                                .getString(
+                                                                    "id"));
+                                                        var fav = await http.post(
+                                                            'https://rpk-happenings.herokuapp.com/add_to_favourite/user/$id/event/${widget.event.id}',
+                                                            headers: {
+                                                              "Authorization":
+                                                                  sharedPreferences
+                                                                      .getString(
+                                                                          "token")
+                                                            });
+                                                        if (fav.statusCode ==
+                                                            200) {
+                                                          setState(() {
+                                                            loading = false;
+                                                          });
+                                                        } else {
+                                                          print(fav.body);
+                                                        }
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10.0),
+                                                        child: Icon(
+                                                            Icons
+                                                                .favorite_border,
+                                                            color: Colors.red),
+                                                      ),
+                                                    )))
+                                            : Container(
+                                                margin: EdgeInsets.fromLTRB(
+                                                    30, 0, 30, 15),
+                                                child: Material(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10)),
+                                                    color: CARD,
+                                                    elevation: 5,
+                                                    shadowColor: Colors.black,
+                                                    child: InkWell(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      onTap: () async {
+                                                        setState(() {
+                                                          loading = true;
+                                                        });
+                                                        SharedPreferences
+                                                            sharedPreferences =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        int id = int.parse(
+                                                            sharedPreferences
+                                                                .getString(
+                                                                    "id"));
+                                                        var fav = await http.delete(
+                                                            'https://rpk-happenings.herokuapp.com/add_to_favourite/user/$id/event/${widget.event.id}',
+                                                            headers: {
+                                                              "Authorization":
+                                                                  sharedPreferences
+                                                                      .getString(
+                                                                          "token")
+                                                            });
+                                                        if (fav.statusCode ==
+                                                            200) {
+                                                          setState(() {
+                                                            loading = false;
+                                                          });
+                                                        } else {
+                                                          print(fav.body);
+                                                        }
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10.0),
+                                                        child: Icon(
+                                                            Icons.favorite,
+                                                            color: Colors.red),
+                                                      ),
+                                                    )))
+                                        : Container()
                                   ],
                                 ),
-                              ),
-                            ),
-                          ),
-                          dateAndTime(
-                              Icon(
-                                Icons.hourglass_top_rounded,
-                                color: Colors.white,
-                              ),
-                              widget.event.startDate),
-                          dateAndTime(
-                              Icon(
-                                Icons.hourglass_bottom_rounded,
-                                color: Colors.white,
-                              ),
-                              widget.event.endDate),
-                          address(),
-                          ticketPrice(),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
-                            child: Container(
-                              width: screenWidth - 60,
-                              child: Text(
-                                "About",
-                                style: GoogleFonts.raleway(
-                                    color: Colors.yellow[800],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
-                            child: Container(
-                              width: screenWidth - 60,
-                              child: Text(
-                                widget.event.description,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
-                            child: Container(
-                              width: screenWidth - 60,
-                              child: Text(
-                                "Speciality",
-                                style: GoogleFonts.raleway(
-                                    color: Colors.yellow[800],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
-                            child: Container(
-                              width: screenWidth - 60,
-                              child: Text(
-                                widget.event.speciality,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 50,
-                          )
-                        ],
-                      )),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-      floatingActionButton: widget.type == ATTENDEE
-          ? FloatingActionButton.extended(
-              onPressed: () async {
-                // Add your onPressed code here!
-                print("On register");
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SimpleDialog(
-                        backgroundColor: Colors.white.withOpacity(0.8),
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        title: Text(
-                          'Are you sure about registering?',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xff102733),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        children: <Widget>[
-                          Divider(
-                            thickness: 2,
-                            indent: 20,
-                            endIndent: 20,
-                          ),
-                          SimpleDialogOption(
-                              child: Text(
-                                "Yes",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: CARD),
-                              ),
-                              onPressed: () async {
-                                SharedPreferences sharedPreferences =
-                                    await SharedPreferences.getInstance();
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.all(10),
+                                  child: Material(
+                                    elevation: 5,
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(40),
+                                    ),
+                                    color: CARD,
+                                    child: Container(
+                                      // width: screenWidth/2,
+                                      padding: EdgeInsets.all(10),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.local_offer,
+                                            color:
+                                                Colors.white.withOpacity(0.7),
+                                            size: 20,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(widget.event.category,
+                                              style: TextStyle(
+                                                  color: Colors.white))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                dateAndTime(
+                                    Icon(
+                                      Icons.hourglass_top_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    widget.event.startDate),
+                                dateAndTime(
+                                    Icon(
+                                      Icons.hourglass_bottom_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    widget.event.endDate),
+                                address(),
+                                ticketPrice(),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                                  child: Container(
+                                    width: screenWidth - 60,
+                                    child: Text(
+                                      "About",
+                                      style: GoogleFonts.raleway(
+                                          color: Colors.yellow[800],
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(30, 0, 30, 10),
+                                  child: Container(
+                                    width: screenWidth - 60,
+                                    child: Text(
+                                      widget.event.description,
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 16),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                                  child: Container(
+                                    width: screenWidth - 60,
+                                    child: Text(
+                                      "Speciality",
+                                      style: GoogleFonts.raleway(
+                                          color: Colors.yellow[800],
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(30, 0, 30, 10),
+                                  child: Container(
+                                    width: screenWidth - 60,
+                                    child: Text(
+                                      widget.event.speciality,
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 16),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 50,
+                                )
+                              ],
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            floatingActionButton: widget.type == ATTENDEE
+                ? !registered
+                    ? FloatingActionButton.extended(
+                        onPressed: () async {
+                          // Add your onPressed code here!
+                          print("On register");
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SimpleDialog(
+                                  backgroundColor:
+                                      Colors.white.withOpacity(0.8),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0))),
+                                  title: Text(
+                                    'Are you sure about registering?',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color(0xff102733),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  children: <Widget>[
+                                    Divider(
+                                      thickness: 2,
+                                      indent: 20,
+                                      endIndent: 20,
+                                    ),
+                                    SimpleDialogOption(
+                                        child: Text(
+                                          "Yes",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: CARD),
+                                        ),
+                                        onPressed: () async {
+                                          SharedPreferences sharedPreferences =
+                                              await SharedPreferences
+                                                  .getInstance();
 
-                                var response = await http.post(
-                                  'https://rpk-happenings.herokuapp.com/register_for_event/event/' +
-                                      widget.event.id.toString() +
-                                      '/user/' +
-                                      sharedPreferences.getString("id"),
+                                          var response = await http.post(
+                                            'https://rpk-happenings.herokuapp.com/register_for_event/event/' +
+                                                widget.event.id.toString() +
+                                                '/user/' +
+                                                sharedPreferences
+                                                    .getString("id"),
+                                          );
+                                          if (response.statusCode == 200) {
+                                            print("Registered for the event");
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Home(type: ATTENDEE)));
+                                          } else {
+                                            print(response.body);
+                                          }
+                                        }),
+                                    SimpleDialogOption(
+                                        child: Text(
+                                          "No",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: CARD),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        }),
+                                  ],
                                 );
-                                if (response.statusCode == 200) {
-                                  print("Registered for the event");
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Home(type: ATTENDEE)));
-                                } else {
-                                  print(response.body);
-                                }
-                              }),
-                          SimpleDialogOption(
-                              child: Text(
-                                "No",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: CARD),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              }),
-                        ],
-                      );
-                    });
-                
-              },
-              label: Text('Register', style: TextStyle(color: BACKGROUND)),
-              icon: Icon(
-                Icons.how_to_reg,
-              ),
-              backgroundColor: Colors.yellow[800],
-            )
-          : Container(),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
+                              });
+                        },
+                        label: Text('Register',
+                            style: TextStyle(color: BACKGROUND)),
+                        icon: Icon(
+                          Icons.how_to_reg,
+                        ),
+                        backgroundColor: Colors.yellow[800],
+                      )
+                    : FloatingActionButton.extended(
+                        backgroundColor: Colors.yellow[800],
+                        onPressed: () {},
+                        label: Text(diff.inDays.toString() + " days to go",
+                            style: TextStyle(color: BACKGROUND)),
+                      )
+                : FloatingActionButton.extended(
+                    onPressed: () {},
+                    label: Text("See Reviews",
+                        style: TextStyle(color: BACKGROUND)),
+                    backgroundColor: Colors.yellow[800],
+                  ),
+            //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:uvento/data/data.dart';
+import 'package:uvento/models/attendee.dart';
 import 'package:uvento/models/date_model.dart';
 import 'package:uvento/models/event.dart';
 import 'package:uvento/models/event_type_model.dart';
@@ -16,8 +17,8 @@ import 'package:intl/intl.dart';
 import 'package:uvento/pages/EventDetailPageOrganiser.dart';
 
 class AttendeeHomeScreen extends StatefulWidget {
-  String name;
-  AttendeeHomeScreen({Key key, this.name}) : super(key: key);
+  Attendee attendee;
+  AttendeeHomeScreen({Key key, this.attendee}) : super(key: key);
 
   @override
   _AttendeeHomeScreenState createState() => _AttendeeHomeScreenState();
@@ -50,7 +51,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
   @override
   void initState() {
     super.initState();
-    print(widget.name);
+    print(widget.attendee.name);
     getevents();
     dates = getDates();
     eventsType = getEventTypes();
@@ -290,7 +291,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "Hello, " + widget.name.toString(),
+                              "Hello, " + widget.attendee.name.toString(),
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -491,6 +492,7 @@ class EventTile extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => SearchEventList(
+                     
                       list: catEvents,
                     )));
       },
