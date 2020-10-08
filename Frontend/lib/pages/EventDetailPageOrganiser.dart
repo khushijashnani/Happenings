@@ -41,14 +41,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
       var data = json.decode(fav.body);
       for (Map f in data) {
         print(f);
-        favs.add(int.parse(f['id']));
+        favs.add(int.parse(f['event_id']));
       }
 
       var registers = await http.get(
           'https://rpk-happenings.herokuapp.com/${widget.type}/$id/registeredevents',
           headers: {"Authorization": sharedPreferences.getString("token")});
       if (registers.statusCode == 200) {
-        var data = json.decode(fav.body);
+        data = json.decode(registers.body);
         for (Map f in data) {
           print(f);
           registeredevents.add(int.parse(f['id']));
@@ -577,6 +577,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                             200) {
                                                           setState(() {
                                                             loading = false;
+                                                            favourite = true;
                                                           });
                                                         } else {
                                                           print(fav.body);
@@ -632,6 +633,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                             200) {
                                                           setState(() {
                                                             loading = false;
+                                                            favourite = false;
                                                           });
                                                         } else {
                                                           print(fav.body);
