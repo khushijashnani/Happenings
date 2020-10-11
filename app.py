@@ -448,13 +448,13 @@ def addEvent(row):
         d[column.name] = str(getattr(row, column.name))
     return d
 
+class GetEvent(Resource):
 
-class EventApi(Resource):
-
-    def get(self):
-        data = request.get_json()
-        event_id = int(data['event_id'])
-        event = Event.query.get(event_id)
+    def get(self, event_id):
+        # data = request.get_json()
+        # event_id = int(data['event_id'])
+        event = Event.query.filter_by(id = event_id).first()
+        print(event)
         e = addEvent(event)
         attendees = event.attendee
         reviews = event.reviews
@@ -467,6 +467,9 @@ class EventApi(Resource):
         e["attendees"] = attendeesList
         e["reviews"] = reviewList
         return e
+
+
+class EventApi(Resource):
 
     def post(self):
 
@@ -745,6 +748,7 @@ api.add_resource(ClassicGet, '/<string:type>/<int:id>/<string:resource>')
 api.add_resource(ManageReviews, '/add_review/<int:user_id>')
 api.add_resource(ManageFavourites,
                  '/add_to_favourite/user/<int:user_id>/event/<int:event_id>')
+api.add_resource(GetEvent, '/event/<int:event_id>')
 
 api.add_resource(UserLogout, '/logout')
 

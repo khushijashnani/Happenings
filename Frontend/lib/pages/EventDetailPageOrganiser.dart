@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -77,11 +78,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
         Fluttertoast.showToast(msg: fav.body);
       }
     }
-    final queryParameters = {'event_id': int.parse(widget.event.id)};
-    final uri =
-        Uri.http('rpk-happenings.herokuapp.com', '/event', queryParameters);
-    var headers = {"Authorization": sharedPreferences.getString("token")};
-    final response = await http.get(uri, headers: headers);
+    final queryParameters = {'event_id': widget.event.id};
+    Uri uri = Uri.parse("http://rpk-happenings.herokuapp.com/event");
+    final newURI = uri.replace(queryParameters: queryParameters);
+    var headers = {"Authorization": sharedPreferences.getString("token"), 
+      HttpHeaders.contentTypeHeader:"application/json",
+      };
+    final response = await http.get(newURI, headers: headers);
     if (response.statusCode == 200) {
       setState(() {
         reviews = json.decode(response.body)["reviews"];
