@@ -63,14 +63,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             favourite = favs.contains(int.parse(widget.event.id));
           });
           print(registered);
-          if (registered) {
-            if (widget.event.endDate.difference(DateTime.now()).inDays > 0) {
-              DateTime d = DateTime.now();
-              diff = widget.event.startDate.difference(d);
-            } else {
-              diff = null;
-            }
-          }
+          // if (registered) {
+          //   if (widget.event.endDate.difference(DateTime.now()).inDays > 0) {
+          //     DateTime d = DateTime.now();
+          //     diff = widget.event.startDate.difference(d);
+          //   } else {
+          //     diff = null;
+          //   }
+          // }
         } else {
           Fluttertoast.showToast(msg: registers.body);
         }
@@ -78,21 +78,28 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
         Fluttertoast.showToast(msg: fav.body);
       }
     }
-    final queryParameters = {'event_id': widget.event.id};
-    Uri uri = Uri.parse("http://rpk-happenings.herokuapp.com/event");
-    final newURI = uri.replace(queryParameters: queryParameters);
-    var headers = {"Authorization": sharedPreferences.getString("token"), 
-      HttpHeaders.contentTypeHeader:"application/json",
-      };
-    final response = await http.get(newURI, headers: headers);
+    if (widget.event.endDate.difference(DateTime.now()).inDays > 0) {
+      DateTime d = DateTime.now();
+      diff = widget.event.startDate.difference(d);
+    } else {
+      diff = null;
+    }
+
+    var headers = {
+      "Authorization": sharedPreferences.getString("token"),
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    int event_id = int.parse(widget.event.id);
+    final response = await http.get(
+        "http://rpk-happenings.herokuapp.com/event/${event_id}",
+        headers: headers);
     if (response.statusCode == 200) {
       setState(() {
         reviews = json.decode(response.body)["reviews"];
         print(reviews);
         loading = false;
       });
-    }
-    else{
+    } else {
       Fluttertoast.showToast(msg: response.body);
     }
   }
@@ -131,7 +138,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
     int rating = int.parse(reviews[index]["rating"]);
 
     return Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+        padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
         child: Material(
             color: CARD,
             elevation: 5,
@@ -569,6 +576,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                             loading = false;
                                                             favourite = true;
                                                           });
+                                                           Navigator.of(context)
+                                                  .pushReplacement(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Home(
+                                                                type: ATTENDEE,
+                                                              )));
                                                         } else {
                                                           print(fav.body);
                                                         }
@@ -625,6 +639,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                             loading = false;
                                                             favourite = false;
                                                           });
+                                                           Navigator.of(context)
+                                                  .pushReplacement(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Home(
+                                                                type: ATTENDEE,
+                                                              )));
                                                         } else {
                                                           print(fav.body);
                                                         }
@@ -740,22 +761,57 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(30, 20, 30, 10),
-                                  child: Container(
-                                    width: screenWidth - 60,
-                                    child: Text(
-                                      "Reviews",
-                                      style: GoogleFonts.raleway(
-                                          color: Colors.yellow[800],
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                reviewsTab()
+                                Divider(color: Colors.grey,indent: 20,endIndent: 20,),
+                                // Padding(
+                                //   padding:
+                                //       const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                                //   child: Container(
+                                //     width: screenWidth - 60,
+                                //     child: Text(
+                                //       "Reviews",
+                                //       style: GoogleFonts.raleway(
+                                //           color: Colors.yellow[800],
+                                //           fontWeight: FontWeight.w500,
+                                //           fontSize: 20),
+                                //     ),
+                                //   ),
+                                // ),
+
+                                // Form(
+                                //   child: Center(
+                                //     child: ConstrainedBox(
+                                //       constraints: BoxConstraints.tight(Size(300, 80)),
+                                //       child: TextFormField(
+                                //         validator: (value) {
+                                //           if (value.isEmpty) {
+                                //             return 'Please enter your username';
+                                //           }
+                                //           // if (!RegExp(r"^(?=.*\d)[\d]{10}$")
+                                //           //     .hasMatch(phoneController.text)) {
+                                //           //   return "Only 10 digits allowed\nDon't Include Country Code";
+                                //           // }
+                                //           return null;
+                                //         },
+                                //         style: TextStyle(color: Colors.white),
+                                //         controller: usernameController,
+                                //         decoration: InputDecoration(
+                                //           border: new OutlineInputBorder(
+                                //             borderRadius:
+                                //                 new BorderRadius.circular(25.0),
+                                //             borderSide: new BorderSide(),
+                                //           ),
+                                //           labelStyle: TextStyle(color: Colors.yellow[600]),
+                                //           icon: Icon(Icons.person, color: Colors.white),
+                                //           hintText: "Username",
+                                //           hintStyle: TextStyle(color: Colors.grey)
+                                //         ),
+                                //       ),
+                                //     )
+                                //   ),
+                                // ),
+                                
+                                reviewsTab(),
+                                SizedBox(height: 60),
                               ],
                             )),
                       ],
@@ -861,12 +917,19 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                             label: Text("Event concluded",
                                 style: TextStyle(color: BACKGROUND)),
                           )
-                : FloatingActionButton.extended(
-                    onPressed: () {},
-                    label: Text("Event concluded",
-                        style: TextStyle(color: BACKGROUND)),
-                    backgroundColor: Colors.yellow[800],
-                  ),
+                : diff != null
+                        ? FloatingActionButton.extended(
+                            backgroundColor: Colors.yellow[800],
+                            onPressed: () {},
+                            label: Text(diff.inDays.toString() + " days to go",
+                                style: TextStyle(color: BACKGROUND)),
+                          )
+                        : FloatingActionButton.extended(
+                            backgroundColor: Colors.yellow[800],
+                            onPressed: () {},
+                            label: Text("Event concluded",
+                                style: TextStyle(color: BACKGROUND)),
+                          )
           );
   }
 }

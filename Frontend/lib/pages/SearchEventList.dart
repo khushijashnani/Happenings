@@ -8,15 +8,15 @@ import 'package:intl/intl.dart';
 import 'package:uvento/pages/EventDetailPageOrganiser.dart';
 
 class SearchEventList extends StatefulWidget {
+  String name;
   List<Event> list;
-  SearchEventList({Key key, this.list}) : super(key: key);
+  SearchEventList({Key key, this.list,this.name}) : super(key: key);
 
   @override
   _SearchEventListState createState() => _SearchEventListState();
 }
 
 class _SearchEventListState extends State<SearchEventList> {
-
   double screenHeight, screenWidth;
 
   Widget eventCard(Event e) {
@@ -95,24 +95,23 @@ class _SearchEventListState extends State<SearchEventList> {
                           ),
                         ),
                       ),
-                      Row(
-                        children: [
-                              SizedBox(
-                                width: 22,
-                              ),
-                              FaIcon(FontAwesomeIcons.rupeeSign,
-                                  color: Colors.white.withOpacity(0.7), size: 15),
-                              SizedBox(width: 10),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                child: AutoSizeText(e.entryamount.toString() + " /-",
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        color: Colors.white.withOpacity(0.7),
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal)),
-                              )
-                            ]),
+                      Row(children: [
+                        SizedBox(
+                          width: 22,
+                        ),
+                        FaIcon(FontAwesomeIcons.rupeeSign,
+                            color: Colors.white.withOpacity(0.7), size: 15),
+                        SizedBox(width: 10),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          child: AutoSizeText(e.entryamount.toString() + " /-",
+                              maxLines: 2,
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal)),
+                        )
+                      ]),
                       // Padding(
                       //   padding: const EdgeInsets.fromLTRB(15, 20, 0, 10),
                       //   child: Container(
@@ -195,100 +194,98 @@ class _SearchEventListState extends State<SearchEventList> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Material(
       color: BACKGROUND,
-          child: SingleChildScrollView(
+      child: SingleChildScrollView(
           child: Container(
               color: BACKGROUND,
               child: Column(children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 40,
-                          width: 40,
-                            decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)
-                            ),
-                          margin: EdgeInsets.fromLTRB(20, 37, 0, 0),
-                          child: Material(
-                          color: BACKGROUND,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20)),
+                      margin: EdgeInsets.fromLTRB(20, 37, 0, 0),
+                      child: Material(
+                        color: BACKGROUND,
+                        borderRadius: BorderRadius.circular(20),
+                        elevation: 10,
+                        child: InkWell(
+                          radius: 50,
                           borderRadius: BorderRadius.circular(20),
-                          elevation: 10,
-                          child: InkWell(
-                              radius: 50,
-                              borderRadius: BorderRadius.circular(20),
-                              child: Icon(
-                                Icons.keyboard_backspace,
-                                color: Colors.yellow[800],
-                                size: 30,
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                            ),
+                          child: Icon(
+                            Icons.keyboard_backspace,
+                            color: Colors.yellow[800],
+                            size: 30,
                           ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                        Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.fromLTRB(20, 50, 20, 10),
-                            child: Text("Search results ...",
-                                style: GoogleFonts.raleway(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ))),
-                      ],
+                      ),
                     ),
-                    widget.list == null
-                        ? Container(
-                            padding: EdgeInsets.all(20),
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width,
-                            child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(children: [
-                                  TextSpan(
-                                      text: "There are no\n",
-                                      style: TextStyle(color: Colors.white)),
-                                  TextSpan(
-                                      text: "events\n",
-                                      style:
-                                          TextStyle(color: Colors.yellow[800])),
-                                  TextSpan(
-                                      text: "yet",
-                                      style: TextStyle(color: Colors.white)),
-                                ])),
-                          )
-                        : ListView.builder(
-                            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            primary: false,
-                            itemCount: widget.list.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              if (index != widget.list.length) {
-                                // return InkWell(
-                                //   onTap: (){
-                                //     print(list[index].title);
-                                //     Navigator.push(context, MaterialPageRoute(builder: (context) => EventDetailPageOrganiser(event: list[index],)));
-                                //   },
-                                //   child: PopularEventTile(
-                                //     imgeAssetPath: list[index].imageUrl,
-                                //     address: list[index].location,
-                                //     desc: list[index].title,
-                                //     date: list[index].startDate.month.toString() +
-                                //         list[index].startDate.day.toString() +
-                                //         ', ' +
-                                //         list[index].startDate.year.toString(),
-                                //   ),
-                                // );
-                                return eventCard(widget.list[index]);
-                              }
-                            }),
-                  ]))),
+                    Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.fromLTRB(20, 50, 20, 10),
+                        child: Text(widget.name,
+                            style: GoogleFonts.raleway(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ))),
+                  ],
+                ),
+                widget.list == null
+                    ? Container(
+                        padding: EdgeInsets.all(20),
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width,
+                        child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text: "There are no\n",
+                                  style: TextStyle(color: Colors.white)),
+                              TextSpan(
+                                  text: "events\n",
+                                  style: TextStyle(color: Colors.yellow[800])),
+                              TextSpan(
+                                  text: "yet",
+                                  style: TextStyle(color: Colors.white)),
+                            ])),
+                      )
+                    : ListView.builder(
+                        padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        primary: false,
+                        itemCount: widget.list.length,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          if (index != widget.list.length) {
+                            // return InkWell(
+                            //   onTap: (){
+                            //     print(list[index].title);
+                            //     Navigator.push(context, MaterialPageRoute(builder: (context) => EventDetailPageOrganiser(event: list[index],)));
+                            //   },
+                            //   child: PopularEventTile(
+                            //     imgeAssetPath: list[index].imageUrl,
+                            //     address: list[index].location,
+                            //     desc: list[index].title,
+                            //     date: list[index].startDate.month.toString() +
+                            //         list[index].startDate.day.toString() +
+                            //         ', ' +
+                            //         list[index].startDate.year.toString(),
+                            //   ),
+                            // );
+                            return eventCard(widget.list[index]);
+                          }
+                        }),
+              ]))),
     );
   }
 }

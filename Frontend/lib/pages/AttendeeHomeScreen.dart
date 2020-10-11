@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:uvento/data/data.dart';
+import 'package:uvento/home.dart';
 import 'package:uvento/models/attendee.dart';
 import 'package:uvento/models/date_model.dart';
 import 'package:uvento/models/event.dart';
@@ -17,9 +18,11 @@ import 'package:intl/intl.dart';
 import 'package:uvento/pages/EventDetailPageOrganiser.dart';
 
 class AttendeeHomeScreen extends StatefulWidget {
+  List<Event> favs;
   String name;
   Attendee attendee;
-  AttendeeHomeScreen({Key key, this.name, this.attendee}) : super(key: key);
+  AttendeeHomeScreen({Key key, this.name, this.attendee, this.favs})
+      : super(key: key);
 
   @override
   _AttendeeHomeScreenState createState() => _AttendeeHomeScreenState();
@@ -73,7 +76,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 color: CARD),
-            width: screenWidth / 2 - 25,
+            width: screenWidth / 1.5,
             height: 250,
             child: FlipCard(
               direction: FlipDirection.HORIZONTAL, // default
@@ -82,11 +85,11 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       color: CARD),
                   height: 250,
-                  width: screenWidth / 2 - 25,
+                  width: screenWidth / 1.5,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     child: Image.network(e.imageUrl,
-                        width: screenWidth / 2 - 25,
+                        width: screenWidth / 1.5,
                         height: 250,
                         fit: BoxFit.fill),
                   )),
@@ -105,8 +108,9 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
-                              width: screenWidth / 2 - 38,
+                              width: screenWidth / 1.5,
                               child: AutoSizeText(e.title,
+                                  textAlign: TextAlign.start,
                                   minFontSize: 18,
                                   maxLines: 3,
                                   style: TextStyle(
@@ -116,7 +120,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                             ),
                             SizedBox(height: 5),
                             Container(
-                              width: screenWidth / 2 - 38,
+                              width: (screenWidth / 1.5) - 10,
                               child: AutoSizeText(
                                   startdate == enddate
                                       ? startdate
@@ -139,7 +143,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                               //Icon(Icons.location_on, color: Colors.white, size : 20),
                               SizedBox(width: 5),
                               Container(
-                                width: screenWidth / 2 - 68,
+                                width: screenWidth / 1.5 - 68,
                                 child: AutoSizeText(e.location,
                                     maxLines: 2,
                                     style: TextStyle(
@@ -157,7 +161,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                                   color: Colors.white, size: 15),
                               SizedBox(width: 5),
                               Container(
-                                width: screenWidth / 2 - 68,
+                                width: screenWidth / 1.5 - 68,
                                 child: AutoSizeText(
                                     e.entryamount.toString() + " /-",
                                     maxLines: 2,
@@ -215,14 +219,10 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
 
   Widget popularEventCard(int index) {
     Event event1 = allEvents[index];
-    Event event2 = allEvents[allEvents.length - index - 1];
+    // Event event2 = allEvents[allEvents.length - index - 1];
     return Padding(
-        padding: EdgeInsets.only(bottom: 10),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          flipcard(event1),
-          SizedBox(width: 10),
-          event1.title != event2.title ? flipcard(event2) : Container()
-        ]));
+        padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+        child: flipcard(event1));
   }
 
   @override
@@ -278,9 +278,19 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                         SizedBox(
                           width: 16,
                         ),
-                        Icon(
-                          Icons.favorite_border,
-                          color: Colors.red,
+                        GestureDetector(
+                          onTap: () {
+                           
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SearchEventList(
+                                      name: "Favourites",
+                                      list: widget.favs,
+                                    )));
+                          },
+                          child: Icon(
+                            Icons.favorite_border,
+                            color: Colors.red,
+                          ),
                         ),
                       ],
                     ),
@@ -365,10 +375,9 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
                             return EventTile(
-                              imgAssetPath: eventsType[index].imgAssetPath,
-                              eventType: eventsType[index].eventType,
-                              icon : eventsType[index].icon
-                            );
+                                imgAssetPath: eventsType[index].imgAssetPath,
+                                eventType: eventsType[index].eventType,
+                                icon: eventsType[index].icon);
                           }),
                     ),
 
@@ -383,36 +392,39 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                     SizedBox(
                       height: 16,
                     ),
-
-                    ListView.builder(
-                      itemCount: (allEvents.length / 2).toInt(),
-                      primary: false,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return popularEventCard(index);
-                      },
+                    Container(
+                      height: 260,
+                      child: ListView.builder(
+                        itemCount: allEvents.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return popularEventCard(index);
+                        },
+                      ),
                     ),
-
-                    // Container(
-                    //   width : 200,
-                    //   height : 300,
-                    //   child : FlipCard(
-                    //     direction: FlipDirection.HORIZONTAL, // default
-                    //     front: Container(
-                    //       color: CARD,
-                    //       height: 300,
-                    //           child: Text('Front'),
-                    //       ),
-                    //       back: Container(
-                    //         color : CARD,
-                    //         height: 300,
-                    //           child: Text('Back'),
-                    //       ),
-                    //   )
-                    // )
-
-                    // )
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      "Recommended Events",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Container(
+                      height: 260,
+                      child: ListView.builder(
+                        itemCount: allEvents.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return popularEventCard(index);
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
                   ],
                 ),
               ),
@@ -498,6 +510,7 @@ class EventTile extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => SearchEventList(
+                      name: "Search results ...",
                       list: catEvents,
                     )));
       },
@@ -510,13 +523,13 @@ class EventTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            icon !=null
-            ?icon
-            :Image.asset(
-              imgAssetPath,
-              height: 27,
-              color: Colors.yellow[800],
-            ),
+            icon != null
+                ? icon
+                : Image.asset(
+                    imgAssetPath,
+                    height: 27,
+                    color: Colors.yellow[800],
+                  ),
             SizedBox(
               height: 12,
             ),
@@ -588,6 +601,7 @@ class PopularEventTile extends StatelessWidget {
                     children: <Widget>[
                       Image.asset(
                         "assets/location.png",
+
                         height: 12,
                       ),
                       SizedBox(

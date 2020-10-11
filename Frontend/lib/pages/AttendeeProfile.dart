@@ -2,9 +2,11 @@ import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uvento/constants.dart';
+import 'package:uvento/home.dart';
 import 'package:uvento/login.dart';
 import 'package:uvento/models/attendee.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
@@ -12,12 +14,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:uvento/models/event.dart';
 import 'package:intl/intl.dart';
+import 'package:uvento/pages/EventDetailPageOrganiser.dart';
+import 'package:uvento/pages/SearchEventList.dart';
 
 class AttendeeProfile extends StatefulWidget {
   Attendee attendee;
   List reviews;
   List allEvents;
-  AttendeeProfile({Key key, this.attendee, this.reviews, this.allEvents})
+  List<Event> favs;
+  AttendeeProfile(
+      {Key key, this.attendee, this.reviews, this.allEvents, this.favs})
       : super(key: key);
 
   @override
@@ -114,6 +120,178 @@ class _AttendeeProfileState extends State<AttendeeProfile>
         print(response.body);
       }
     }
+  }
+
+  
+  Widget eventCard(Event e) {
+    String startdate = DateFormat('d MMM, yyyy').format(e.startDate);
+    String enddate = DateFormat('d MMM, yyyy').format(e.endDate);
+    int date = e.startDate.day;
+
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: Material(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: CARD,
+        elevation: 5,
+        shadowColor: Colors.black,
+        child: InkWell(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventDetailPageOrganiser(
+                    event: e,
+                    type: ATTENDEE,
+                  ),
+                ));
+          },
+          child: Container(
+            height: 160,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: screenWidth * 0.65 - 30,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Container(
+                        width: screenWidth * 0.4,
+                        alignment: Alignment.centerRight,
+                        decoration: BoxDecoration(
+                          color: BACKGROUND,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 4, 10, 4),
+                          child: AutoSizeText(
+                            startdate == enddate
+                                ? startdate
+                                : date.toString() + " - " + startdate,
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.white.withOpacity(0.7),
+                                fontSize: 14),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                        child: Container(
+                          width: screenWidth * 0.65 - 45,
+                          child: AutoSizeText(
+                            e.title,
+                            maxLines: 2,
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      ),
+                      Row(children: [
+                        SizedBox(
+                          width: 17,
+                        ),
+                        FaIcon(FontAwesomeIcons.rupeeSign,
+                            color: Colors.white.withOpacity(0.7), size: 15),
+                        SizedBox(width: 10),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          child: AutoSizeText(e.entryamount.toString() + " /-",
+                              maxLines: 2,
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal)),
+                        )
+                      ]),
+                      // Padding(
+                      //   padding: const EdgeInsets.fromLTRB(15, 20, 0, 10),
+                      //   child: Container(
+                      //     width: screenWidth * 0.65 - 45,
+                      //     child: Row(
+                      //       children: [
+                      //         AutoSizeText(
+                      //           "Organised by ",
+                      //           maxLines: 1,
+                      //           style: TextStyle(
+                      //               color: Colors.white.withOpacity(0.7),
+                      //               fontSize: 15),
+                      //         ),
+                      //         AutoSizeText(
+                      //           ,
+                      //           maxLines: 1,
+                      //           style: TextStyle(
+                      //               color: Colors.white, fontSize: 18),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
+                        child: Container(
+                          width: screenWidth * 0.65 - 45,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.white.withOpacity(0.7),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Container(
+                                width: screenWidth * 0.44,
+                                child: AutoSizeText(
+                                  e.location,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(0.7),
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: screenWidth * 0.27,
+                  alignment: Alignment.topCenter,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.only(bottomLeft: Radius.circular(20)),
+                    //color: Colors.pink,
+                  ),
+                  child: ClipRRect(
+                    borderRadius:
+                        BorderRadius.only(bottomLeft: Radius.circular(50)),
+                    child: Image.network(e.imageUrl,
+                        width: screenWidth * 0.27,
+                        height: 135,
+                        fit: BoxFit.fill),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget profileImage() {
@@ -328,32 +506,47 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                                             Radius.circular(30),
                                           ),
                                           color: CARD,
-                                          child: Container(
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                color: Colors.yellow[800],
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(12),
+                                          child: InkWell(
+                                            onTap: () {
+                                              
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SearchEventList(
+                                                            name: "Favourites",
+                                                            list: widget.favs,
+                                                          )));
+                                            },
+                                            child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.yellow[800],
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(12),
+                                                  ),
                                                 ),
-                                              ),
-                                              child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Icon(Icons.favorite_border,
-                                                        color: BACKGROUND),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Text("Favourites",
-                                                        style:
-                                                            GoogleFonts.raleway(
-                                                                color:
-                                                                    BACKGROUND,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                  ])))),
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(
+                                                          Icons.favorite_border,
+                                                          color: BACKGROUND),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Text("Favourites",
+                                                          style: GoogleFonts
+                                                              .raleway(
+                                                                  color:
+                                                                      BACKGROUND,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                    ])),
+                                          ))),
                                   Container(
                                       height: 50,
                                       width: screenWidth / 6,
@@ -396,7 +589,7 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                           Container(
                             height: 450,
                             child: _getTabBarView(
-                              <Widget>[Icon(Icons.home), reviewsTab()],
+                              <Widget>[eventsTab(), reviewsTab()],
                             ),
                           )
                         ],
@@ -412,6 +605,18 @@ class _AttendeeProfileState extends State<AttendeeProfile>
     ]);
   }
 
+  Widget eventsTab(){
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+      child: ListView.builder(
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          itemCount: widget.reviews.length,
+          itemBuilder: (context, index) {
+            return eventCard(events[index]);
+          }),
+    );
+  }
+
   Widget reviewsTab() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -425,10 +630,11 @@ class _AttendeeProfileState extends State<AttendeeProfile>
   }
 
   Widget reviewCards(int index) {
-    String startdate = DateFormat('d MMM, yyyy').format(events[index].startDate);
+    String startdate =
+        DateFormat('d MMM, yyyy').format(events[index].startDate);
     String enddate = DateFormat('d MMM, yyyy').format(events[index].endDate);
     int date = events[index].startDate.day;
-    int rating =int.parse(widget.reviews[index]["rating"]);
+    int rating = int.parse(widget.reviews[index]["rating"]);
 
     return Padding(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -463,8 +669,8 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                             child: AutoSizeText(
                                 //"Mon, 26 July 2000 - Wed, 28 July 2020",
                                 startdate == enddate
-                                ? startdate
-                                : date.toString() + " - " + startdate,
+                                    ? startdate
+                                    : date.toString() + " - " + startdate,
                                 style: TextStyle(
                                   color: Colors.grey,
                                 )))),
@@ -481,36 +687,42 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                         child: Container(
                             width: screenWidth * 0.8,
                             child: Row(
-                              mainAxisAlignment : MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                rating >= 1 ? Icon(
-                                  Icons.star,
-                                  color: Colors.yellow[800],
-                                ) : Container(),
+                                rating >= 1
+                                    ? Icon(
+                                        Icons.star,
+                                        color: Colors.yellow[800],
+                                      )
+                                    : Container(),
                                 rating > 1 ? SizedBox(width: 5) : Container(),
-
-                                rating >= 2 ? Icon(
-                                  Icons.star,
-                                  color: Colors.yellow[800],
-                                ) : Container(),
+                                rating >= 2
+                                    ? Icon(
+                                        Icons.star,
+                                        color: Colors.yellow[800],
+                                      )
+                                    : Container(),
                                 rating > 2 ? SizedBox(width: 5) : Container(),
-
-                                rating >= 3 ? Icon(
-                                  Icons.star,
-                                  color: Colors.yellow[800],
-                                ) : Container(),
+                                rating >= 3
+                                    ? Icon(
+                                        Icons.star,
+                                        color: Colors.yellow[800],
+                                      )
+                                    : Container(),
                                 rating > 3 ? SizedBox(width: 5) : Container(),
-                                
-                                rating >= 4 ? Icon(
-                                  Icons.star,
-                                  color: Colors.yellow[800],
-                                ) : Container(),
+                                rating >= 4
+                                    ? Icon(
+                                        Icons.star,
+                                        color: Colors.yellow[800],
+                                      )
+                                    : Container(),
                                 rating > 4 ? SizedBox(width: 5) : Container(),
-
-                                rating >= 5 ? Icon(
-                                  Icons.star,
-                                  color: Colors.yellow[800],
-                                ) : Container(),
+                                rating >= 5
+                                    ? Icon(
+                                        Icons.star,
+                                        color: Colors.yellow[800],
+                                      )
+                                    : Container(),
                                 rating > 5 ? SizedBox(width: 5) : Container(),
                               ],
                             ))),

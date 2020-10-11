@@ -185,29 +185,32 @@ class _EventFormState extends State<EventForm> {
                           });
                     },
                     child: Container(
-                        decoration: new BoxDecoration(
-                          color: image != null || widget.e != null
-                              ? Colors.transparent
-                              : Colors.grey,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(30),
-                          //border: Border.all(width: 4.0, color: Colors.yellow[800]),
-                        ),
                         padding: EdgeInsets.all(20),
                         height: 150,
-                        width: MediaQuery.of(context).size.width - 100,
+                        width: MediaQuery.of(context).size.width,
                         child: Center(
                             child: widget.e == null
                                 ? image != null
                                     ? Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.center,
                                         children: [
-                                            Image.file(
-                                              image,
-                                              fit: BoxFit.fill,
+                                            Container(
+                                              height: 100,
+                                              width: MediaQuery.of(context).size.width*0.5,
+                                              child: Image.file(
+                                                image,
+                                                height: 100,
+                                                width: MediaQuery.of(context).size.width*0.5,
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 15,
                                             ),
                                             Container(
+                                              // height: MediaQuery.of(context).size.height,
+                                              // width: MediaQuery.of(context).size.width*0.7,
                                                 alignment:
                                                     Alignment.bottomCenter,
                                                 child: GestureDetector(
@@ -224,26 +227,41 @@ class _EventFormState extends State<EventForm> {
                                                               1)),
                                                 ))
                                           ])
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Icon(Icons.add_a_photo),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text("Upload an image")
-                                        ],
-                                      )
+                                    : Container(
+                                      height: 150,
+                                      width: MediaQuery.of(context).size.width*0.7,
+                                      decoration: new BoxDecoration(
+                                        color: Colors.grey,
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.circular(30),
+                                        //border: Border.all(width: 4.0, color: Colors.yellow[800]),
+                                      ),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.add_a_photo),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text("Upload an image")
+                                          ],
+                                        ),
+                                    )
                                 : image == null
                                     ? Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.center,
                                         children: [
-                                            Image.network(
-                                              widget.e.imageUrl,
-                                              fit: BoxFit.fill,
+                                            Container(
+                                              child: Image.network(
+                                                widget.e.imageUrl,
+                                                height: 100,
+                                                width: MediaQuery.of(context).size.width*0.5,
+                                                fit: BoxFit.fill,
+                                              ),
                                             ),
+                                            SizedBox(width: 20,),
                                             Container(
                                                 alignment:
                                                     Alignment.bottomCenter,

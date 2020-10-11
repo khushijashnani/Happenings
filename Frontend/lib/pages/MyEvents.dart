@@ -247,14 +247,15 @@ class _EventsListState extends State<EventsList> {
                                       EventForm(org_id: widget.id)));
                         },
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(Icons.add_circle, color: Colors.yellow[800]),
+                          // Icon(Icons.add_circle, color: Colors.yellow[800]),
                           Container(
                             padding: EdgeInsets.fromLTRB(5, 25, 25, 25),
-                            child: Text(
-                              "Post an event",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
+                            child: Icon(Icons.add_circle, color: Colors.yellow[800]),
+                            // Text(
+                            //   "Post an event",
+                            //   style:
+                            //       TextStyle(color: Colors.white, fontSize: 15),
+                            // ),
                           ),
                         ]))
                   ],

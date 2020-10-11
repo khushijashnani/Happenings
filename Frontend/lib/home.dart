@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uvento/constants.dart';
 import 'package:uvento/models/attendee.dart';
+import 'package:uvento/models/event.dart';
 import 'package:uvento/models/organisation.dart';
 import 'package:uvento/pages/AttendeeHomeScreen.dart';
 import 'package:uvento/pages/AttendeeProfile.dart';
@@ -36,6 +37,7 @@ class _HomeState extends State<Home> {
   Organisation organisation;
   List reviews = [];
   List reg_events = [];
+  List<Event> favourites = [];
 
   @override
   void dispose() {
@@ -62,7 +64,10 @@ class _HomeState extends State<Home> {
       var userDetails = json.decode(response2.body)['user_details'];
       var user_reviews;
       var registered_events;
+      var favs;
+
       if (type == ATTENDEE) {
+        favs = json.decode(response2.body)['favourites'];
         user_reviews = json.decode(response2.body)['reviews'];
         registered_events = json.decode(response2.body)['events'];
         print(registered_events);
@@ -70,6 +75,9 @@ class _HomeState extends State<Home> {
       }
 
       setState(() {
+        for (Map f in favs) {
+          favourites.add(Event.fromMap(f));
+        }
         reg_events = registered_events;
         reviews = user_reviews;
         if (type == 'ATTENDEE') {
@@ -100,11 +108,6 @@ class _HomeState extends State<Home> {
 
         loading = false;
       });
-
-      Fluttertoast.showToast(
-          msg: "Loading Successful",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM);
     } else {
       setState(() {
         loading = false;
@@ -229,9 +232,11 @@ class _HomeState extends State<Home> {
                   children: type == ATTENDEE
                       ? <Widget>[
                           AttendeeHomeScreen(
+                            favs : favourites,
                               name: attendee.name, attendee: attendee),
                           FilterPage(),
                           AttendeeProfile(
+                              favs: favourites,
                               attendee: attendee,
                               reviews: reviews,
                               allEvents: reg_events)
