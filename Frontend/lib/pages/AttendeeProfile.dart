@@ -10,10 +10,15 @@ import 'package:uvento/models/attendee.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:uvento/models/event.dart';
+import 'package:intl/intl.dart';
 
 class AttendeeProfile extends StatefulWidget {
   Attendee attendee;
-  AttendeeProfile({Key key, this.attendee}) : super(key: key);
+  List reviews;
+  List allEvents;
+  AttendeeProfile({Key key, this.attendee, this.reviews, this.allEvents})
+      : super(key: key);
 
   @override
   _AttendeeProfileState createState() => _AttendeeProfileState();
@@ -23,11 +28,36 @@ class _AttendeeProfileState extends State<AttendeeProfile>
     with SingleTickerProviderStateMixin {
   double screenWidth, screenHeight;
   TabController tabController;
+  bool loading = false;
+  List<Event> events = [];
+
+  Future<void> getevents() async {
+    var response =
+        await http.get('https://rpk-happenings.herokuapp.com/events');
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      setState(() {
+        for (int i = 0; i < widget.reviews.length; i++) {
+          for (Map l in widget.allEvents) {
+            Event e = Event.fromMap(l);
+            if (e.id == widget.reviews[i]["event_id"]) {
+              events.add(e);
+            }
+          }
+        }
+        print(events);
+      });
+    } else {
+      print(response.body);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    print(widget.reviews);
+    getevents();
   }
 
   @override
@@ -387,14 +417,19 @@ class _AttendeeProfileState extends State<AttendeeProfile>
       padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: ListView.builder(
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-          itemCount: 5,
+          itemCount: widget.reviews.length,
           itemBuilder: (context, index) {
-            return reviewCards();
+            return reviewCards(index);
           }),
     );
   }
 
-  Widget reviewCards() {
+  Widget reviewCards(int index) {
+    String startdate = DateFormat('d MMM, yyyy').format(events[index].startDate);
+    String enddate = DateFormat('d MMM, yyyy').format(events[index].endDate);
+    int date = events[index].startDate.day;
+    int rating =int.parse(widget.reviews[index]["rating"]);
+
     return Padding(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
         child: Material(
@@ -415,7 +450,7 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                         padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
                         child: Container(
                             width: screenWidth * 0.8,
-                            child: AutoSizeText("Marathon Bounce",
+                            child: AutoSizeText(events[index].title,
                                 maxLines: 2,
                                 style: TextStyle(
                                     color: Colors.white,
@@ -426,7 +461,10 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                         child: Container(
                             width: screenWidth * 0.8,
                             child: AutoSizeText(
-                                "Mon, 26 July 2000 - Wed, 28 July 2020",
+                                //"Mon, 26 July 2000 - Wed, 28 July 2020",
+                                startdate == enddate
+                                ? startdate
+                                : date.toString() + " - " + startdate,
                                 style: TextStyle(
                                   color: Colors.grey,
                                 )))),
@@ -434,8 +472,8 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                         padding: EdgeInsets.fromLTRB(15, 8, 15, 5),
                         child: Container(
                             width: screenWidth * 0.8,
-                            child: Text(
-                                "It was a wonderful event!! Enjoyed a lott and hope to see more such events...Thank You so much for it",
+                            child: Text(widget.reviews[index]["review"],
+                                //"It was a wonderful event!! Enjoyed a lott and hope to see more such events...Thank You so much for it",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 15)))),
                     Padding(
@@ -443,27 +481,37 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                         child: Container(
                             width: screenWidth * 0.8,
                             child: Row(
+                              mainAxisAlignment : MainAxisAlignment.start,
                               children: [
-                                Icon(
+                                rating >= 1 ? Icon(
                                   Icons.star,
                                   color: Colors.yellow[800],
-                                ),
-                                SizedBox(width: 5),
-                                Icon(
+                                ) : Container(),
+                                rating > 1 ? SizedBox(width: 5) : Container(),
+
+                                rating >= 2 ? Icon(
                                   Icons.star,
                                   color: Colors.yellow[800],
-                                ),
-                                SizedBox(width: 5),
-                                Icon(
+                                ) : Container(),
+                                rating > 2 ? SizedBox(width: 5) : Container(),
+
+                                rating >= 3 ? Icon(
                                   Icons.star,
                                   color: Colors.yellow[800],
-                                ),
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.star_half,
+                                ) : Container(),
+                                rating > 3 ? SizedBox(width: 5) : Container(),
+                                
+                                rating >= 4 ? Icon(
+                                  Icons.star,
                                   color: Colors.yellow[800],
-                                ),
-                                SizedBox(width: 5),
+                                ) : Container(),
+                                rating > 4 ? SizedBox(width: 5) : Container(),
+
+                                rating >= 5 ? Icon(
+                                  Icons.star,
+                                  color: Colors.yellow[800],
+                                ) : Container(),
+                                rating > 5 ? SizedBox(width: 5) : Container(),
                               ],
                             ))),
                     Padding(
@@ -474,13 +522,13 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Positive",
+                                  widget.reviews[index]["sentiment"],
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
                                 ),
-                                Text("- Priyav Mehta",
+                                Text("- " + widget.attendee.name,
                                     style: TextStyle(
                                         color: Colors.grey,
                                         fontStyle: FontStyle.italic,

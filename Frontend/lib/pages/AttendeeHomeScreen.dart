@@ -42,7 +42,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
         for (Map l in data) {
           allEvents.add(Event.fromMap(l));
         }
-       // print(allEvents[0].toJson());
+        // print(allEvents[0].toJson());
       });
     } else {
       print(response.body);
@@ -158,7 +158,8 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                               SizedBox(width: 5),
                               Container(
                                 width: screenWidth / 2 - 68,
-                                child: AutoSizeText(e.entryamount.toString() + " /-",
+                                child: AutoSizeText(
+                                    e.entryamount.toString() + " /-",
                                     maxLines: 2,
                                     style: TextStyle(
                                         color: Colors.white,
@@ -366,6 +367,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                             return EventTile(
                               imgAssetPath: eventsType[index].imgAssetPath,
                               eventType: eventsType[index].eventType,
+                              icon : eventsType[index].icon
                             );
                           }),
                     ),
@@ -461,9 +463,10 @@ class DateTile extends StatelessWidget {
 }
 
 class EventTile extends StatelessWidget {
+  final Icon icon;
   final String imgAssetPath;
   final String eventType;
-  EventTile({this.imgAssetPath, this.eventType});
+  EventTile({this.imgAssetPath, this.eventType, this.icon});
 
   Future<List<Event>> getCatEvents(category) async {
     List<Event> list = [];
@@ -495,7 +498,6 @@ class EventTile extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => SearchEventList(
-                     
                       list: catEvents,
                     )));
       },
@@ -508,7 +510,9 @@ class EventTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset(
+            icon !=null
+            ?icon
+            :Image.asset(
               imgAssetPath,
               height: 27,
               color: Colors.yellow[800],

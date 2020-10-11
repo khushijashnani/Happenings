@@ -452,8 +452,8 @@ def addEvent(row):
 class EventApi(Resource):
 
     def get(self):
-
-        event_id = request.get_json()['event_id']
+        data = request.get_json()
+        event_id = int(data['event_id'])
         event = Event.query.get(event_id)
         e = addEvent(event)
         attendees = event.attendee

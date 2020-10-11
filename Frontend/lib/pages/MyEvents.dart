@@ -27,6 +27,8 @@ class _EventsListState extends State<EventsList> {
 
   getevents() async {
     var jsonData;
+    print(widget.type);
+    print(widget.id);
     var response = await http.get(
         'https://rpk-happenings.herokuapp.com/${widget.type}/${widget.id}/events');
     if (response.statusCode == 200) {
@@ -34,7 +36,7 @@ class _EventsListState extends State<EventsList> {
       for (Map l in data) {
         list.add(Event.fromMap(l));
       }
-      print(list[1].toJson());
+      //print(list[1].toJson());
     } else {
       print(response.body);
     }

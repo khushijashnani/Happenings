@@ -34,6 +34,8 @@ class _HomeState extends State<Home> {
   bool loading = false;
   Attendee attendee;
   Organisation organisation;
+  List reviews = [];
+  List reg_events = [];
 
   @override
   void dispose() {
@@ -53,14 +55,23 @@ class _HomeState extends State<Home> {
     });
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var response2 = await http.get(
-      'https://rpk-happenings.herokuapp.com/${type}/' +
-          sharedPreferences.getString("id"),
-      headers: {"Authorization": sharedPreferences.getString("token")}
-    );
+        'https://rpk-happenings.herokuapp.com/${type}/' +
+            sharedPreferences.getString("id"),
+        headers: {"Authorization": sharedPreferences.getString("token")});
     if (response2.statusCode == 200) {
       var userDetails = json.decode(response2.body)['user_details'];
-      print(userDetails);
+      var user_reviews;
+      var registered_events;
+      if (type == ATTENDEE) {
+        user_reviews = json.decode(response2.body)['reviews'];
+        registered_events = json.decode(response2.body)['events'];
+        print(registered_events);
+        print(userDetails);
+      }
+
       setState(() {
+        reg_events = registered_events;
+        reviews = user_reviews;
         if (type == 'ATTENDEE') {
           attendee = Attendee(
               username: userDetails['username'],
@@ -73,7 +84,6 @@ class _HomeState extends State<Home> {
               address: userDetails['address'],
               imageUrl: userDetails['image'],
               email: userDetails['email_id']);
-              
         } else {
           organisation = Organisation(
               username: userDetails['username'],
@@ -92,19 +102,17 @@ class _HomeState extends State<Home> {
       });
 
       Fluttertoast.showToast(
-        msg: "Loading Successful",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM
-      );
+          msg: "Loading Successful",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM);
     } else {
       setState(() {
         loading = false;
       });
       Fluttertoast.showToast(
-        msg: "Loading failed",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM
-      );
+          msg: "Loading failed",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM);
       print(response2.body);
     }
   }
@@ -195,42 +203,50 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: loading ? 
-      Scaffold(
-        backgroundColor: Color(0xff102733),
-        body: Align(
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Loading User details...",
-                  style: TextStyle(color: Colors.white, fontSize: 20)),
-              SizedBox(
-                height: 20,
+      child: loading
+          ? Scaffold(
+              backgroundColor: Color(0xff102733),
+              body: Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Loading User details...",
+                        style: TextStyle(color: Colors.white, fontSize: 20)),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    CircularProgressIndicator()
+                  ],
+                ),
               ),
-              CircularProgressIndicator()
-            ],
-          ),
-        ),
-      ): 
-      Scaffold(
-        backgroundColor: Color(0xff102733),
-        bottomNavigationBar: getBottomNav(),
-        body: IndexedStack(
-          index: _page,
-          children: type == ATTENDEE ? 
-          <Widget>[
-            AttendeeHomeScreen(name : attendee.name, attendee: attendee),
-            FilterPage(),
-            AttendeeProfile(attendee:attendee)
-          ]
-          : <Widget>[
-            OrganiserHomeScreen(organisation: organisation,),
-            EventsList(id:organisation.id,type:type,name:organisation.name),
-            OrganisationProfile(organisation: organisation),
-          ]
-        ),
-      ),
+            )
+          : Scaffold(
+              backgroundColor: Color(0xff102733),
+              bottomNavigationBar: getBottomNav(),
+              body: IndexedStack(
+                  index: _page,
+                  children: type == ATTENDEE
+                      ? <Widget>[
+                          AttendeeHomeScreen(
+                              name: attendee.name, attendee: attendee),
+                          FilterPage(),
+                          AttendeeProfile(
+                              attendee: attendee,
+                              reviews: reviews,
+                              allEvents: reg_events)
+                        ]
+                      : <Widget>[
+                          OrganiserHomeScreen(
+                            organisation: organisation,
+                          ),
+                          EventsList(
+                              id: organisation.id,
+                              type: type,
+                              name: organisation.name),
+                          OrganisationProfile(organisation: organisation),
+                        ]),
+            ),
     );
   }
 }
