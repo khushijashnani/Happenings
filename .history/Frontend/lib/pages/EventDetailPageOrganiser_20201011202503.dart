@@ -684,13 +684,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                 ),
                                 dateAndTime(
                                     Icon(
-                                      Icons.hourglass_empty,
+                                      Icons.hourglass_top_rounded,
                                       color: Colors.white,
                                     ),
                                     widget.event.startDate),
                                 dateAndTime(
                                     Icon(
-                                      Icons.hourglass_full,
+                                      Icons.hourglass_bottom_rounded,
                                       color: Colors.white,
                                     ),
                                     widget.event.endDate),

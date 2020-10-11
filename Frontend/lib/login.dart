@@ -328,6 +328,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         print("id=" + jsonData['id'].toString());
         sharedPreferences.setString("id", jsonData['id'].toString());
+        sharedPreferences.setString("type", type);
         sharedPreferences.setString(
             "token", "Bearer " + jsonData['access_token']);
 
