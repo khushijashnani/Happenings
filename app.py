@@ -416,7 +416,7 @@ class FaceRecognition(Resource):
         encodeList = []
         nameList = []
         for attendee in attendees:
-            url = attendee.verification_image
+            url = attendee.image
             url_response = urllib.request.urlopen(url)
             img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
             img = cv2.imdecode(img_array, -1)
@@ -724,10 +724,10 @@ class ManageFavourites(Resource):
 
 class RegisterForEvent(Resource):
     def post(self, user_id, event_id):
-        data = request.get_json()
-        img = data["url"]
+        #data = request.get_json()
+        #img = data["url"]
         user = Attendee.query.get(user_id)
-        user.verification_image = img
+        #user.verification_image = img
         event = Event.query.get(event_id)
         event.attendee.append(user)
         event.current_count = int(event.current_count) + 1
