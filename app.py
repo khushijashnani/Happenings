@@ -499,7 +499,7 @@ class UserLogin(Resource):
             return {'message': 'User doesn\'t exist.'}
         if user and safe_str_cmp(user.password, data['password']):
             access_token = create_access_token(
-                identity=user.id, expires_delta=datetime.timedelta(hours=30))
+                identity=user.id, expires_delta=datetime.timedelta(hours=300))
             #refresh_token = create_refresh_token(user.id)
             return {
                 'access_token': access_token,

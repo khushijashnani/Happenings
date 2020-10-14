@@ -29,6 +29,8 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   List<int> favs = [];
   List<int> registeredevents = [];
   List reviews = [];
+  TextEditingController content;
+  int rating = 1;
 
   getUserDetails() async {
     setState(() {
@@ -112,22 +114,40 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   @override
   void initState() {
     getUserDetails();
-
+    content = TextEditingController();
     super.initState();
   }
 
   Widget reviewsTab() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-      child: ListView.builder(
-          shrinkWrap: true,
-          primary: false,
-          physics: NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-          itemCount: reviews.length,
-          itemBuilder: (context, index) {
-            return reviewCards(index);
-          }),
+      child: Column(
+        children :[
+           Padding(
+            padding:
+                const EdgeInsets.fromLTRB(30, 20, 30, 10),
+            child: Container(
+              width: screenWidth - 60,
+              child: Text(
+                "Reviews",
+                style: GoogleFonts.raleway(
+                    color: Colors.yellow[800],
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20),
+              ),
+            ),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            primary: false,
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            itemCount: reviews.length,
+            itemBuilder: (context, index) {
+              return reviewCards(index);
+            }),
+        ]
+      )
     );
   }
 
@@ -330,26 +350,31 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: Colors.black.withOpacity(0.3),
                         child: InkWell(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            onTap: () async {
-                              SharedPreferences sharedPreferences =
-                                  await SharedPreferences.getInstance();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EventForm(
-                                          org_id: int.parse(sharedPreferences
-                                              .getString('id')),
-                                          e: widget.event)));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            )))
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          onTap: () async {
+                            SharedPreferences sharedPreferences =
+                                await SharedPreferences.getInstance();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EventForm(
+                                      org_id: int.parse(sharedPreferences
+                                          .getString('id')),
+                                      e: widget.event
+                                )
+                              )
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          )
+                        )
+                      )
                     : Container(),
               ],
             ),
@@ -382,16 +407,17 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
         padding: const EdgeInsets.fromLTRB(30, 2, 30, 2),
         child: Row(children: [
           Material(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: CARD,
-              elevation: 5,
-              shadowColor: Colors.black,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: InkWell(
-                  child: icon,
-                ),
-              )),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: CARD,
+            elevation: 5,
+            shadowColor: Colors.black,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: InkWell(
+                child: icon,
+              ),
+            )
+          ),
           SizedBox(
             width: 0,
           ),
@@ -410,7 +436,9 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
               maxLines: 2,
             ),
           )
-        ]));
+        ]
+      )
+    );
   }
 
   Widget address() {
@@ -438,22 +466,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             child: AutoSizeText(
               widget.event.location,
               style: TextStyle(color: Colors.white),
+              
               maxLines: 4,
             ),
           ),
-          Expanded(
-              child: Container(
-            alignment: Alignment.centerRight,
-            padding: EdgeInsets.all(5),
-            child: InkWell(
-              onTap: () {},
-              child: Text(
-                "Get location",
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-          ))
-        ]));
+        ]
+      )
+    );
   }
 
   Widget ticketPrice() {
@@ -474,9 +493,6 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                   size: 20,
                 )),
               )),
-          // SizedBox(
-          //   width: 10,
-          // ),
           Container(
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.fromLTRB(20, 15, 30, 15),
@@ -494,11 +510,9 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
 
-    // String startdate = DateFormat('d MMM, yyyy').format(widget.event.startDate);
-    // String enddate = DateFormat('d MMM, yyyy').format(widget.event.endDate);
-
     return loading
         ? Container(
+            color: BACKGROUND,
             height: screenHeight,
             width: screenWidth,
             child: Center(
@@ -576,13 +590,17 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                             loading = false;
                                                             favourite = true;
                                                           });
-                                                           Navigator.of(context)
-                                                  .pushReplacement(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Home(
-                                                                type: ATTENDEE,
-                                                              )));
+                                                          Navigator.of(context)
+                                                              .pushReplacement(
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              Home(
+                                                                                type: ATTENDEE,
+                                                                              )));
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Added to favourites.");
                                                         } else {
                                                           print(fav.body);
                                                         }
@@ -639,13 +657,17 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                             loading = false;
                                                             favourite = false;
                                                           });
-                                                           Navigator.of(context)
-                                                  .pushReplacement(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Home(
-                                                                type: ATTENDEE,
-                                                              )));
+                                                          Navigator.of(context)
+                                                              .pushReplacement(
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              Home(
+                                                                                type: ATTENDEE,
+                                                                              )));
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Removed from favourites.");
                                                         } else {
                                                           print(fav.body);
                                                         }
@@ -672,7 +694,6 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                     ),
                                     color: CARD,
                                     child: Container(
-                                      // width: screenWidth/2,
                                       padding: EdgeInsets.all(10),
                                       child: Row(
                                         children: [
@@ -761,57 +782,15 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                     ),
                                   ),
                                 ),
-                                Divider(color: Colors.grey,indent: 20,endIndent: 20,),
-                                // Padding(
-                                //   padding:
-                                //       const EdgeInsets.fromLTRB(30, 10, 30, 0),
-                                //   child: Container(
-                                //     width: screenWidth - 60,
-                                //     child: Text(
-                                //       "Reviews",
-                                //       style: GoogleFonts.raleway(
-                                //           color: Colors.yellow[800],
-                                //           fontWeight: FontWeight.w500,
-                                //           fontSize: 20),
-                                //     ),
-                                //   ),
-                                // ),
-
-                                // Form(
-                                //   child: Center(
-                                //     child: ConstrainedBox(
-                                //       constraints: BoxConstraints.tight(Size(300, 80)),
-                                //       child: TextFormField(
-                                //         validator: (value) {
-                                //           if (value.isEmpty) {
-                                //             return 'Please enter your username';
-                                //           }
-                                //           // if (!RegExp(r"^(?=.*\d)[\d]{10}$")
-                                //           //     .hasMatch(phoneController.text)) {
-                                //           //   return "Only 10 digits allowed\nDon't Include Country Code";
-                                //           // }
-                                //           return null;
-                                //         },
-                                //         style: TextStyle(color: Colors.white),
-                                //         controller: usernameController,
-                                //         decoration: InputDecoration(
-                                //           border: new OutlineInputBorder(
-                                //             borderRadius:
-                                //                 new BorderRadius.circular(25.0),
-                                //             borderSide: new BorderSide(),
-                                //           ),
-                                //           labelStyle: TextStyle(color: Colors.yellow[600]),
-                                //           icon: Icon(Icons.person, color: Colors.white),
-                                //           hintText: "Username",
-                                //           hintStyle: TextStyle(color: Colors.grey)
-                                //         ),
-                                //       ),
-                                //     )
-                                //   ),
-                                // ),
-                                
-                                reviewsTab(),
-                                SizedBox(height: 60),
+                                Divider(
+                                  color: Colors.grey,
+                                  indent: 20,
+                                  endIndent: 20,
+                                ),
+                                reviews.length != 0
+                                ? reviewsTab()
+                                : Container(),
+                                SizedBox(height: 70),
                               ],
                             )),
                       ],
@@ -836,10 +815,11 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0))),
                                   title: Text(
-                                    'Are you sure about registering?',
+                                    'Are you sure about registering?\nYour profile image will be used for validating you at the day of the event.',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Color(0xff102733),
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -877,6 +857,9 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         Home(type: ATTENDEE)));
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    "Registered for the event");
                                           } else {
                                             print(response.body);
                                           }
@@ -899,12 +882,10 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                         },
                         label: Text('Register',
                             style: TextStyle(color: BACKGROUND)),
-                        icon: Icon(
-                          Icons.arrow_forward_ios
-                        ),
+                        icon: Icon(Icons.arrow_forward_ios),
                         backgroundColor: Colors.yellow[800],
                       )
-                    : diff != null
+                    : (diff != null && diff.inDays > 0)
                         ? FloatingActionButton.extended(
                             backgroundColor: Colors.yellow[800],
                             onPressed: () {},
@@ -913,23 +894,283 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                           )
                         : FloatingActionButton.extended(
                             backgroundColor: Colors.yellow[800],
-                            onPressed: () {},
-                            label: Text("Event concluded",
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  elevation: 12,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (BuildContext bc) {
+                                    return StatefulBuilder(builder: (BuildContext
+                                            context,
+                                        StateSetter
+                                            setState /*You can rename this!*/) {
+                                      return Wrap(
+                                        children: [
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.6,
+                                            margin: EdgeInsets.all(15.0),
+                                            padding: EdgeInsets.fromLTRB(
+                                                18, 0, 18, 0),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            ),
+                                            child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(0.0),
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 5),
+                                                      child: Center(
+                                                          child: Container(
+                                                        height: 2,
+                                                        width: 50,
+                                                        color: Colors.black,
+                                                        margin: EdgeInsets.only(
+                                                            top: 20),
+                                                      )),
+                                                    ),
+                                                    Expanded(
+                                                      child: ListView(
+                                                        children: <Widget>[
+                                                          ListTile(
+                                                              title: Text(
+                                                                "Write a review",
+                                                                style: GoogleFonts.raleway(fontSize: 18, fontWeight: FontWeight.bold)
+                                                              ),
+                                                              subtitle: Text(
+                                                                " Happenings",
+                                                                style: GoogleFonts.raleway(fontSize: 13, fontWeight: FontWeight.bold)
+                                                              ),
+                                                              trailing: InkWell(
+                                                                onTap: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .cancel,
+                                                                  size: 30,
+                                                                  color: BACKGROUND,
+                                                                ),
+                                                              )),
+                                                          Divider(
+                                                            color: Colors.black,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10.0,
+                                                          ),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10),
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .blue[50],
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15.0)),
+                                                            child: TextField(
+                                                              minLines: 4,
+                                                              maxLines: 4,
+                                                              controller:
+                                                                  content,
+                                                              decoration: InputDecoration(
+                                                                  border:
+                                                                      InputBorder
+                                                                          .none,
+                                                                  hintText:
+                                                                      "Your review ...",
+                                                                  hintStyle: TextStyle(
+                                                                      color: Colors
+                                                                          .grey)),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 20.0,
+                                                          ),
+                                                          Container(
+                                                            padding: EdgeInsets.fromLTRB(10,0,10, 0),
+                                                            child:Text("Choose your Rating", 
+                                                            style: GoogleFonts.raleway(fontSize: 15, fontWeight: FontWeight.bold))
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10.0,
+                                                          ),
+                                                          Container(
+                                                            padding: EdgeInsets.fromLTRB(10,0,10, 0),
+                                                            child: Row(
+                                                              children: [
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      print("1");
+                                                                      setState(
+                                                                          () {
+                                                                        rating =
+                                                                            1;
+                                                                      });
+                                                                    },
+                                                                    child: rating <
+                                                                            1
+                                                                        ? Icon(Icons
+                                                                            .star_border)
+                                                                        : Icon(
+                                                                            Icons
+                                                                                .star,
+                                                                            color:
+                                                                                Colors.yellow[800],
+                                                                          )),
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      print("2");
+                                                                      setState(
+                                                                          () {
+                                                                        rating =
+                                                                            2;
+                                                                      });
+                                                                    },
+                                                                    child: rating <
+                                                                            2
+                                                                        ? Icon(Icons
+                                                                            .star_border)
+                                                                        : Icon(
+                                                                            Icons
+                                                                                .star,
+                                                                            color:
+                                                                                Colors.yellow[800],
+                                                                          )),
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      print("3");
+                                                                      setState(
+                                                                          () {
+                                                                        rating =
+                                                                            3;
+                                                                      });
+                                                                    },
+                                                                    child: rating <
+                                                                            3
+                                                                        ? Icon(Icons
+                                                                            .star_border)
+                                                                        : Icon(
+                                                                            Icons
+                                                                                .star,
+                                                                            color:
+                                                                                Colors.yellow[800],
+                                                                          )),
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      print("4");
+                                                                      setState(
+                                                                          () {
+                                                                        rating =
+                                                                            4;
+                                                                      });
+                                                                    },
+                                                                    child: rating <
+                                                                            4
+                                                                        ? Icon(Icons
+                                                                            .star_border)
+                                                                        : Icon(
+                                                                            Icons
+                                                                                .star,
+                                                                            color:
+                                                                                Colors.yellow[800],
+                                                                          )),
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      print("5");
+                                                                      setState(
+                                                                          () {
+                                                                        rating =
+                                                                            5;
+                                                                      });
+                                                                    },
+                                                                    child: rating <
+                                                                            5
+                                                                        ? Icon(Icons
+                                                                            .star_border)
+                                                                        : Icon(
+                                                                            Icons
+                                                                                .star,
+                                                                            color:
+                                                                                Colors.yellow[800],
+                                                                          )),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10.0,
+                                                          ),
+                                                          Container(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .all(
+                                                                      10.0),
+                                                              child: Row(
+                                                                children: <
+                                                                    Widget>[
+                                                                  SizedBox(
+                                                                      width: 5),
+                                                                  Spacer(),
+                                                                  InkWell(
+                                                                    onTap:
+                                                                        () {},
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundColor:BACKGROUND,
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .arrow_forward,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 30.0,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                                  });
+                            },
+                            label: Text("Write a review",
                                 style: TextStyle(color: BACKGROUND)),
                           )
                 : diff != null
-                        ? FloatingActionButton.extended(
-                            backgroundColor: Colors.yellow[800],
-                            onPressed: () {},
-                            label: Text(diff.inDays.toString() + " days to go",
-                                style: TextStyle(color: BACKGROUND)),
-                          )
-                        : FloatingActionButton.extended(
-                            backgroundColor: Colors.yellow[800],
-                            onPressed: () {},
-                            label: Text("Event concluded",
-                                style: TextStyle(color: BACKGROUND)),
-                          )
-          );
+                    ? FloatingActionButton.extended(
+                        backgroundColor: Colors.yellow[800],
+                        onPressed: () {},
+                        label: Text(diff.inDays.toString() + " days to go",
+                            style: TextStyle(color: BACKGROUND)),
+                      )
+                    : FloatingActionButton.extended(
+                        backgroundColor: Colors.yellow[800],
+                        onPressed: () {},
+                        label: Text("Event concluded",
+                            style: TextStyle(color: BACKGROUND)),
+                      ));
   }
 }
