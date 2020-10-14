@@ -14,3 +14,5 @@ gunicorn
 opencv-python-headless
 textblob
 Flask-Mail
+face_recognition
+dlib

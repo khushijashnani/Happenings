@@ -61,6 +61,14 @@ registration = db.Table('registration',
                             'attendee.id'), nullable=False),
                         db.Column('event_id', db.Integer, db.ForeignKey('event.id'), nullable=False))
 
+# class registration(db.Model):
+
+#     __tablename__ = 'registration'
+#     id = db.Column(db.Integer, primary_key=True)
+#     attendee_id = db.Column(db.Integer, db.ForeignKey('attendee.id'), nullable=False)
+#     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+#     status = db.Column(db.String(50),default = 'Registered')
+#     unique_key = db.Column(db.String(10))
 
 class User(db.Model):
     __abstract__ = True
@@ -128,7 +136,8 @@ class Attendee(User):
             'password': user.password,
             'username': user.username,
             'age': user.age,
-            'gender': user.gender}
+            'gender': user.gender,
+            'verification_img':user.verification_image }
 
         for favourite in favourites:
             event_id = favourite.event_id

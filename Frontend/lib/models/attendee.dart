@@ -9,18 +9,18 @@ class Attendee {
   String address;
   String phone_no;
   String email;
+  String verificationImage;
 
-  Attendee({
-    this.id,
-    this.name,
-    this.address,
-    this.age,
-    this.gender,
-    this.imageUrl,
-    this.password,
-    this.username,
-    this.phone_no,
-    this.email
-  });
-
+  Attendee(
+      {this.id,
+      this.name,
+      this.address,
+      this.age,
+      this.gender,
+      this.imageUrl,
+      this.password,
+      this.username,
+      this.phone_no,
+      this.verificationImage,
+      this.email});
 }

@@ -84,6 +84,7 @@ class _HomeState extends State<Home> {
         reviews = user_reviews;
         if (type == 'ATTENDEE') {
           attendee = Attendee(
+              verificationImage: userDetails['verification_img'],
               username: userDetails['username'],
               password: userDetails['password'],
               id: userDetails['id'],
