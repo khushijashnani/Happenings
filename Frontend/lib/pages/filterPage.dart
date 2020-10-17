@@ -270,7 +270,7 @@ class _FilterPageState extends State<FilterPage> {
 
     return loading ? 
       Scaffold(
-        backgroundColor: Color(0xff102733),
+        backgroundColor: BACKGROUND,
         body: Align(
           alignment: Alignment.center,
           child: Column(

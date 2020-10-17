@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uvento/AttendeeList.dart';
 import 'package:uvento/eventform.dart';
 import 'package:uvento/home.dart';
 import 'package:uvento/models/event.dart';
@@ -120,12 +121,10 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
 
   Widget reviewsTab() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-      child: Column(
-        children :[
-           Padding(
-            padding:
-                const EdgeInsets.fromLTRB(30, 20, 30, 10),
+        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
             child: Container(
               width: screenWidth - 60,
               child: Text(
@@ -138,17 +137,15 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             ),
           ),
           ListView.builder(
-            shrinkWrap: true,
-            primary: false,
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-            itemCount: reviews.length,
-            itemBuilder: (context, index) {
-              return reviewCards(index);
-            }),
-        ]
-      )
-    );
+              shrinkWrap: true,
+              primary: false,
+              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              itemCount: reviews.length,
+              itemBuilder: (context, index) {
+                return reviewCards(index);
+              }),
+        ]));
   }
 
   Widget reviewCards(int index) {
@@ -350,31 +347,26 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         color: Colors.black.withOpacity(0.3),
                         child: InkWell(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          onTap: () async {
-                            SharedPreferences sharedPreferences =
-                                await SharedPreferences.getInstance();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EventForm(
-                                      org_id: int.parse(sharedPreferences
-                                          .getString('id')),
-                                      e: widget.event
-                                )
-                              )
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          )
-                        )
-                      )
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            onTap: () async {
+                              SharedPreferences sharedPreferences =
+                                  await SharedPreferences.getInstance();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EventForm(
+                                          org_id: int.parse(sharedPreferences
+                                              .getString('id')),
+                                          e: widget.event)));
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            )))
                     : Container(),
               ],
             ),
@@ -407,17 +399,16 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
         padding: const EdgeInsets.fromLTRB(30, 2, 30, 2),
         child: Row(children: [
           Material(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: CARD,
-            elevation: 5,
-            shadowColor: Colors.black,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: InkWell(
-                child: icon,
-              ),
-            )
-          ),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: CARD,
+              elevation: 5,
+              shadowColor: Colors.black,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: InkWell(
+                  child: icon,
+                ),
+              )),
           SizedBox(
             width: 0,
           ),
@@ -436,9 +427,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
               maxLines: 2,
             ),
           )
-        ]
-      )
-    );
+        ]));
   }
 
   Widget address() {
@@ -466,13 +455,10 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             child: AutoSizeText(
               widget.event.location,
               style: TextStyle(color: Colors.white),
-              
               maxLines: 4,
             ),
           ),
-        ]
-      )
-    );
+        ]));
   }
 
   Widget ticketPrice() {
@@ -788,8 +774,8 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                   endIndent: 20,
                                 ),
                                 reviews.length != 0
-                                ? reviewsTab()
-                                : Container(),
+                                    ? reviewsTab()
+                                    : Container(),
                                 SizedBox(height: 70),
                               ],
                             )),
@@ -943,23 +929,31 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                         children: <Widget>[
                                                           ListTile(
                                                               title: Text(
-                                                                "Write a review",
-                                                                style: GoogleFonts.raleway(fontSize: 18, fontWeight: FontWeight.bold)
-                                                              ),
+                                                                  "Write a review",
+                                                                  style: GoogleFonts.raleway(
+                                                                      fontSize:
+                                                                          18,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold)),
                                                               subtitle: Text(
-                                                                " Happenings",
-                                                                style: GoogleFonts.raleway(fontSize: 13, fontWeight: FontWeight.bold)
-                                                              ),
+                                                                  " Happenings",
+                                                                  style: GoogleFonts.raleway(
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold)),
                                                               trailing: InkWell(
                                                                 onTap: () {
                                                                   Navigator.pop(
                                                                       context);
                                                                 },
                                                                 child: Icon(
-                                                                  Icons
-                                                                      .cancel,
+                                                                  Icons.cancel,
                                                                   size: 30,
-                                                                  color: BACKGROUND,
+                                                                  color:
+                                                                      BACKGROUND,
                                                                 ),
                                                               )),
                                                           Divider(
@@ -999,20 +993,34 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                             height: 20.0,
                                                           ),
                                                           Container(
-                                                            padding: EdgeInsets.fromLTRB(10,0,10, 0),
-                                                            child:Text("Choose your Rating", 
-                                                            style: GoogleFonts.raleway(fontSize: 15, fontWeight: FontWeight.bold))
-                                                          ),
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                          10,
+                                                                          0,
+                                                                          10,
+                                                                          0),
+                                                              child: Text(
+                                                                  "Choose your Rating",
+                                                                  style: GoogleFonts.raleway(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold))),
                                                           SizedBox(
                                                             height: 10.0,
                                                           ),
                                                           Container(
-                                                            padding: EdgeInsets.fromLTRB(10,0,10, 0),
+                                                            padding: EdgeInsets
+                                                                .fromLTRB(10, 0,
+                                                                    10, 0),
                                                             child: Row(
                                                               children: [
                                                                 GestureDetector(
                                                                     onTap: () {
-                                                                      print("1");
+                                                                      print(
+                                                                          "1");
                                                                       setState(
                                                                           () {
                                                                         rating =
@@ -1024,14 +1032,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                                         ? Icon(Icons
                                                                             .star_border)
                                                                         : Icon(
-                                                                            Icons
-                                                                                .star,
+                                                                            Icons.star,
                                                                             color:
                                                                                 Colors.yellow[800],
                                                                           )),
                                                                 GestureDetector(
                                                                     onTap: () {
-                                                                      print("2");
+                                                                      print(
+                                                                          "2");
                                                                       setState(
                                                                           () {
                                                                         rating =
@@ -1043,14 +1051,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                                         ? Icon(Icons
                                                                             .star_border)
                                                                         : Icon(
-                                                                            Icons
-                                                                                .star,
+                                                                            Icons.star,
                                                                             color:
                                                                                 Colors.yellow[800],
                                                                           )),
                                                                 GestureDetector(
                                                                     onTap: () {
-                                                                      print("3");
+                                                                      print(
+                                                                          "3");
                                                                       setState(
                                                                           () {
                                                                         rating =
@@ -1062,14 +1070,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                                         ? Icon(Icons
                                                                             .star_border)
                                                                         : Icon(
-                                                                            Icons
-                                                                                .star,
+                                                                            Icons.star,
                                                                             color:
                                                                                 Colors.yellow[800],
                                                                           )),
                                                                 GestureDetector(
                                                                     onTap: () {
-                                                                      print("4");
+                                                                      print(
+                                                                          "4");
                                                                       setState(
                                                                           () {
                                                                         rating =
@@ -1081,14 +1089,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                                         ? Icon(Icons
                                                                             .star_border)
                                                                         : Icon(
-                                                                            Icons
-                                                                                .star,
+                                                                            Icons.star,
                                                                             color:
                                                                                 Colors.yellow[800],
                                                                           )),
                                                                 GestureDetector(
                                                                     onTap: () {
-                                                                      print("5");
+                                                                      print(
+                                                                          "5");
                                                                       setState(
                                                                           () {
                                                                         rating =
@@ -1100,8 +1108,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                                         ? Icon(Icons
                                                                             .star_border)
                                                                         : Icon(
-                                                                            Icons
-                                                                                .star,
+                                                                            Icons.star,
                                                                             color:
                                                                                 Colors.yellow[800],
                                                                           )),
@@ -1125,10 +1132,72 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                                                   Spacer(),
                                                                   InkWell(
                                                                     onTap:
-                                                                        () {},
+                                                                        () async {
+                                                                      print(
+                                                                          rating);
+                                                                      print(content
+                                                                          .text);
+                                                                      setState(
+                                                                          () {
+                                                                        loading =
+                                                                            true;
+                                                                      });
+                                                                      SharedPreferences
+                                                                          sharedPreferences =
+                                                                          await SharedPreferences
+                                                                              .getInstance();
+                                                                      int id = int.parse(
+                                                                          sharedPreferences
+                                                                              .getString("id"));
+                                                                      Map data =
+                                                                          {
+                                                                        "event_id": int.parse(widget
+                                                                            .event
+                                                                            .id),
+                                                                        "review":
+                                                                            content.text,
+                                                                        "rating":
+                                                                            rating
+                                                                      };
+                                                                      var review = await http.post(
+                                                                          'https://rpk-happenings.herokuapp.com/add_review/' +
+                                                                              sharedPreferences.getString("id"),
+                                                                          headers: {
+                                                                            "Content-type":
+                                                                                "application/json",
+                                                                            "Accept":
+                                                                                "application/json",
+                                                                            "charset":
+                                                                                "utf-8",
+                                                                            "Authorization":
+                                                                                sharedPreferences.getString("token")
+                                                                          },
+                                                                          body: json.encode(data));
+                                                                      if (review
+                                                                              .statusCode ==
+                                                                          200) {
+                                                                        Navigator.pushReplacement(
+                                                                            context,
+                                                                            MaterialPageRoute(builder: (context) => Home(type: ATTENDEE)));
+                                                                        Fluttertoast.showToast(
+                                                                            msg:
+                                                                                "Review added");
+                                                                      } else {
+                                                                        Fluttertoast.showToast(
+                                                                            msg:
+                                                                                review.body);
+                                                                      }
+
+                                                                      setState(
+                                                                          () {
+                                                                        loading =
+                                                                            true;
+                                                                      });
+                                                                    },
                                                                     child:
                                                                         CircleAvatar(
-                                                                      backgroundColor:BACKGROUND,
+                                                                      backgroundColor:
+                                                                          BACKGROUND,
                                                                       child:
                                                                           Icon(
                                                                         Icons
@@ -1168,8 +1237,21 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                       )
                     : FloatingActionButton.extended(
                         backgroundColor: Colors.yellow[800],
-                        onPressed: () {},
-                        label: Text("Event concluded",
+                        onPressed: () async {
+                        
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => 
+                                    AttendeeList(
+                                      event_id: widget.event.id,
+                                      startDate: widget.event.startDate, 
+                                      endDate: widget.event.endDate
+                                    )
+                                )
+                            );
+                        },
+                        label: Text("See your attendees",
                             style: TextStyle(color: BACKGROUND)),
                       ));
   }

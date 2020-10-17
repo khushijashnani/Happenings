@@ -16,3 +16,4 @@ textblob
 Flask-Mail
 face_recognition
 dlib
+scikit-surprise

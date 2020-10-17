@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
   Attendee attendee;
   Organisation organisation;
   List reviews = [];
-  List reg_events = [];
+  List<Event> reg_events = [];
   List<Event> favourites = [];
   int revenue, no_of_events, org_reviews, attendees;
   Map pieData, barGraph, lineGraph, groupBarGraph;
@@ -80,7 +80,9 @@ class _HomeState extends State<Home> {
         for (Map f in favs) {
           favourites.add(Event.fromMap(f));
         }
-        reg_events = registered_events;
+        for (Map f in registered_events) {
+          reg_events.add(Event.fromMap(f));
+        }
         reviews = user_reviews;
         if (type == 'ATTENDEE') {
           attendee = Attendee(
@@ -232,7 +234,7 @@ class _HomeState extends State<Home> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Loading User details...",
+                    Text("Loading user details...",
                         style: TextStyle(color: Colors.white, fontSize: 20)),
                     SizedBox(
                       height: 20,

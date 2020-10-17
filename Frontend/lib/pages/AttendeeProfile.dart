@@ -14,13 +14,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:uvento/models/event.dart';
 import 'package:intl/intl.dart';
+import 'package:uvento/pages/AttendeeEditProfile.dart';
 import 'package:uvento/pages/EventDetailPageOrganiser.dart';
 import 'package:uvento/pages/SearchEventList.dart';
 
 class AttendeeProfile extends StatefulWidget {
   Attendee attendee;
   List reviews;
-  List allEvents;
+  List<Event> allEvents;
   List<Event> favs;
   AttendeeProfile(
       {Key key, this.attendee, this.reviews, this.allEvents, this.favs})
@@ -38,24 +39,23 @@ class _AttendeeProfileState extends State<AttendeeProfile>
   List<Event> events = [];
 
   Future<void> getevents() async {
-    var response =
-        await http.get('https://rpk-happenings.herokuapp.com/events');
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      setState(() {
-        for (int i = 0; i < widget.reviews.length; i++) {
-          for (Map l in widget.allEvents) {
-            Event e = Event.fromMap(l);
-            if (e.id == widget.reviews[i]["event_id"]) {
-              events.add(e);
-            }
+    // var response =
+    //     await http.get('https://rpk-happenings.herokuapp.com/events');
+    // if (response.statusCode == 200) {
+    //   var data = json.decode(response.body);
+    setState(() {
+      for (int i = 0; i < widget.reviews.length; i++) {
+        for (Event e in widget.allEvents) {
+          if (e.id == widget.reviews[i]["event_id"]) {
+            events.add(e);
           }
         }
-        print(events);
-      });
-    } else {
-      print(response.body);
-    }
+      }
+      print(events);
+    });
+    // } else {
+    //   print(response.body);
+    // }
   }
 
   @override
@@ -74,6 +74,7 @@ class _AttendeeProfileState extends State<AttendeeProfile>
 
   TabBar _getTabBar() {
     return TabBar(
+      unselectedLabelColor: Colors.white,
       indicatorColor: BACKGROUND,
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: new BubbleTabIndicator(
@@ -122,13 +123,13 @@ class _AttendeeProfileState extends State<AttendeeProfile>
     }
   }
 
-  
   Widget eventCard(Event e) {
     String startdate = DateFormat('d MMM, yyyy').format(e.startDate);
     String enddate = DateFormat('d MMM, yyyy').format(e.endDate);
     int date = e.startDate.day;
 
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       padding: const EdgeInsets.all(0.0),
       child: Material(
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -508,7 +509,6 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                                           color: CARD,
                                           child: InkWell(
                                             onTap: () {
-                                              
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (context) =>
@@ -557,17 +557,27 @@ class _AttendeeProfileState extends State<AttendeeProfile>
                                             Radius.circular(12),
                                           ),
                                           color: CARD,
-                                          child: Container(
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                    color: Colors.yellow[800],
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(12))),
-                                              child: Icon(Icons.edit,
-                                                  color: Colors.yellow[800])))),
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          AttendeeEditProfile(attendee: widget.attendee,)));
+                                            },
+                                            child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: Colors.yellow[800],
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                12))),
+                                                child: Icon(Icons.edit,
+                                                    color: Colors.yellow[800])),
+                                          ))),
                                   SizedBox(
                                     width: 1,
                                   ),
@@ -605,14 +615,29 @@ class _AttendeeProfileState extends State<AttendeeProfile>
     ]);
   }
 
-  Widget eventsTab(){
+  Widget eventsTab() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
       child: ListView.builder(
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-          itemCount: widget.reviews.length,
+          itemCount: widget.allEvents.length,
           itemBuilder: (context, index) {
-            return eventCard(events[index]);
+            if (widget.allEvents[index].endDate
+                    .difference(DateTime.now())
+                    .inDays <=
+                0) {
+              return Stack(
+                children: [
+                  eventCard(widget.allEvents[index]),
+                  Container(
+                    height: 160,
+                    color: CARD.withOpacity(0.6),
+                  )
+                ],
+              );
+            } else {
+              return eventCard(widget.allEvents[index]);
+            }
           }),
     );
   }

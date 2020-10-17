@@ -1,7 +1,8 @@
 TYPE    Username   Password
 O       zomato      zomato
-A       khushi Khushi@123
-
+A       khushi      Khushi@123
+A       priyav      priyav@123
+A       rishikaul   Rishi@123
 
 Categories : 
 Health & Wellness

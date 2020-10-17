@@ -235,7 +235,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
         child: Stack(
           children: <Widget>[
             Container(
-              decoration: BoxDecoration(color: Color(0xff102733)),
+              decoration: BoxDecoration(color: BACKGROUND),
             ),
             SingleChildScrollView(
               child: Container(

@@ -20,6 +20,8 @@ import pickle
 from textblob import TextBlob
 import cv2
 import face_recognition
+from recommend import getSimilarUsers
+from recommend import contentBasedRecommendations
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'assembler'
@@ -415,8 +417,10 @@ class FaceRecognition(Resource):
         attendees = event.attendee
         encodeList = []
         nameList = []
+        imageUrls = []
         for attendee in attendees:
             url = attendee.image
+            imageUrls.append(url)
             url_response = urllib.request.urlopen(url)
             img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
             img = cv2.imdecode(img_array, -1)
@@ -429,6 +433,7 @@ class FaceRecognition(Resource):
         data = dict()
         data["encodings"] = encodeList
         data["names"] = nameList
+        data['imageUrls'] = imageUrls
         return data
 
 class AadharApi(Resource):
@@ -752,6 +757,67 @@ class UserLogout(Resource):
         return {"message": "Successfully logged out"}, 200
 
 
+class Recommend(Resource):
+    def get(self, user_id, event_id):
+        events = Event.query.all()
+        content = {}
+        events = []
+        categories = []
+        locations = []
+        for e in events:
+            if (e.start_date - datetime.now()).minutes > 0:
+                events.append({ e.id : {"location" : e.location, 'category' : e.category,'startdate' : str(e.start_date.day),'enddate' : str(e.end_date.day),'cost' : e.entry_amount}})
+                if e.location not in locations:
+                    locations.append(e.location)
+                if e.category not in categories:
+                    categories.append(e.category)
+        content_based_recommendations_ids = contentBasedRecommendations(events, locations, categories, event_id, 3)
+        content_based_recommendations_events = []
+        for id in content_based_recommendations_ids:
+            e1 = Event.query.get(id)
+            content_based_recommendations_events.append(addEvent(e1))
+
+        users = Attendee.query.all()
+        user_id = []
+        user_events = []
+        user_ratings = []
+        for u in users:
+            user_reviews = u.reviews
+            for e in user_reviews :
+                user_id.append(e.attendee_id)
+                user_events.append(e.event_id)
+                user_ratings.append(e.rating)
+        data = {
+            "userID" : user_id,
+            "eventID" : user_events,
+            "rating" : user_ratings
+        }
+        attendee_sim = Attendee.query.filter_by(user_id=user_id).first()
+        attendee_events = []
+        attendee_events = attendee_sim.events
+        recommended_events = []
+        similar_users = getSimilarUsers(data,3,user_id)
+        for sim in similar_users:
+            attendee = Attendee.query.filter_by(user_id = sim).first()
+            sim_user_events = attendee.events
+            for e in sim_user_events:
+                if e not in attendee_events and (e.start_date - datetime.now()).minutes > 0 :
+                    recommended_events.append(addEvent(e))
+        return {
+            "user_based_recommended_events" : recommended_events,
+            "content_based_recommended_events" : content_based_recommendations_events
+        }
+        # return {
+        #     "userID" : user_id,
+        #     "eventID" : user_events,
+        #     "rating" : user_ratings,
+        #     "events" : events,
+        #     "categories" :categories,
+        #     "locations" : locations
+        # }
+
+
+
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     return decrypted_token['jti'] in BLACKLIST
@@ -821,6 +887,56 @@ api.add_resource(GetEvent, '/event/<int:event_id>')
 
 api.add_resource(UserLogout, '/logout')
 api.add_resource(FaceRecognition, '/validate_attendee/<int:event_id>')
+api.add_resource(Recommend, '/recommedations/<int:user_id>/<int:event_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# raw_data = {
+#     'userID': [1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3 ],
+#     'eventID': [1, 3, 6, 4, 1, 4, 6, 7, 10, 1, 4, 6, 8],
+#     'rating': [5, 4, 2, 3, 1, 5, 5, 2, 4, 5, 5, 4, 2]
+# }
+
+# content based raw data = 
+# 1) Dict of events = {
+    # 'id' : {
+    #     'location' : 'hjv',
+    #     'category' : 'hsd',
+    #     'startdate' : ,
+    #     'enddate' : ,
+    #     'cost' : 
+    # }
+# }
+# 2) List of categories
+# 3) list of locations
+# locations = ['Borivali','Kandivali','Malad','Goregaon','Andheri','Bandra','Dadar']
+
+
+# import pandas as pd
+# import heapq
+# from surprise import KNNBasic
+# from surprise import Reader, Dataset
+
+# def getSimilarUsers(data,n,user_id)
+#     df = pd.DataFrame(data)
+#     reader = Reader()
+#     data = Dataset.load_from_df(df[['userID', 'eventID', 'rating']], reader)
+#     trainSet = data.build_full_trainset()
+#     sim_options = {'name': 'cosine','user_based': True}
+#     model = KNNBasic(sim_options=sim_options)
+#     model.fit(trainSet)
+#     simsMatrix = model.compute_similarities()
+#     testUserInnerID = trainSet.to_inner_uid(user_id)
+#     similarityRow = simsMatrix[testUserInnerID]
+#     similarUsers = []
+#     for innerID, score in enumerate(similarityRow):
+#         if (innerID != testUserInnerID):
+#             similarUsers.append( (innerID, score) )
+#     kNeighbors = heapq.nlargest(n, similarUsers, key=lambda t: t[1])
+#     similarUsers=[]
+#     for simUser in kNeighbors:
+#         similarUsers.append(simUser[0])
+    
+#     return similarUsers
