@@ -172,6 +172,10 @@ def getPieData(events):  # categories vs events
     data.clear()
     data['labels'] = categories
     data['data'] = events
+
+    del categories
+    del events
+
     return data
 
 
@@ -185,6 +189,10 @@ def getLineData(events):  # attendees vs events
 
     data['labels'] = eventNames
     data['data'] = eventCount
+
+    del eventNames
+    del eventCount
+
     return data
 
 
@@ -204,6 +212,10 @@ def getBarDataCategories(events):  # attendees vs categories
 
     data['labels'] = eventCat
     data['data'] = eventCount
+
+    del eventCat
+    del eventCount
+
     return data
 
 
@@ -230,6 +242,11 @@ def getBarDataReviews(events):  # events vs reviews
     data['labels'] = eventNames
     data['positive'] = positive
     data['negative'] = negative
+
+    del eventNames
+    del positive
+    del negative
+
     return data
 
 
@@ -401,6 +418,7 @@ class FaceRecognition(Resource):
                 name = "Unknown"
 
         result = dict()
+
         if name == "Unknown":
             result["message"] = "Attendee not found in registered list"
             result["name"] = "Unknown"
@@ -408,6 +426,13 @@ class FaceRecognition(Resource):
         else:
             result["message"] = "Attendee present in registered list"
             result["name"] = name
+        
+        del ImageEncodingsKnown
+        del facesCurFrame
+        del encodingsCurFrame
+        del names
+        del img
+        del img_array
 
         return result
 
@@ -434,6 +459,9 @@ class FaceRecognition(Resource):
         data["encodings"] = encodeList
         data["names"] = nameList
         data['imageUrls'] = imageUrls
+
+        del encodeList
+        del nameList
         return data
 
 class AadharApi(Resource):
@@ -486,6 +514,7 @@ class UserRegister(Resource):
                 org_details=data['details'])
 
         addToDatabase(user)
+        del user
 
         return {'message': 'User created successfully'}
 
@@ -537,6 +566,10 @@ class GetEvent(Resource):
             reviewList.append(addEvent(review))
         e["attendees"] = attendeesList
         e["reviews"] = reviewList
+
+        del attendeesList
+        del reviewList
+
         return e
 
 
@@ -625,6 +658,8 @@ class ClassicGet(Resource):
         l = []
         for item in d:
             l.append(addEvent(item))
+
+        del d
         return l
 
 
@@ -646,9 +681,11 @@ class UserDetails(Resource):
             user = Attendee.query.get(user_id)
             print(user)
             details = user.get_userdetails(user)
+            del user
         else:
             organisation = Organisation.query.filter_by(id=user_id).first()
             details = organisation.get_orgdetails(organisation)
+            del organisation
 
         return details
 
@@ -710,6 +747,10 @@ class ManageReviews(Resource):
         )
 
         addToDatabase(reviews)
+        del reviews
+        del polarity
+        del review
+
         return {"message": "Review Added"}
 
 
@@ -718,14 +759,23 @@ class ManageFavourites(Resource):
     def post(self, user_id, event_id):
         favourite = Favourites(user_id, event_id)
         addToDatabase(favourite)
+        del favourite
         return {'message': 'Favourite added'}
 
     def delete(self, user_id, event_id):
         favourite = Favourites.query.filter_by(
             attendee_id=user_id, event_id=event_id).first()
         deleteFromDatabase(favourite)
+        del favourite
         return {'message': 'Favourite removed'}
 
+class Subscription(Resource):
+    def post(self, org_id):
+        org = Organisation.query.get(org_id)
+        org.subscription = True
+        db.session.commit()
+        del org
+        return {"message":"Subscribed"}
 
 class RegisterForEvent(Resource):
     def post(self, user_id, event_id):
@@ -745,6 +795,7 @@ class RegisterForEvent(Resource):
         msg = Message(subject='Event Confirmation from Happenings',
                       body=body, recipients=[user.email_id])
         mail.send(msg)
+        
         return {'message': 'Successfully registered for Event'}
 
 
@@ -888,6 +939,7 @@ api.add_resource(GetEvent, '/event/<int:event_id>')
 api.add_resource(UserLogout, '/logout')
 api.add_resource(FaceRecognition, '/validate_attendee/<int:event_id>')
 api.add_resource(Recommend, '/recommedations/<int:user_id>/<int:event_id>')
+api.add_resource(Subscription,'/subs/<int:org_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)
