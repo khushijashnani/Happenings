@@ -503,11 +503,10 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
     // print(widget.barGraph);
     // print(widget.lineGraph);
     // print(widget.groupBarGraph);
-    print("Printing in build context");
-    print("Data Map" + dataMap.length.toString());
-    print("Data Line" + data_line.length.toString());
-    print("Group Bar Graph" + pos_data.length.toString());
-    print("Bar Grpaph" + data.length.toString());
+    print(dataMap.length);
+    print(data_line.length);
+    print(pos_data.length);
+    print(data.length);
 
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
@@ -702,7 +701,7 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
                   ),
 
                   SizedBox(height: 30,),
-                  widget.no_of_events == null || widget.no_of_events == 0 ? Container() : Container(
+                  data.length == 0 ? Container() : Container(
                     height: 300,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,

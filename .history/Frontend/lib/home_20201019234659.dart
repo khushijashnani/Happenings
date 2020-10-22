@@ -126,11 +126,6 @@ class _HomeState extends State<Home> {
         print(no_of_events);
         print(attendees);
 
-        print(pieData);
-        print(barGraph);
-        print(lineGraph);
-        print(groupBarGraph);
-
         loading = false;
       });
     } else {
@@ -234,14 +229,17 @@ class _HomeState extends State<Home> {
       child: loading
           ? Scaffold(
               backgroundColor: Color(0xff102733),
-              body: Container(
-                height: MediaQuery.of(context).size.height,
-                width:  MediaQuery.of(context).size.width,
-                child: Image.asset(
-                  "assets/loader.gif",
-                  height: MediaQuery.of(context).size.height,
-                width:  MediaQuery.of(context).size.width,
-                  fit: BoxFit.fill,
+              body: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  child: Image.asset(
+                    "assets/gif loader.gif",
+                    height: 200,
+                    width: 200,
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
               // body: Align(

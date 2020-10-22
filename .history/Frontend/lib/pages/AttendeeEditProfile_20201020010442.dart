@@ -808,17 +808,11 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                 ),
               ),
             ),
-            floatingActionButton: (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
-            FloatingActionButton.extended(
-              onPressed: () {
-                uploadImages();
-              },
-              label: Text('Register',
-                  style: TextStyle(color: BACKGROUND)),
-              icon: Icon(Icons.update),
-              backgroundColor: Colors.yellow[800],
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: null, 
+              label: Text("Update"),
               
-            ) : Container(),
+            ),
     ));
   }
 

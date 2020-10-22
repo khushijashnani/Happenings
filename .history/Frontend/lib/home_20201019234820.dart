@@ -126,11 +126,6 @@ class _HomeState extends State<Home> {
         print(no_of_events);
         print(attendees);
 
-        print(pieData);
-        print(barGraph);
-        print(lineGraph);
-        print(groupBarGraph);
-
         loading = false;
       });
     } else {
@@ -238,7 +233,7 @@ class _HomeState extends State<Home> {
                 height: MediaQuery.of(context).size.height,
                 width:  MediaQuery.of(context).size.width,
                 child: Image.asset(
-                  "assets/loader.gif",
+                  "assets/gif loader.gif",
                   height: MediaQuery.of(context).size.height,
                 width:  MediaQuery.of(context).size.width,
                   fit: BoxFit.fill,

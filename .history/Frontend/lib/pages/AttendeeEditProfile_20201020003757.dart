@@ -774,51 +774,40 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
 
                     SizedBox(height: 25),
 
-                    // (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
-                    // Material(
-                    //   color: Colors.yellow[800],
-                    //   borderRadius: BorderRadius.all(Radius.circular(20)),
-                    //   elevation: 5,
-                    //   shadowColor: Colors.black,
-                    //   child: InkWell(
-                    //     borderRadius: BorderRadius.all(Radius.circular(20)),
-                    //     onTap: (){
-                    //       uploadImages();
-                    //     },
-                    //     child: Container(
-                    //       height: 60,
-                    //       width: screenWidth - 40,
-                    //       child: Center(
-                    //         child: Text(
-                    //           "Update",
-                    //           style: TextStyle(
-                    //             color: Colors.black,
-                    //             fontWeight: FontWeight.w800,
-                    //             fontSize: 20
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // )
-                    // : Container(),
+                    (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
+                    Material(
+                      color: Colors.yellow[800],
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      elevation: 5,
+                      shadowColor: Colors.black,
+                      child: InkWell(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        onTap: (){
+                          uploadImages();
+                        },
+                        child: Container(
+                          height: 60,
+                          width: screenWidth - 40,
+                          child: Center(
+                            child: Text(
+                              "Update",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 20
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    : Container(),
 
                     SizedBox(height: 20,)
                   ],
                 ),
               ),
             ),
-            floatingActionButton: (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
-            FloatingActionButton.extended(
-              onPressed: () {
-                uploadImages();
-              },
-              label: Text('Register',
-                  style: TextStyle(color: BACKGROUND)),
-              icon: Icon(Icons.update),
-              backgroundColor: Colors.yellow[800],
-              
-            ) : Container(),
     ));
   }
 

@@ -680,7 +680,7 @@ class _FilterPageState extends State<FilterPage> {
                                         for (Event e in events) {
                                           if ((!moneyFilter || (e.entryamount >= _currentRangeValues.start && e.entryamount <= _currentRangeValues.end)) && 
                                           (category == "None" || e.category == category) && 
-                                          (date == null || date == currentDate || date.isBefore(e.startDate))){
+                                          (date == currentDate || date.isBefore(e.startDate))){
                                             if (locations.length == 0){
                                               temp.add(e);
                                             }

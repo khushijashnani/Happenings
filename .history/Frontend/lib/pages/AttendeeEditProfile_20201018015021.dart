@@ -36,7 +36,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
   File image;
   bool loading = false;
   bool showName = false, showAddress = false, showUsername = false, showPassword = false, showEmail = false, showPhone = false;
-  bool cName = false, cAddress = false, cUsername = false, cPassword = false, cEmail = false, cPhone = false, cImage = false;
+  bool cName = false, cAddress = false, cUsername = false, cPassword = false, cEmail = false, cPhone = false;
   final _signupFormKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   double screenWidth, screenHeight;
@@ -63,8 +63,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
     File selected = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      image = selected;
-      cImage = true;
+      _profile = selected;
     });
   }
 
@@ -78,16 +77,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
       key: _scaffoldKey,
       backgroundColor: Color(0xff102733),
       body: loading
-          ? Container(
-                height: MediaQuery.of(context).size.height,
-                width:  MediaQuery.of(context).size.width,
-                child: Image.asset(
-                  "assets/loader.gif",
-                  height: MediaQuery.of(context).size.height,
-                width:  MediaQuery.of(context).size.width,
-                  fit: BoxFit.fill,
-                ),
-              )
+          ? Center(child: CircularProgressIndicator())
           : Form(
               key: _signupFormKey,
               child: SingleChildScrollView(
@@ -152,7 +142,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                               child: InkWell(
                                 borderRadius: BorderRadius.all(Radius.circular(20)),
                                 onTap: (){
-                                  _pickProfileImage();
+                                  
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -170,19 +160,6 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                       ),
                     ),
 
-                    SizedBox(height: 10),
-
-                    Container(
-                      width: screenWidth,
-                      child: Text(
-                        age.text + " years,  " + gender,
-                        style: TextStyle(
-                          color: Colors.yellow[800],
-                          fontSize: 18
-                        ),
-                        textAlign: TextAlign.center,
-                      )
-                    ),
                     SizedBox(height: 20),
 
                     showName
@@ -774,90 +751,45 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
 
                     SizedBox(height: 25),
 
-                    // (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
-                    // Material(
-                    //   color: Colors.yellow[800],
-                    //   borderRadius: BorderRadius.all(Radius.circular(20)),
-                    //   elevation: 5,
-                    //   shadowColor: Colors.black,
-                    //   child: InkWell(
-                    //     borderRadius: BorderRadius.all(Radius.circular(20)),
-                    //     onTap: (){
-                    //       uploadImages();
-                    //     },
-                    //     child: Container(
-                    //       height: 60,
-                    //       width: screenWidth - 40,
-                    //       child: Center(
-                    //         child: Text(
-                    //           "Update",
-                    //           style: TextStyle(
-                    //             color: Colors.black,
-                    //             fontWeight: FontWeight.w800,
-                    //             fontSize: 20
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // )
-                    // : Container(),
+                    (cName || cAddress || cUsername || cPassword || cEmail || cPhone) ? 
+                    Material(
+                      color: Colors.yellow[800],
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      elevation: 5,
+                      shadowColor: Colors.black,
+                      child: InkWell(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        onTap: (){
+                          updateProfile();
+                        },
+                        child: Container(
+                          height: 60,
+                          width: screenWidth - 40,
+                          child: Center(
+                            child: Text(
+                              "Update",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 20
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    : Container(),
 
                     SizedBox(height: 20,)
                   ],
                 ),
               ),
             ),
-            floatingActionButton: (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
-            FloatingActionButton.extended(
-              onPressed: () {
-                uploadImages();
-              },
-              label: Text('Register',
-                  style: TextStyle(color: BACKGROUND)),
-              icon: Icon(Icons.update),
-              backgroundColor: Colors.yellow[800],
-              
-            ) : Container(),
     ));
   }
 
-  Future<void> uploadImages() async {
-    if (image != null) {
-      setState(() {
-        loading = true;
-      });
-
-      //bool rc = await readText();
-
-      String profileImageUrl;
-      final String picture1 =
-          "${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-      FirebaseStorage storage = FirebaseStorage.instance;
-      StorageUploadTask task1 = storage.ref().child(picture1).putFile(image);
-      
-      task1.onComplete.then((snapshot) async {
-
-        profileImageUrl = await snapshot.ref.getDownloadURL();
-        setState(() {
-          imageUrl = profileImageUrl;
-        });
-        print(profileImageUrl);
-        updateProfile();
-
-      }).catchError((e) {
-        Fluttertoast.showToast(
-            msg: e.toString(),
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM);
-      });
-    } else if (image == null) {
-      updateProfile();
-    }
-  }
-
   Future<void> updateProfile() async {
-    if (cImage || _signupFormKey.currentState.validate()) {
+    if (_signupFormKey.currentState.validate()) {
       setState(() {
         loading = true;
       });
@@ -865,7 +797,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
         'name': name.text,
         'username': username.text,
         'password': password.text,
-        'type': ATTENDEE,
+        'type': ORGANISATION,
         'address': address.text,
         'email_id': email.text,
         'phone': phone_no.text,

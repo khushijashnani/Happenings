@@ -63,7 +63,6 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
   }
 
   Widget flipcard(Event e) {
-    
     String startdate = DateFormat('d MMM, yyyy').format(e.startDate);
     String enddate = DateFormat('d MMM, yyyy').format(e.endDate);
     int date = e.startDate.day;
@@ -100,7 +99,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                       color: CARD,
                       image: new DecorationImage(
                         fit: BoxFit.cover,
-                        colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.25), BlendMode.dstATop),
+                        colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
                         image: new NetworkImage(
                           e.imageUrl,
 

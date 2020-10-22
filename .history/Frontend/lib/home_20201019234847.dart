@@ -126,11 +126,6 @@ class _HomeState extends State<Home> {
         print(no_of_events);
         print(attendees);
 
-        print(pieData);
-        print(barGraph);
-        print(lineGraph);
-        print(groupBarGraph);
-
         loading = false;
       });
     } else {

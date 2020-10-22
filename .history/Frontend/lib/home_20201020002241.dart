@@ -15,6 +15,7 @@ import 'package:uvento/pages/MyEvents.dart';
 import 'package:http/http.dart' as http;
 import 'package:uvento/pages/OrganiserHomeScreen.dart';
 import 'package:uvento/pages/filterPage.dart';
+import 'package:delayed_display/delayed_display.dart';
 
 class Home extends StatefulWidget {
   // Attendee attendee;
@@ -125,11 +126,6 @@ class _HomeState extends State<Home> {
         print(org_reviews);
         print(no_of_events);
         print(attendees);
-
-        print(pieData);
-        print(barGraph);
-        print(lineGraph);
-        print(groupBarGraph);
 
         loading = false;
       });
@@ -262,38 +258,41 @@ class _HomeState extends State<Home> {
           : Scaffold(
               backgroundColor: Color(0xff102733),
               bottomNavigationBar: getBottomNav(),
-              body: IndexedStack(
-                  index: _page,
-                  children: type == ATTENDEE
-                      ? <Widget>[
-                          AttendeeHomeScreen(
-                            favs : favourites,
-                              name: attendee.name, attendee: attendee),
-                          FilterPage(),
-                          AttendeeProfile(
-                              favs: favourites,
-                              attendee: attendee,
-                              reviews: reviews,
-                              allEvents: reg_events)
-                        ]
-                      : <Widget>[
-                          OrganiserHomeScreen(
-                            organisation: organisation,
-                            revenue: revenue,
-                            org_reviews: org_reviews,
-                            attendees: attendees,
-                            no_of_events: no_of_events,
-                            pieData: pieData,
-                            barGraph: barGraph,
-                            lineGraph: lineGraph,
-                            groupBarGraph: groupBarGraph,
-                          ),
-                          EventsList(
-                              id: organisation.id,
-                              type: type,
-                              name: organisation.name),
-                          OrganisationProfile(organisation: organisation),
-                        ]),
+              body: DelayedDisplay(
+                delay: Duration(seconds: 5),
+                  child: IndexedStack(
+                    index: _page,
+                    children: type == ATTENDEE
+                        ? <Widget>[
+                            AttendeeHomeScreen(
+                              favs : favourites,
+                                name: attendee.name, attendee: attendee),
+                            FilterPage(),
+                            AttendeeProfile(
+                                favs: favourites,
+                                attendee: attendee,
+                                reviews: reviews,
+                                allEvents: reg_events)
+                          ]
+                        : <Widget>[
+                            OrganiserHomeScreen(
+                              organisation: organisation,
+                              revenue: revenue,
+                              org_reviews: org_reviews,
+                              attendees: attendees,
+                              no_of_events: no_of_events,
+                              pieData: pieData,
+                              barGraph: barGraph,
+                              lineGraph: lineGraph,
+                              groupBarGraph: groupBarGraph,
+                            ),
+                            EventsList(
+                                id: organisation.id,
+                                type: type,
+                                name: organisation.name),
+                            OrganisationProfile(organisation: organisation),
+                          ]),
+              ),
             ),
     );
   }

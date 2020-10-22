@@ -63,7 +63,6 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
   }
 
   Widget flipcard(Event e) {
-    
     String startdate = DateFormat('d MMM, yyyy').format(e.startDate);
     String enddate = DateFormat('d MMM, yyyy').format(e.endDate);
     int date = e.startDate.day;
@@ -100,7 +99,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                       color: CARD,
                       image: new DecorationImage(
                         fit: BoxFit.cover,
-                        colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.25), BlendMode.dstATop),
+                        colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
                         image: new NetworkImage(
                           e.imageUrl,
 
@@ -139,7 +138,6 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12,
-                                    fontWeight: FontWeight.bold
                                   )),
                             ),
                           ],
@@ -160,7 +158,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 15,
-                                        fontWeight: FontWeight.bold)),
+                                        fontWeight: FontWeight.normal)),
                               )
                             ]),
                             SizedBox(height: 10),
@@ -179,7 +177,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 15,
-                                        fontWeight: FontWeight.bold)),
+                                        fontWeight: FontWeight.normal)),
                               )
                             ]),
                             SizedBox(height: 10),

@@ -90,7 +90,7 @@ class _FilterPageState extends State<FilterPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  date != currentDate && date != null ? Material(
+                  date != currentDate ? Material(
                     color: Colors.yellow[800],
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                     child: Padding(
@@ -117,7 +117,7 @@ class _FilterPageState extends State<FilterPage> {
                     ),
                   ) : Container(),
 
-                  date != currentDate && date != null ? SizedBox(width: 20,) : Container(),
+                  date != currentDate ? SizedBox(width: 20,) : Container(),
 
                   category == "None" ? Container() : Material(
                     color: Colors.yellow[800],
@@ -268,7 +268,6 @@ class _FilterPageState extends State<FilterPage> {
     screenWidth = MediaQuery.of(context).size.width;
     formattedate = new DateFormat.yMMMd().format(date == null ? currentDate : date);
     print(date);
-    print(currentDate);
 
     return loading ? 
       Scaffold(
@@ -680,7 +679,7 @@ class _FilterPageState extends State<FilterPage> {
                                         for (Event e in events) {
                                           if ((!moneyFilter || (e.entryamount >= _currentRangeValues.start && e.entryamount <= _currentRangeValues.end)) && 
                                           (category == "None" || e.category == category) && 
-                                          (date == null || date == currentDate || date.isBefore(e.startDate))){
+                                          (date == currentDate || date.isBefore(e.startDate))){
                                             if (locations.length == 0){
                                               temp.add(e);
                                             }

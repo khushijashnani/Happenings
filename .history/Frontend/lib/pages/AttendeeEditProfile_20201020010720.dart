@@ -810,9 +810,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
             ),
             floatingActionButton: (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
             FloatingActionButton.extended(
-              onPressed: () {
-                uploadImages();
-              },
+              onPressed: null, 
               label: Text('Register',
                   style: TextStyle(color: BACKGROUND)),
               icon: Icon(Icons.update),

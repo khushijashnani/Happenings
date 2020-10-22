@@ -100,7 +100,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                       color: CARD,
                       image: new DecorationImage(
                         fit: BoxFit.cover,
-                        colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.25), BlendMode.dstATop),
+                        colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
                         image: new NetworkImage(
                           e.imageUrl,
 

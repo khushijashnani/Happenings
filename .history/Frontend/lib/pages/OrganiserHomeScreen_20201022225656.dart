@@ -702,7 +702,7 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
                   ),
 
                   SizedBox(height: 30,),
-                  widget.no_of_events == null || widget.no_of_events == 0 ? Container() : Container(
+                  data.length == 0 ? Container() : Container(
                     height: 300,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,

@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uvento/constants.dart';
 import 'package:uvento/home.dart';
 import 'package:uvento/models/event.dart';
@@ -36,7 +35,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
   File image;
   bool loading = false;
   bool showName = false, showAddress = false, showUsername = false, showPassword = false, showEmail = false, showPhone = false;
-  bool cName = false, cAddress = false, cUsername = false, cPassword = false, cEmail = false, cPhone = false, cImage = false;
+  bool cName = false, cAddress = false, cUsername = false, cPassword = false, cEmail = false, cPhone = false;
   final _signupFormKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   double screenWidth, screenHeight;
@@ -59,15 +58,6 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
     }
   }
 
-  Future<void> _pickProfileImage() async {
-    File selected = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      image = selected;
-      cImage = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
@@ -78,16 +68,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
       key: _scaffoldKey,
       backgroundColor: Color(0xff102733),
       body: loading
-          ? Container(
-                height: MediaQuery.of(context).size.height,
-                width:  MediaQuery.of(context).size.width,
-                child: Image.asset(
-                  "assets/loader.gif",
-                  height: MediaQuery.of(context).size.height,
-                width:  MediaQuery.of(context).size.width,
-                  fit: BoxFit.fill,
-                ),
-              )
+          ? Center(child: CircularProgressIndicator())
           : Form(
               key: _signupFormKey,
               child: SingleChildScrollView(
@@ -119,72 +100,6 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
 
                     SizedBox(height: 20),
 
-                    Container(
-                      width: 200,
-                      height: 200,
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(100))
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(100)),
-                              child: image == null ? Image.network(
-                                widget.attendee.imageUrl,
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.fill,
-                              ) :Image.file(
-                                image,
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              child: InkWell(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                onTap: (){
-                                  _pickProfileImage();
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.yellow[800],
-                                    borderRadius: BorderRadius.all(Radius.circular(20))
-                                  ),
-                                  width: 40,
-                                  height: 40,
-                                  child: Icon(Icons.edit, color: BACKGROUND, size: 30,),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 10),
-
-                    Container(
-                      width: screenWidth,
-                      child: Text(
-                        age.text + " years,  " + gender,
-                        style: TextStyle(
-                          color: Colors.yellow[800],
-                          fontSize: 18
-                        ),
-                        textAlign: TextAlign.center,
-                      )
-                    ),
-                    SizedBox(height: 20),
-
                     showName
                     ? 
                     Container(
@@ -205,13 +120,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                                   child: TextFormField(
                                     initialValue: name.text,
                                     maxLines: 1,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        name.text = value;
-                                        cName = true;
-                                      });
-                                      
-                                    },
+                                    onChanged: (value) => name.text = value,
                                     style: TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.account_circle,
@@ -303,13 +212,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                                       child: TextFormField(
                                         initialValue: username.text,
                                         maxLines: 1,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            username.text = value;
-                                            cUsername = true;
-                                          });
-                                          
-                                        },
+                                        onChanged: (value) => username.text = value,
                                         style: TextStyle(color: Colors.white),
                                         decoration: InputDecoration(
                                           prefixIcon: Icon(Icons.person,
@@ -400,13 +303,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                                       child: TextFormField(
                                         initialValue: password.text,
                                         maxLines: 1,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            password.text = value;
-                                            cPassword = true;
-                                          });
-                                          
-                                        },
+                                        onChanged: (value) => username.text = value,
                                         style: TextStyle(color: Colors.white),
                                         decoration: InputDecoration(
                                           prefixIcon: Icon(Icons.lock,
@@ -498,13 +395,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                                       child: TextFormField(
                                         initialValue: address.text,
                                         maxLines: 1,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            address.text = value;
-                                            cAddress = true;
-                                          });
-                                          
-                                        },
+                                        onChanged: (value) => address.text = value,
                                         style: TextStyle(color: Colors.white),
                                         decoration: InputDecoration(
                                           prefixIcon: Icon(Icons.location_on,
@@ -597,13 +488,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                                   child: TextFormField(
                                     initialValue: email.text,
                                     maxLines: 1,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        email.text = value;
-                                        cEmail = true;
-                                      });
-                                      
-                                    },
+                                    onChanged: (value) => email.text = value,
                                     style: TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.email,
@@ -696,12 +581,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                                   child: TextFormField(
                                     initialValue: phone_no.text,
                                     maxLines: 1,
-                                    onChanged: (value){
-                                      setState(() {
-                                        phone_no.text = value;
-                                        cPhone = true;
-                                      });
-                                    },
+                                    onChanged: (value) => phone_no.text = value,
                                     style: TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.phone,
@@ -772,151 +652,14 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                               )),
                         )),
 
-                    SizedBox(height: 25),
+                    SizedBox(height: 15),
 
-                    // (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
-                    // Material(
-                    //   color: Colors.yellow[800],
-                    //   borderRadius: BorderRadius.all(Radius.circular(20)),
-                    //   elevation: 5,
-                    //   shadowColor: Colors.black,
-                    //   child: InkWell(
-                    //     borderRadius: BorderRadius.all(Radius.circular(20)),
-                    //     onTap: (){
-                    //       uploadImages();
-                    //     },
-                    //     child: Container(
-                    //       height: 60,
-                    //       width: screenWidth - 40,
-                    //       child: Center(
-                    //         child: Text(
-                    //           "Update",
-                    //           style: TextStyle(
-                    //             color: Colors.black,
-                    //             fontWeight: FontWeight.w800,
-                    //             fontSize: 20
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // )
-                    // : Container(),
 
-                    SizedBox(height: 20,)
                   ],
                 ),
               ),
             ),
-            floatingActionButton: (cName || cAddress || cUsername || cPassword || cEmail || cPhone || cImage) ? 
-            FloatingActionButton.extended(
-              onPressed: () {
-                uploadImages();
-              },
-              label: Text('Register',
-                  style: TextStyle(color: BACKGROUND)),
-              icon: Icon(Icons.update),
-              backgroundColor: Colors.yellow[800],
-              
-            ) : Container(),
     ));
-  }
-
-  Future<void> uploadImages() async {
-    if (image != null) {
-      setState(() {
-        loading = true;
-      });
-
-      //bool rc = await readText();
-
-      String profileImageUrl;
-      final String picture1 =
-          "${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-      FirebaseStorage storage = FirebaseStorage.instance;
-      StorageUploadTask task1 = storage.ref().child(picture1).putFile(image);
-      
-      task1.onComplete.then((snapshot) async {
-
-        profileImageUrl = await snapshot.ref.getDownloadURL();
-        setState(() {
-          imageUrl = profileImageUrl;
-        });
-        print(profileImageUrl);
-        updateProfile();
-
-      }).catchError((e) {
-        Fluttertoast.showToast(
-            msg: e.toString(),
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM);
-      });
-    } else if (image == null) {
-      updateProfile();
-    }
-  }
-
-  Future<void> updateProfile() async {
-    if (cImage || _signupFormKey.currentState.validate()) {
-      setState(() {
-        loading = true;
-      });
-      var data = {
-        'name': name.text,
-        'username': username.text,
-        'password': password.text,
-        'type': ATTENDEE,
-        'address': address.text,
-        'email_id': email.text,
-        'phone': phone_no.text,
-        'image': imageUrl,
-        'age' : age.text,
-        'gender' : gender
-      };
-
-      print(data);
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-      Map<String, String> headers = {
-        "Content-type": "application/json",
-        "Accept": "application/json",
-        "charset": "utf-8",
-        "Authorization": sharedPreferences.getString("token")
-      };
-      
-      var response2 = await http.put(
-        'https://rpk-happenings.herokuapp.com/ATTENDEE/' +
-            sharedPreferences.getString("id"),
-        headers: headers,
-        body: json.encode(data)
-      );
-
-      if (response2.statusCode == 200) {
-        print(response2.body);
-        setState(() {
-          loading = false;
-        });
-        Fluttertoast.showToast(
-          msg: "Profile Updated Successfully",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM
-        );
-
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home(type: ATTENDEE,),), (route) => false);
-
-      } else {
-
-        setState(() {
-          loading = false;
-        });
-        Fluttertoast.showToast(
-          msg: "Update failed...",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM
-        );
-
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home(type: ORGANISATION,),), (route) => false);
-      }
-    }
   }
 
   // Future<void> _pickImage(ImageSource source) async {
