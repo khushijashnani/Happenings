@@ -252,11 +252,11 @@ class _HomeState extends State<Home> {
                   children: type == ATTENDEE
                       ? <Widget>[
                           AttendeeHomeScreen(
-                            favs : favourites,
+                            favs : favourites ?? null,
                               name: attendee.name, attendee: attendee),
                           FilterPage(),
                           AttendeeProfile(
-                              favs: favourites,
+                              favs: favourites ?? null ,
                               attendee: attendee,
                               reviews: reviews,
                               allEvents: reg_events)

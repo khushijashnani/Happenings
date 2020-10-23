@@ -375,6 +375,7 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
       ? Container(
         height: screenHeight,
         width: screenWidth,
+        color: BACKGROUND,
         child: Center(
           child: Column(
             children: [
