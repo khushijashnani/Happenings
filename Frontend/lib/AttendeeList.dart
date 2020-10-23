@@ -45,11 +45,12 @@ class _AttendeeListState extends State<AttendeeList> {
       var data = json.decode(registers.body);
       setState(() {
         names = data['names'];
-        encodings = data['encodings'];
+        // encodings = data['encodings'];
+        status = new List<bool>.filled(names.length, false, growable: false);
       });
       print(names);
-      print(encodings);
-      status = new List<bool>.filled(names.length, false, growable: false);
+      // print(encodings);
+      
       print(status);
     } else {}
     setState(() {
@@ -208,9 +209,9 @@ class _AttendeeListState extends State<AttendeeList> {
           "Content-type": "application/json",
           "Accept": "application/json",
           "charset": "utf-8",
-          //"Authorization": sharedPreferences.getString("token")
+          "Authorization": sharedPreferences.getString("token")
         };
-        Map data = {"url": imageUrl, "encodings": encodings, "names": names};
+        Map data = {"url": imageUrl};
 
         var validate = await http.post(
             'https://rpk-happenings.herokuapp.com/validate_attendee/${int.parse(widget.event_id)}',

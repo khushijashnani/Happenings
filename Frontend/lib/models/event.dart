@@ -11,6 +11,7 @@ class Event {
   String speciality;
   int maxCount;
   int currentCount;
+  String organiser_id;
 
   Event(
       {this.id,
@@ -24,7 +25,8 @@ class Event {
       this.speciality,
       this.maxCount,
       this.currentCount,
-      this.title});
+      this.title,
+      this.organiser_id});
 
   factory Event.fromMap(Map doc) {
     return Event(
@@ -39,7 +41,8 @@ class Event {
         speciality: doc['speciality'],
         maxCount: int.parse(doc['max_count']),
         currentCount: int.parse(doc['current_count']),
-        entryamount: int.parse(doc['entry_amount']));
+        entryamount: int.parse(doc['entry_amount']),
+        organiser_id: doc['organiser_id']);
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +59,7 @@ class Event {
     data['category'] = this.category;
     data['max_count'] = this.maxCount;
     data['current_count'] = this.currentCount;
+    data['organiser_id'] = this.organiser_id;
     return data;
   }
 }

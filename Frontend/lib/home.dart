@@ -126,6 +126,11 @@ class _HomeState extends State<Home> {
         print(no_of_events);
         print(attendees);
 
+        print(pieData);
+        print(barGraph);
+        print(lineGraph);
+        print(groupBarGraph);
+
         loading = false;
       });
     } else {
@@ -229,20 +234,30 @@ class _HomeState extends State<Home> {
       child: loading
           ? Scaffold(
               backgroundColor: Color(0xff102733),
-              body: Align(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Loading user details...",
-                        style: TextStyle(color: Colors.white, fontSize: 20)),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    CircularProgressIndicator()
-                  ],
+              body: Container(
+                height: MediaQuery.of(context).size.height,
+                width:  MediaQuery.of(context).size.width,
+                child: Image.asset(
+                  "assets/loader.gif",
+                  height: MediaQuery.of(context).size.height,
+                width:  MediaQuery.of(context).size.width,
+                  fit: BoxFit.fill,
                 ),
               ),
+              // body: Align(
+              //   alignment: Alignment.center,
+              //   child: Column(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       Text("Loading user details...",
+              //           style: TextStyle(color: Colors.white, fontSize: 20)),
+              //       SizedBox(
+              //         height: 20,
+              //       ),
+              //       CircularProgressIndicator()
+              //     ],
+              //   ),
+              // ),
             )
           : Scaffold(
               backgroundColor: Color(0xff102733),
@@ -274,6 +289,7 @@ class _HomeState extends State<Home> {
                             groupBarGraph: groupBarGraph,
                           ),
                           EventsList(
+                              organisation: organisation,
                               id: organisation.id,
                               type: type,
                               name: organisation.name),

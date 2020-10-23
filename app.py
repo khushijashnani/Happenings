@@ -394,10 +394,26 @@ class FaceRecognition(Resource):
 
     def post(self, event_id):
 
+        
+        event = Event.query.get(event_id)
+        attendees = event.attendee
+        encodeList = []
+        nameList = []
+        imageUrls = []
+        # print(attendees)
+        for attendee in attendees:
+            url = attendee.image
+            # print(url)
+            imageUrls.append(url)
+            url_response = urllib.request.urlopen(url)
+            img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
+            img = cv2.imdecode(img_array, -1)
+            encode = face_recognition.face_encodings(img)[0]
+            encodeList.append(encode)
+            nameList.append(attendee.name)
+        # print(encodeList)
         data = request.get_json()
         url = data["url"]
-        ImageEncodingsKnown = data["encodings"]
-        names = data["names"]
         url_response = urllib.request.urlopen(url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
         img = cv2.imdecode(img_array, -1)
@@ -405,15 +421,15 @@ class FaceRecognition(Resource):
         encodingsCurFrame = face_recognition.face_encodings(img,facesCurFrame)
         name = ""
         for encodeFace, faceLoc in zip(encodingsCurFrame, facesCurFrame):
-            matches = face_recognition.compare_faces(ImageEncodingsKnown, encodeFace)
-            dist = face_recognition.face_distance(ImageEncodingsKnown, encodeFace)
+            matches = face_recognition.compare_faces(encodeList, encodeFace)
+            dist = face_recognition.face_distance(encodeList, encodeFace)
             print(matches)
             print(dist)
 
             matchIndex = np.argmin(dist)
 
             if matches[matchIndex]:
-                name = names[matchIndex].upper()
+                name = nameList[matchIndex].upper()
             else:
                 name = "Unknown"
 
@@ -427,12 +443,13 @@ class FaceRecognition(Resource):
             result["message"] = "Attendee present in registered list"
             result["name"] = name
         
-        del ImageEncodingsKnown
+        
         del facesCurFrame
         del encodingsCurFrame
-        del names
         del img
         del img_array
+        del encodeList
+        del nameList
 
         return result
 
@@ -440,27 +457,27 @@ class FaceRecognition(Resource):
 
         event = Event.query.get(event_id)
         attendees = event.attendee
-        encodeList = []
+        # encodeList = []
         nameList = []
         imageUrls = []
         for attendee in attendees:
             url = attendee.image
             imageUrls.append(url)
-            url_response = urllib.request.urlopen(url)
-            img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
-            img = cv2.imdecode(img_array, -1)
-            encode = face_recognition.face_encodings(img)[0]
-            encodeList.append(encode.tolist())
+            # url_response = urllib.request.urlopen(url)
+            # img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
+            # img = cv2.imdecode(img_array, -1)
+            # encode = face_recognition.face_encodings(img)[0]
+            # encodeList.append(encode.tolist())
             nameList.append(attendee.name)
 
-        print(encodeList)
+        # print(encodeList)
         print(nameList)
         data = dict()
-        data["encodings"] = encodeList
+        # data["encodings"] = encodeList
         data["names"] = nameList
         data['imageUrls'] = imageUrls
 
-        del encodeList
+        # del encodeList
         del nameList
         return data
 
@@ -798,6 +815,12 @@ class RegisterForEvent(Resource):
         
         return {'message': 'Successfully registered for Event'}
 
+class GetOrg(Resource):
+    
+    def get(self, org_id):
+        org = Organisation.query.get(org_id)
+        return {"org_name" : org.name}
+
 
 class UserLogout(Resource):
 
@@ -940,6 +963,7 @@ api.add_resource(UserLogout, '/logout')
 api.add_resource(FaceRecognition, '/validate_attendee/<int:event_id>')
 api.add_resource(Recommend, '/recommedations/<int:user_id>/<int:event_id>')
 api.add_resource(Subscription,'/subs/<int:org_id>')
+api.add_resource(GetOrg, '/org_name/<int:org_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)

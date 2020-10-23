@@ -7,15 +7,19 @@ import 'package:uvento/models/event.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-
+import 'package:uvento/models/organisation.dart';
 import 'package:uvento/pages/AttendeeHomeScreen.dart';
 import 'package:uvento/pages/EventDetailPageOrganiser.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uvento/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventsList extends StatefulWidget {
   int id;
   String name;
   String type;
-  EventsList({Key key, this.id, this.type, this.name}) : super(key: key);
+  Organisation organisation;
+  EventsList({Key key, this.id, this.type, this.name, this.organisation}) : super(key: key);
 
   @override
   _EventsListState createState() => _EventsListState();
@@ -24,6 +28,7 @@ class EventsList extends StatefulWidget {
 class _EventsListState extends State<EventsList> {
   List list = [];
   double screenHeight, screenWidth;
+  bool loading = false;
 
   getevents() async {
     var jsonData;
@@ -33,13 +38,161 @@ class _EventsListState extends State<EventsList> {
         'https://rpk-happenings.herokuapp.com/${widget.type}/${widget.id}/events');
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
-      for (Map l in data) {
+      for (Map l in data) {                                                
         list.add(Event.fromMap(l));
       }
       //print(list[1].toJson());
     } else {
       print(response.body);
     }
+  }
+
+  Widget subscriptionCard() {
+    return Material(
+        color: CARD,
+        elevation: 10,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        shadowColor: Colors.black,
+        child: Container(
+          height: screenHeight / 3,
+          width: screenWidth - 30,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)), color: CARD),
+          child: Column(
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Image.asset(
+                    "assets/logo.png",
+                    height: 15,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, top: 20, right: 20),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "HAPPEN",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            fontStyle: FontStyle.italic),
+                      ),
+                      Text(
+                        "INGS",
+                        style: TextStyle(
+                            color: Color(0xffFFA700),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            fontStyle: FontStyle.italic),
+                      )
+                    ],
+                  ),
+                ),
+              ]),
+              Container(
+                padding:
+                    EdgeInsets.only(right: 20, left: 20, top: 10, bottom: 10),
+                alignment: Alignment.centerLeft,
+                child: Text("Yearly subscription",
+                    style: GoogleFonts.raleway(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500)),
+              ),
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 0),
+                child: RichText(
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    text: '⦿',
+                    style: TextStyle(
+                      color: YELLOW,
+                      fontWeight: FontWeight.w200,
+                      fontSize: 12,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: ' You can post upto 20 events.\n',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '⦿',
+                      ),
+                      TextSpan(
+                        text:
+                            ' Enjoy secure validation through our face recognition feature.\n',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      TextSpan(
+                        text: '⦿',
+                      ),
+                      TextSpan(
+                        text:
+                            ' Strategize your business plan with the help of our dashboard which contains graphs for data analysis.',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  alignment: Alignment.centerRight,
+                  child : Material(
+                    elevation: 10,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    child: InkWell(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    onTap: () async {
+                      setState(() {
+                        loading = true;
+                      });
+                      SharedPreferences sharedPreferences =
+                          await SharedPreferences.getInstance();
+                      var response = await http.post(
+                          'https://rpk-happenings.herokuapp.com/subs/${int.parse(sharedPreferences.getString("id"))}');
+                      if (response.statusCode == 200) {
+                        print("Subscribed");
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Home(type: ORGANISATION)));
+                        Fluttertoast.showToast(
+                            msg: "User is successfully subscribed");
+                      } else {
+                        print(response.body);
+                      }
+                      setState(() {
+                        loading = false;
+                      });
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        border: Border.all(color: YELLOW),
+                        color: Colors.yellow[800],
+                      ),
+                      child: Center(
+                          child: Text("Buy Now",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold))),
+                  ),
+                )
+              )
+            )
+            ],
+          ),
+        ));
   }
 
   @override
@@ -209,20 +362,26 @@ class _EventsListState extends State<EventsList> {
 
     return SafeArea(
         child: Scaffold(
-      body: Stack(
+        body: loading 
+        ? Container(
+        height: screenHeight,
+        width: screenWidth,
+        color: BACKGROUND,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Subscribing",style: GoogleFonts.raleway(color:YELLOW),),
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      )
+      :widget.organisation.subscription 
+      ? Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0.7, 0.9],
-                colors: [
-                  BACKGROUND,
-                  Color(0xFF193d50),
-                ],
-              ),
-            ),
+            color: BACKGROUND,
           ),
           SingleChildScrollView(
             child: Column(
@@ -233,9 +392,9 @@ class _EventsListState extends State<EventsList> {
                     Container(
                         alignment: Alignment.topLeft,
                         padding: EdgeInsets.all(25),
-                        child: Text("My Events",
+                        child: Text(widget.organisation.name +  "'s  events",
                             style: GoogleFonts.raleway(
-                                fontSize: 30,
+                                fontSize: 25,
                                 color: Colors.yellow[800],
                                 fontWeight: FontWeight.bold))),
                     GestureDetector(
@@ -269,10 +428,10 @@ class _EventsListState extends State<EventsList> {
                             textAlign: TextAlign.center,
                             text: TextSpan(children: [
                               TextSpan(
-                                  text: "There are no\n",
+                                  text: "There are no ",
                                   style: TextStyle(color: Colors.white)),
                               TextSpan(
-                                  text: "events\n",
+                                  text: "events ",
                                   style: TextStyle(color: Colors.yellow[800])),
                               TextSpan(
                                   text: "yet",
@@ -312,7 +471,88 @@ class _EventsListState extends State<EventsList> {
             ),
           ),
         ],
-      ),
+      ) 
+      : Container(
+                width: screenWidth,
+                height: screenHeight,
+                color: BACKGROUND,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20.0),
+                                  child: Image.asset(
+                                    "assets/logo.png",
+                                    height: 25,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 4, top: 20),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "HAPPEN",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w800,
+                                            fontStyle: FontStyle.italic),
+                                      ),
+                                      Text(
+                                        "INGS",
+                                        style: TextStyle(
+                                            color: Color(0xffFFA700),
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w800,
+                                            fontStyle: FontStyle.italic),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 3, color: Colors.white),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Image.network(
+                                      widget.organisation.imageUrl,
+                                      height: 40,
+                                      width: 40,
+                                      fit: BoxFit.fill,
+                                    )),
+                              ))
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      child : Text("Looks like you haven't subscribed...\n To subscribe go to the dashboard",style :GoogleFonts.raleway(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500))
+                    ),
+                    //subscriptionCard(),
+                    SizedBox(
+                      height: 40,
+                    ),
+                  ],
+                )),
     ));
   }
 }

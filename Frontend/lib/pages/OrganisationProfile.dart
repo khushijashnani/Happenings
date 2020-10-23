@@ -40,8 +40,11 @@ class _OrganisationProfileState extends State<OrganisationProfile> {
         print("Logged out");
         sharedPreferences.remove("token");
         sharedPreferences.remove("id");
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+        Navigator.pushAndRemoveUntil(
+            context, 
+            MaterialPageRoute(builder: (context) => LoginPage()), 
+            (route) => false
+          );
       } else {
         print(response.body);
       }

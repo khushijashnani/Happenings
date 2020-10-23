@@ -32,6 +32,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   List reviews = [];
   TextEditingController content;
   int rating = 1;
+  String org_name = "Happenings";
 
   getUserDetails() async {
     setState(() {
@@ -112,9 +113,30 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   Duration diff;
   bool loading = false;
 
+  Future<void> getOrgName() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var headers = {
+      "Authorization": sharedPreferences.getString("token"),
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    int org_id = int.parse(widget.event.organiser_id);
+    final response = await http.get(
+        "http://rpk-happenings.herokuapp.com/org_name/${org_id}",
+        headers: headers);
+    if (response.statusCode == 200) {
+      setState(() {
+        org_name = json.decode(response.body)["org_name"];
+        print(org_name);
+      });
+    } else {
+      Fluttertoast.showToast(msg: response.body);
+    }
+  }
+
   @override
   void initState() {
     getUserDetails();
+    getOrgName();
     content = TextEditingController();
     super.initState();
   }
@@ -1238,18 +1260,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                     : FloatingActionButton.extended(
                         backgroundColor: Colors.yellow[800],
                         onPressed: () async {
-                        
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => 
-                                    AttendeeList(
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AttendeeList(
                                       event_id: widget.event.id,
-                                      startDate: widget.event.startDate, 
-                                      endDate: widget.event.endDate
-                                    )
-                                )
-                            );
+                                      startDate: widget.event.startDate,
+                                      endDate: widget.event.endDate)));
                         },
                         label: Text("See your attendees",
                             style: TextStyle(color: BACKGROUND)),

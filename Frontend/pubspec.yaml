@@ -41,6 +41,8 @@ dependencies:
   bezier_chart: "^1.0.6"
   bubble_tab_indicator: "^0.1.4"
   flip_card: ^0.4.4
+  delayed_display: ^1.0.3
+  translator: ^0.1.5
 
 dev_dependencies:
   flutter_test:
