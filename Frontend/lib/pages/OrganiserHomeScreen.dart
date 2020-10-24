@@ -630,11 +630,10 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
     print("Data Line" + data_line.length.toString());
     print("Group Bar Graph" + pos_data.length.toString());
     print("Bar Grpaph" + data.length.toString());
-    print("Before trans");
-    translator
-        .translate(input, from: 'hi', to: 'en')
-        .then((output) => print(output));
-    print("After trans");
+    print("Printing Data");
+    print(dataMap);
+    print(data);
+    print(data_line);
 
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
@@ -841,7 +840,7 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
                             chartLegendSpacing: 40,
                             chartRadius: 150,
                             colorList: pieChartColors,
-                            centerText: 10.toString(),
+                            centerText: widget.no_of_events.toString(),
                             initialAngleInDegree: -90,
                             chartType: ChartType.ring,
                             ringStrokeWidth: 60,

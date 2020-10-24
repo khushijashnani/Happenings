@@ -80,18 +80,18 @@ class SplashScreen extends StatelessWidget {
                 onTap: () async {
                   SharedPreferences sharedPreferences =
                       await SharedPreferences.getInstance();
-                  // if (sharedPreferences.containsKey("id") &&
-                  //     sharedPreferences.containsKey("token")) {
-                  //   Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) => Home(
-                  //                 type: sharedPreferences.getString("type"),
-                  //               )));
-                  // } else {
+                  if (sharedPreferences.containsKey("id") &&
+                      sharedPreferences.containsKey("token")) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Home(
+                                  type: sharedPreferences.getString("type"),
+                                )));
+                  } else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => LoginPage()));
-                  // }
+                  }
                 },
                 child: Container(
                   child: Row(

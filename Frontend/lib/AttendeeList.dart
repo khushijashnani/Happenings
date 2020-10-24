@@ -30,7 +30,7 @@ class _AttendeeListState extends State<AttendeeList> {
   bool loading = false;
   File image;
   String imageUrl;
-  List<bool> status = [];
+  List status = [];
   String name = '';
   bool recognising = false;
 
@@ -47,7 +47,7 @@ class _AttendeeListState extends State<AttendeeList> {
       var data = json.decode(registers.body);
       setState(() {
         names = data['names'];
-        status = data['statusList'];
+        status = data['status'];
       });
       print(names);
       print(status);
@@ -185,15 +185,15 @@ class _AttendeeListState extends State<AttendeeList> {
                       ),
                     ),
           floatingActionButton:
-              // d.isAfter(widget.startDate) && d.isBefore(widget.endDate)
-              //     ?
+              d.isAfter(widget.startDate) && d.isBefore(widget.endDate)
+                  ?
               FloatingActionButton.extended(
                   backgroundColor: YELLOW,
                   onPressed: () {
                     validate();
                   },
                   label: Text("Validate"))
-          // : Container(),
+          : Container(),
           ),
     );
   }
