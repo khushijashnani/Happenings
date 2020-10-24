@@ -7,7 +7,6 @@ uwsgi
 psycopg2
 pandas
 numpy
-pytesseract
 opencv-python
 urllib3
 gunicorn
