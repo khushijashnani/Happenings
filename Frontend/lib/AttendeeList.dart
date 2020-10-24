@@ -24,14 +24,14 @@ class AttendeeList extends StatefulWidget {
 
 class _AttendeeListState extends State<AttendeeList> {
   List<String> urls;
-  List names;
-  List encodings;
+  List names = [];
+  List encodings = [];
   DateTime d;
   bool loading = false;
   File image;
   String imageUrl;
-  List<bool> status;
-  String name;
+  List<bool> status = [];
+  String name = '';
   bool recognising = false;
 
   getAttendees() async {
@@ -39,9 +39,9 @@ class _AttendeeListState extends State<AttendeeList> {
       loading = true;
     });
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    int event_id = int.parse(widget.event_id);
     var registers = await http.get(
-        'https://rpk-happenings.herokuapp.com/validate_attendee/' +
-            widget.event_id,
+        'https://rpk-happenings.herokuapp.com/validate_attendee/${event_id}',
         headers: {"Authorization": sharedPreferences.getString("token")});
     if (registers.statusCode == 200) {
       var data = json.decode(registers.body);
@@ -50,8 +50,6 @@ class _AttendeeListState extends State<AttendeeList> {
         status = data['statusList'];
       });
       print(names);
-      // print(encodings);
-
       print(status);
     } else {}
     setState(() {
@@ -95,22 +93,7 @@ class _AttendeeListState extends State<AttendeeList> {
                       CircularProgressIndicator()
                     ],
                   ))
-              : recognising
-                  ? Align(
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Recognising the Attendee",
-                              style: GoogleFonts.raleway(
-                                  color: Colors.white, fontSize: 20)),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          CircularProgressIndicator()
-                        ],
-                      ))
-                  : SingleChildScrollView(
+              : SingleChildScrollView(
                       child: Column(
                         children: [
                           Container(

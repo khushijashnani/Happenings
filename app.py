@@ -476,7 +476,7 @@ class FaceRecognition(Resource):
             # img = cv2.imdecode(img_array, -1)
             # encode = face_recognition.face_encodings(img)[0]
             # encodeList.append(encode.tolist())
-            nameList.append(entry.name)
+            nameList.append(entry.attendee_name)
             statusList.append(entry.status)
 
         # print(encodeList)
@@ -857,17 +857,17 @@ class Recommend(Resource):
         content = {}
 
         if type.lower() == 'content_based':
-            events = []
+            all_events = {}
             categories = []
             locations = []
             for e in events:
                 if (e.start_date - datetime.now()).minutes > 0:
-                    events.append({ e.id : {"location" : e.location, 'category' : e.category,'startdate' : str(e.start_date.day),'enddate' : str(e.end_date.day),'cost' : e.entry_amount}})
+                    all_events[e.id] = {"location" : e.location, 'category' : e.category,'startdate' : str(e.start_date.day),'enddate' : str(e.end_date.day),'cost' : e.entry_amount}
                     if e.location not in locations:
                         locations.append(e.location)
                     if e.category not in categories:
                         categories.append(e.category)
-            content_based_recommendations_ids = contentBasedRecommendations(events, locations, categories, event_id, 3)
+            content_based_recommendations_ids = contentBasedRecommendations(all_events, locations, categories, event_id, 3)
             content_based_recommendations_events = []
             for id in content_based_recommendations_ids:
                 e1 = Event.query.get(id)

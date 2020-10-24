@@ -84,7 +84,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
         Fluttertoast.showToast(msg: fav.body);
       }
     }
-    if (widget.event.endDate.difference(DateTime.now()).inDays > 0) {
+    if (widget.event.endDate.difference(DateTime.now()).inMicroseconds > 0) {
       DateTime d = DateTime.now();
       diff = widget.event.startDate.difference(d);
     } else {
@@ -157,7 +157,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   void initState() {
     getUserDetails();
     getOrgName();
-    getRecommendedEvents();
+    //getRecommendedEvents();
     content = TextEditingController();
     super.initState();
   }
@@ -834,7 +834,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
               ],
             ),
             floatingActionButton: widget.type == ATTENDEE
-              ? (diff != null && diff.inDays > 0)
+              ? (diff != null && diff.inMilliseconds > 0)
                 ? !registered
                     ? FloatingActionButton.extended(
                         onPressed: () async {
@@ -923,7 +923,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                     : FloatingActionButton.extended(
                             backgroundColor: Colors.yellow[800],
                             onPressed: () {},
-                            label: Text(diff.inDays.toString() + " days to go",
+                            label: Text(diff.inDays.toString()=="1" ? (diff.inDays.toString()+" day to go"):diff.inDays.toString() + " days to go",
                                 style: TextStyle(color: BACKGROUND)),
                           )
                   : registered 
