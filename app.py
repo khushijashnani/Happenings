@@ -63,14 +63,22 @@ registration = db.Table('registration',
                             'attendee.id'), nullable=False),
                         db.Column('event_id', db.Integer, db.ForeignKey('event.id'), nullable=False))
 
-# class registration(db.Model):
+class Status(db.Model):
 
-#     __tablename__ = 'registration'
-#     id = db.Column(db.Integer, primary_key=True)
-#     attendee_id = db.Column(db.Integer, db.ForeignKey('attendee.id'), nullable=False)
-#     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
-#     status = db.Column(db.String(50),default = 'Registered')
-#     unique_key = db.Column(db.String(10))
+    __tablename__ = 'status'
+    id = db.Column(db.Integer, primary_key=True)
+    attendee_id = db.Column(db.Integer, nullable=False)
+    attendee_name = db.Column(db.String(100), nullable=False)
+    event_id = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Boolean,default = False)
+    unique_key = db.Column(db.String(10))
+
+    def __init__(self, attendee_id, attendee_name, event_id, status, unique_key):
+        self.attendee_id = attendee_id
+        self.attendee_name = attendee_name
+        self.event_id = event_id
+        self.status = status
+        self.unique_key = unique_key
 
 class User(db.Model):
     __abstract__ = True
@@ -399,18 +407,17 @@ class FaceRecognition(Resource):
         attendees = event.attendee
         encodeList = []
         nameList = []
-        imageUrls = []
+        ids = []
         # print(attendees)
         for attendee in attendees:
             url = attendee.image
-            # print(url)
-            imageUrls.append(url)
             url_response = urllib.request.urlopen(url)
             img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
             img = cv2.imdecode(img_array, -1)
             encode = face_recognition.face_encodings(img)[0]
             encodeList.append(encode)
             nameList.append(attendee.name)
+            ids.append(attendee.id)
         # print(encodeList)
         data = request.get_json()
         url = data["url"]
@@ -430,6 +437,9 @@ class FaceRecognition(Resource):
 
             if matches[matchIndex]:
                 name = nameList[matchIndex].upper()
+                attendee_status = Status.query.filter_by(event_id = event_id,attendee_id = ids[matchIndex]).first()
+                attendee_status.status = True
+                db.session.commit()
             else:
                 name = "Unknown"
 
@@ -455,30 +465,35 @@ class FaceRecognition(Resource):
 
     def get(self, event_id):
 
-        event = Event.query.get(event_id)
-        attendees = event.attendee
+        # event = Event.query.get(event_id)
+        # attendees = event.attendee
+        attendees = Status.query.filter_by(event_id = event_id).all()
         # encodeList = []
         nameList = []
-        imageUrls = []
-        for attendee in attendees:
-            url = attendee.image
-            imageUrls.append(url)
+        statusList = []
+        # imageUrls = []
+        for entry in attendees:
+            # url = attendee.image
+            # imageUrls.append(url)
             # url_response = urllib.request.urlopen(url)
             # img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
             # img = cv2.imdecode(img_array, -1)
             # encode = face_recognition.face_encodings(img)[0]
             # encodeList.append(encode.tolist())
-            nameList.append(attendee.name)
+            nameList.append(entry.name)
+            statusList.append(entry.status)
 
         # print(encodeList)
         print(nameList)
         data = dict()
         # data["encodings"] = encodeList
         data["names"] = nameList
-        data['imageUrls'] = imageUrls
+        data['status'] = statusList
+        # data['imageUrls'] = imageUrls
 
         # del encodeList
         del nameList
+        del statusList
         return data
 
 class AadharApi(Resource):
@@ -803,6 +818,15 @@ class RegisterForEvent(Resource):
         event = Event.query.get(event_id)
         event.attendee.append(user)
         event.current_count = int(event.current_count) + 1
+
+        status = Status(
+            attendee_id=user_id,
+            attendee_name = user.name,
+            event_id=event_id,
+            status=False,
+            unique_key=str(event_id)
+        )
+        addToDatabase(status)
         db.session.commit()
         body = 'Your unique id is ' + \
             str(event.id) + ', for ' + event.title + \
@@ -832,55 +856,60 @@ class UserLogout(Resource):
 
 
 class Recommend(Resource):
-    def get(self, user_id, event_id):
+    def get(self, type, user_id, event_id):
         events = Event.query.all()
         content = {}
-        events = []
-        categories = []
-        locations = []
-        for e in events:
-            if (e.start_date - datetime.now()).minutes > 0:
-                events.append({ e.id : {"location" : e.location, 'category' : e.category,'startdate' : str(e.start_date.day),'enddate' : str(e.end_date.day),'cost' : e.entry_amount}})
-                if e.location not in locations:
-                    locations.append(e.location)
-                if e.category not in categories:
-                    categories.append(e.category)
-        content_based_recommendations_ids = contentBasedRecommendations(events, locations, categories, event_id, 3)
-        content_based_recommendations_events = []
-        for id in content_based_recommendations_ids:
-            e1 = Event.query.get(id)
-            content_based_recommendations_events.append(addEvent(e1))
 
-        users = Attendee.query.all()
-        user_id = []
-        user_events = []
-        user_ratings = []
-        for u in users:
-            user_reviews = u.reviews
-            for e in user_reviews :
-                user_id.append(e.attendee_id)
-                user_events.append(e.event_id)
-                user_ratings.append(e.rating)
-        data = {
-            "userID" : user_id,
-            "eventID" : user_events,
-            "rating" : user_ratings
-        }
-        attendee_sim = Attendee.query.filter_by(user_id=user_id).first()
-        attendee_events = []
-        attendee_events = attendee_sim.events
-        recommended_events = []
-        similar_users = getSimilarUsers(data,3,user_id)
-        for sim in similar_users:
-            attendee = Attendee.query.filter_by(user_id = sim).first()
-            sim_user_events = attendee.events
-            for e in sim_user_events:
-                if e not in attendee_events and (e.start_date - datetime.now()).minutes > 0 :
-                    recommended_events.append(addEvent(e))
-        return {
-            "user_based_recommended_events" : recommended_events,
-            "content_based_recommended_events" : content_based_recommendations_events
-        }
+        if type.lower() == 'content_based':
+            events = []
+            categories = []
+            locations = []
+            for e in events:
+                if (e.start_date - datetime.now()).minutes > 0:
+                    events.append({ e.id : {"location" : e.location, 'category' : e.category,'startdate' : str(e.start_date.day),'enddate' : str(e.end_date.day),'cost' : e.entry_amount}})
+                    if e.location not in locations:
+                        locations.append(e.location)
+                    if e.category not in categories:
+                        categories.append(e.category)
+            content_based_recommendations_ids = contentBasedRecommendations(events, locations, categories, event_id, 3)
+            content_based_recommendations_events = []
+            for id in content_based_recommendations_ids:
+                e1 = Event.query.get(id)
+                content_based_recommendations_events.append(addEvent(e1))
+
+            return {'recommended_events' : content_based_recommendations_events}
+
+        else : 
+            users = Attendee.query.all()
+            user_id = []
+            user_events = []
+            user_ratings = []
+            for u in users:
+                user_reviews = u.reviews
+                for e in user_reviews :
+                    user_id.append(e.attendee_id)
+                    user_events.append(e.event_id)
+                    user_ratings.append(e.rating)
+            data = {
+                "userID" : user_id,
+                "eventID" : user_events,
+                "rating" : user_ratings
+            }
+            attendee_sim = Attendee.query.filter_by(user_id=user_id).first()
+            attendee_events = []
+            attendee_events = attendee_sim.events
+            recommended_events = []
+            similar_users = getSimilarUsers(data,3,user_id)
+            for sim in similar_users:
+                attendee = Attendee.query.filter_by(user_id = sim).first()
+                sim_user_events = attendee.events
+                for e in sim_user_events:
+                    if e not in attendee_events and (e.start_date - datetime.now()).minutes > 0 :
+                        recommended_events.append(addEvent(e))
+
+            return {
+                "recommended_events" : recommended_events,
+            }
         # return {
         #     "userID" : user_id,
         #     "eventID" : user_events,
@@ -961,7 +990,7 @@ api.add_resource(GetEvent, '/event/<int:event_id>')
 
 api.add_resource(UserLogout, '/logout')
 api.add_resource(FaceRecognition, '/validate_attendee/<int:event_id>')
-api.add_resource(Recommend, '/recommedations/<int:user_id>/<int:event_id>')
+api.add_resource(Recommend, '/recommedations/<string:type>/<int:user_id>/<int:event_id>')
 api.add_resource(Subscription,'/subs/<int:org_id>')
 api.add_resource(GetOrg, '/org_name/<int:org_id>')
 

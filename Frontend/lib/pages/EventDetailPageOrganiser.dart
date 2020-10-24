@@ -33,6 +33,8 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
   TextEditingController content;
   int rating = 1;
   String org_name = "Happenings";
+  List<Event> recommended_events = [];
+  int attendee_id = 0;
 
   getUserDetails() async {
     setState(() {
@@ -133,10 +135,29 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
     }
   }
 
+  Future<void> getRecommendedEvents() async {
+    int event_id = int.parse(widget.event.id);
+    var response =
+        await http.get('https://rpk-happenings.herokuapp.com/recommedations/content_based/${attendee_id}/${event_id}');
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print(data);
+      setState(() {
+        for (Map l in data) {
+          recommended_events.add(Event.fromMap(l));
+        }
+        print(recommended_events);
+      });
+    } else {
+      print(response.body);
+    }
+  }
+
   @override
   void initState() {
     getUserDetails();
     getOrgName();
+    getRecommendedEvents();
     content = TextEditingController();
     super.initState();
   }
@@ -693,6 +714,11 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                   ],
                                 ),
                                 Container(
+                                  padding: EdgeInsets.only(right:30),
+                                  alignment: Alignment.centerRight,
+                                  child: Text("- "+org_name,style: TextStyle(color: Colors.white,fontSize: 15,fontStyle: FontStyle.italic),),
+                                ),
+                                Container(
                                   alignment: Alignment.centerLeft,
                                   padding: EdgeInsets.all(10),
                                   child: Material(
@@ -808,6 +834,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
               ],
             ),
             floatingActionButton: widget.type == ATTENDEE
+              ? (diff != null && diff.inDays > 0)
                 ? !registered
                     ? FloatingActionButton.extended(
                         onPressed: () async {
@@ -893,371 +920,365 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                         icon: Icon(Icons.arrow_forward_ios),
                         backgroundColor: Colors.yellow[800],
                       )
-                    : (diff != null && diff.inDays > 0)
-                        ? FloatingActionButton.extended(
+                    : FloatingActionButton.extended(
                             backgroundColor: Colors.yellow[800],
                             onPressed: () {},
                             label: Text(diff.inDays.toString() + " days to go",
                                 style: TextStyle(color: BACKGROUND)),
                           )
-                        : FloatingActionButton.extended(
-                            backgroundColor: Colors.yellow[800],
-                            onPressed: () {
-                              showModalBottomSheet(
-                                  context: context,
-                                  elevation: 12,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (BuildContext bc) {
-                                    return StatefulBuilder(builder: (BuildContext
-                                            context,
-                                        StateSetter
-                                            setState /*You can rename this!*/) {
-                                      return Wrap(
-                                        children: [
-                                          Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.6,
-                                            margin: EdgeInsets.all(15.0),
-                                            padding: EdgeInsets.fromLTRB(
-                                                18, 0, 18, 0),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0),
-                                            ),
-                                            child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(0.0),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 5),
-                                                      child: Center(
-                                                          child: Container(
-                                                        height: 2,
-                                                        width: 50,
-                                                        color: Colors.black,
-                                                        margin: EdgeInsets.only(
-                                                            top: 20),
-                                                      )),
-                                                    ),
-                                                    Expanded(
-                                                      child: ListView(
-                                                        children: <Widget>[
-                                                          ListTile(
-                                                              title: Text(
-                                                                  "Write a review",
-                                                                  style: GoogleFonts.raleway(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold)),
-                                                              subtitle: Text(
-                                                                  " Happenings",
-                                                                  style: GoogleFonts.raleway(
-                                                                      fontSize:
-                                                                          13,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold)),
-                                                              trailing: InkWell(
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Icon(
-                                                                  Icons.cancel,
-                                                                  size: 30,
-                                                                  color:
-                                                                      BACKGROUND,
-                                                                ),
-                                                              )),
-                                                          Divider(
-                                                            color: Colors.black,
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10.0,
-                                                          ),
-                                                          Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 10),
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .blue[50],
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            15.0)),
-                                                            child: TextField(
-                                                              minLines: 4,
-                                                              maxLines: 4,
-                                                              controller:
-                                                                  content,
-                                                              decoration: InputDecoration(
-                                                                  border:
-                                                                      InputBorder
-                                                                          .none,
-                                                                  hintText:
-                                                                      "Your review ...",
-                                                                  hintStyle: TextStyle(
-                                                                      color: Colors
-                                                                          .grey)),
+                  : registered 
+                    ? FloatingActionButton.extended(
+                              backgroundColor: Colors.yellow[800],
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    elevation: 12,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (BuildContext bc) {
+                                      return StatefulBuilder(builder: (BuildContext
+                                              context,
+                                          StateSetter
+                                              setState /*You can rename this!*/) {
+                                        return Wrap(
+                                          children: [
+                                            Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.6,
+                                              margin: EdgeInsets.all(15.0),
+                                              padding: EdgeInsets.fromLTRB(
+                                                  18, 0, 18, 0),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
+                                              child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(0.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                                top: 5),
+                                                        child: Center(
+                                                            child: Container(
+                                                          height: 2,
+                                                          width: 50,
+                                                          color: Colors.black,
+                                                          margin: EdgeInsets.only(
+                                                              top: 20),
+                                                        )),
+                                                      ),
+                                                      Expanded(
+                                                        child: ListView(
+                                                          children: <Widget>[
+                                                            ListTile(
+                                                                title: Text(
+                                                                    "Write a review",
+                                                                    style: GoogleFonts.raleway(
+                                                                        fontSize:
+                                                                            18,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold)),
+                                                                subtitle: Text(
+                                                                    " Happenings",
+                                                                    style: GoogleFonts.raleway(
+                                                                        fontSize:
+                                                                            13,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold)),
+                                                                trailing: InkWell(
+                                                                  onTap: () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.cancel,
+                                                                    size: 30,
+                                                                    color:
+                                                                        BACKGROUND,
+                                                                  ),
+                                                                )),
+                                                            Divider(
+                                                              color: Colors.black,
                                                             ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 20.0,
-                                                          ),
-                                                          Container(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .fromLTRB(
-                                                                          10,
-                                                                          0,
-                                                                          10,
-                                                                          0),
-                                                              child: Text(
-                                                                  "Choose your Rating",
-                                                                  style: GoogleFonts.raleway(
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold))),
-                                                          SizedBox(
-                                                            height: 10.0,
-                                                          ),
-                                                          Container(
-                                                            padding: EdgeInsets
-                                                                .fromLTRB(10, 0,
-                                                                    10, 0),
-                                                            child: Row(
-                                                              children: [
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      print(
-                                                                          "1");
-                                                                      setState(
-                                                                          () {
-                                                                        rating =
-                                                                            1;
-                                                                      });
-                                                                    },
-                                                                    child: rating <
-                                                                            1
-                                                                        ? Icon(Icons
-                                                                            .star_border)
-                                                                        : Icon(
-                                                                            Icons.star,
-                                                                            color:
-                                                                                Colors.yellow[800],
-                                                                          )),
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      print(
-                                                                          "2");
-                                                                      setState(
-                                                                          () {
-                                                                        rating =
-                                                                            2;
-                                                                      });
-                                                                    },
-                                                                    child: rating <
-                                                                            2
-                                                                        ? Icon(Icons
-                                                                            .star_border)
-                                                                        : Icon(
-                                                                            Icons.star,
-                                                                            color:
-                                                                                Colors.yellow[800],
-                                                                          )),
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      print(
-                                                                          "3");
-                                                                      setState(
-                                                                          () {
-                                                                        rating =
-                                                                            3;
-                                                                      });
-                                                                    },
-                                                                    child: rating <
-                                                                            3
-                                                                        ? Icon(Icons
-                                                                            .star_border)
-                                                                        : Icon(
-                                                                            Icons.star,
-                                                                            color:
-                                                                                Colors.yellow[800],
-                                                                          )),
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      print(
-                                                                          "4");
-                                                                      setState(
-                                                                          () {
-                                                                        rating =
-                                                                            4;
-                                                                      });
-                                                                    },
-                                                                    child: rating <
-                                                                            4
-                                                                        ? Icon(Icons
-                                                                            .star_border)
-                                                                        : Icon(
-                                                                            Icons.star,
-                                                                            color:
-                                                                                Colors.yellow[800],
-                                                                          )),
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      print(
-                                                                          "5");
-                                                                      setState(
-                                                                          () {
-                                                                        rating =
-                                                                            5;
-                                                                      });
-                                                                    },
-                                                                    child: rating <
-                                                                            5
-                                                                        ? Icon(Icons
-                                                                            .star_border)
-                                                                        : Icon(
-                                                                            Icons.star,
-                                                                            color:
-                                                                                Colors.yellow[800],
-                                                                          )),
-                                                              ],
+                                                            SizedBox(
+                                                              height: 10.0,
                                                             ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10.0,
-                                                          ),
-                                                          Container(
-                                                            child: Padding(
+                                                            Container(
                                                               padding:
-                                                                  const EdgeInsets
-                                                                          .all(
-                                                                      10.0),
-                                                              child: Row(
-                                                                children: <
-                                                                    Widget>[
-                                                                  SizedBox(
-                                                                      width: 5),
-                                                                  Spacer(),
-                                                                  InkWell(
-                                                                    onTap:
-                                                                        () async {
-                                                                      print(
-                                                                          rating);
-                                                                      print(content
-                                                                          .text);
-                                                                      setState(
-                                                                          () {
-                                                                        loading =
-                                                                            true;
-                                                                      });
-                                                                      SharedPreferences
-                                                                          sharedPreferences =
-                                                                          await SharedPreferences
-                                                                              .getInstance();
-                                                                      int id = int.parse(
-                                                                          sharedPreferences
-                                                                              .getString("id"));
-                                                                      Map data =
-                                                                          {
-                                                                        "event_id": int.parse(widget
-                                                                            .event
-                                                                            .id),
-                                                                        "review":
-                                                                            content.text,
-                                                                        "rating":
-                                                                            rating
-                                                                      };
-                                                                      var review = await http.post(
-                                                                          'https://rpk-happenings.herokuapp.com/add_review/' +
-                                                                              sharedPreferences.getString("id"),
-                                                                          headers: {
-                                                                            "Content-type":
-                                                                                "application/json",
-                                                                            "Accept":
-                                                                                "application/json",
-                                                                            "charset":
-                                                                                "utf-8",
-                                                                            "Authorization":
-                                                                                sharedPreferences.getString("token")
-                                                                          },
-                                                                          body: json.encode(data));
-                                                                      if (review
-                                                                              .statusCode ==
-                                                                          200) {
-                                                                        Navigator.pushReplacement(
-                                                                            context,
-                                                                            MaterialPageRoute(builder: (context) => Home(type: ATTENDEE)));
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                "Review added");
-                                                                      } else {
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                review.body);
-                                                                      }
-
-                                                                      setState(
-                                                                          () {
-                                                                        loading =
-                                                                            true;
-                                                                      });
-                                                                    },
-                                                                    child:
-                                                                        CircleAvatar(
-                                                                      backgroundColor:
-                                                                          BACKGROUND,
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .arrow_forward,
+                                                                  EdgeInsets.only(
+                                                                      left: 10),
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .blue[50],
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              15.0)),
+                                                              child: TextField(
+                                                                minLines: 4,
+                                                                maxLines: 4,
+                                                                controller:
+                                                                    content,
+                                                                decoration: InputDecoration(
+                                                                    border:
+                                                                        InputBorder
+                                                                            .none,
+                                                                    hintText:
+                                                                        "Your review ...",
+                                                                    hintStyle: TextStyle(
                                                                         color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    ),
-                                                                  )
+                                                                            .grey)),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 20.0,
+                                                            ),
+                                                            Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .fromLTRB(
+                                                                            10,
+                                                                            0,
+                                                                            10,
+                                                                            0),
+                                                                child: Text(
+                                                                    "Choose your Rating",
+                                                                    style: GoogleFonts.raleway(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold))),
+                                                            SizedBox(
+                                                              height: 10.0,
+                                                            ),
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .fromLTRB(10, 0,
+                                                                      10, 0),
+                                                              child: Row(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                      onTap: () {
+                                                                        print(
+                                                                            "1");
+                                                                        setState(
+                                                                            () {
+                                                                          rating =
+                                                                              1;
+                                                                        });
+                                                                      },
+                                                                      child: rating <
+                                                                              1
+                                                                          ? Icon(Icons
+                                                                              .star_border)
+                                                                          : Icon(
+                                                                              Icons.star,
+                                                                              color:
+                                                                                  Colors.yellow[800],
+                                                                            )),
+                                                                  GestureDetector(
+                                                                      onTap: () {
+                                                                        print(
+                                                                            "2");
+                                                                        setState(
+                                                                            () {
+                                                                          rating =
+                                                                              2;
+                                                                        });
+                                                                      },
+                                                                      child: rating <
+                                                                              2
+                                                                          ? Icon(Icons
+                                                                              .star_border)
+                                                                          : Icon(
+                                                                              Icons.star,
+                                                                              color:
+                                                                                  Colors.yellow[800],
+                                                                            )),
+                                                                  GestureDetector(
+                                                                      onTap: () {
+                                                                        print(
+                                                                            "3");
+                                                                        setState(
+                                                                            () {
+                                                                          rating =
+                                                                              3;
+                                                                        });
+                                                                      },
+                                                                      child: rating <
+                                                                              3
+                                                                          ? Icon(Icons
+                                                                              .star_border)
+                                                                          : Icon(
+                                                                              Icons.star,
+                                                                              color:
+                                                                                  Colors.yellow[800],
+                                                                            )),
+                                                                  GestureDetector(
+                                                                      onTap: () {
+                                                                        print(
+                                                                            "4");
+                                                                        setState(
+                                                                            () {
+                                                                          rating =
+                                                                              4;
+                                                                        });
+                                                                      },
+                                                                      child: rating <
+                                                                              4
+                                                                          ? Icon(Icons
+                                                                              .star_border)
+                                                                          : Icon(
+                                                                              Icons.star,
+                                                                              color:
+                                                                                  Colors.yellow[800],
+                                                                            )),
+                                                                  GestureDetector(
+                                                                      onTap: () {
+                                                                        print(
+                                                                            "5");
+                                                                        setState(
+                                                                            () {
+                                                                          rating =
+                                                                              5;
+                                                                        });
+                                                                      },
+                                                                      child: rating <
+                                                                              5
+                                                                          ? Icon(Icons
+                                                                              .star_border)
+                                                                          : Icon(
+                                                                              Icons.star,
+                                                                              color:
+                                                                                  Colors.yellow[800],
+                                                                            )),
                                                                 ],
                                                               ),
                                                             ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 30.0,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                )),
-                                          ),
-                                        ],
-                                      );
+                                                            SizedBox(
+                                                              height: 10.0,
+                                                            ),
+                                                            Container(
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        10.0),
+                                                                child: Row(
+                                                                  children: <
+                                                                      Widget>[
+                                                                    SizedBox(
+                                                                        width: 5),
+                                                                    Spacer(),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () async {
+                                                                        print(
+                                                                            rating);
+                                                                        print(content
+                                                                            .text);
+                                                                        setState(
+                                                                            () {
+                                                                          loading =
+                                                                              true;
+                                                                        });
+                                                                        SharedPreferences
+                                                                            sharedPreferences =
+                                                                            await SharedPreferences
+                                                                                .getInstance();
+                                                                        int id = int.parse(
+                                                                            sharedPreferences
+                                                                                .getString("id"));
+                                                                        Map data =
+                                                                            {
+                                                                          "event_id": int.parse(widget
+                                                                              .event
+                                                                              .id),
+                                                                          "review":
+                                                                              content.text,
+                                                                          "rating":
+                                                                              rating
+                                                                        };
+                                                                        var review = await http.post(
+                                                                            'https://rpk-happenings.herokuapp.com/add_review/' +
+                                                                                sharedPreferences.getString("id"),
+                                                                            headers: {
+                                                                              "Content-type":
+                                                                                  "application/json",
+                                                                              "Accept":
+                                                                                  "application/json",
+                                                                              "charset":
+                                                                                  "utf-8",
+                                                                              "Authorization":
+                                                                                  sharedPreferences.getString("token")
+                                                                            },
+                                                                            body: json.encode(data));
+                                                                        if (review
+                                                                                .statusCode ==
+                                                                            200) {
+                                                                          Navigator.pushReplacement(
+                                                                              context,
+                                                                              MaterialPageRoute(builder: (context) => Home(type: ATTENDEE)));
+                                                                          Fluttertoast.showToast(
+                                                                              msg:
+                                                                                  "Review added");
+                                                                        } else {
+                                                                          Fluttertoast.showToast(
+                                                                              msg:
+                                                                                  review.body);
+                                                                        }
+
+                                                                        setState(
+                                                                            () {
+                                                                          loading =
+                                                                              true;
+                                                                        });
+                                                                      },
+                                                                      child:
+                                                                          CircleAvatar(
+                                                                        backgroundColor:
+                                                                            BACKGROUND,
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .arrow_forward,
+                                                                          color: Colors
+                                                                              .white,
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 30.0,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )),
+                                            ),
+                                          ],
+                                        );
+                                      });
                                     });
-                                  });
-                            },
-                            label: Text("Write a review",
-                                style: TextStyle(color: BACKGROUND)),
-                          )
-                : diff != null
-                    ? FloatingActionButton.extended(
-                        backgroundColor: Colors.yellow[800],
-                        onPressed: () {},
-                        label: Text(diff.inDays.toString() + " days to go",
-                            style: TextStyle(color: BACKGROUND)),
-                      )
-                    : FloatingActionButton.extended(
+                              },
+                              label: Text("Write a review",
+                                  style: TextStyle(color: BACKGROUND)),
+                            )
+                : Container()
+            : FloatingActionButton.extended(
                         backgroundColor: Colors.yellow[800],
                         onPressed: () async {
                           Navigator.push(
@@ -1270,6 +1291,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                         },
                         label: Text("See your attendees",
                             style: TextStyle(color: BACKGROUND)),
-                      ));
+                  )
+        );
   }
 }

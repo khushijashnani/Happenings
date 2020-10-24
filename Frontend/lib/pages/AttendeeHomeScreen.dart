@@ -35,6 +35,8 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
   String todayDateIs = "12";
   double screenWidth, screenHeight;
   List<Event> allEvents = [];
+  List<Event> recommended_events = [];
+  int event_id = 0;
 
   Future<void> getevents() async {
     var response =
@@ -52,6 +54,23 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
     }
   }
 
+  Future<void> getRecommendedEvents() async {
+    var response =
+        await http.get('https://rpk-happenings.herokuapp.com/recommedations/user_based/${widget.attendee.id}/${event_id}');
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print(data);
+      setState(() {
+        for (Map l in data) {
+          recommended_events.add(Event.fromMap(l));
+        }
+        print(recommended_events);
+      });
+    } else {
+      print(response.body);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +79,7 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
     dates = getDates();
     eventsType = getEventTypes();
     events = getEvents();
+    getRecommendedEvents();
   }
 
   Widget flipcard(Event e) {
