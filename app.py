@@ -41,9 +41,6 @@ app.config['JWT_BLACKLIST_ENABLED'] = True  # enable blacklist feature
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 jwt = JWTManager(app)
 
-pytesseract.pytesseract.tesseract_cmd = os.environ.get(
-    'TESSDATA_PREFIX', 'C:\\Program Files\\Tesseract-OCR\\tesseract')
-
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
