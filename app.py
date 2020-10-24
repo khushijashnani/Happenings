@@ -12,7 +12,6 @@ from werkzeug.security import safe_str_cmp
 import dateutil.parser
 import datetime
 import urllib
-import pytesseract
 from getAadharData import getAadharData
 from aadhar_verification import aadharNumVerify
 from flask_mail import Mail,Message
