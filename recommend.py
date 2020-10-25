@@ -40,8 +40,10 @@ def contentBasedRecommendations(events, locations, categories, event_id, n):
         data = pd.DataFrame(all_events[0][1], rows, [all_events[0][0]])
         for i in range(1, len(all_events)):
             data[all_events[i][0]] = all_events[i][1]
-    recommended_events = getRecommendations(data, event_id, all_events, n)
-    return [event[0] for event in recommended_events]
+        recommended_events = getRecommendations(data, event_id, all_events, n)
+        return [event[0] for event in recommended_events]
+    else:
+        return []
 
 def getRecommendations(data, event_id, all_events, n):
 

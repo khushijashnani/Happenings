@@ -830,15 +830,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                     ? reviewsTab()
                                     : Container(),
                                 // SizedBox(height: 70),
-                                widget.type == ATTENDEE 
-                                ?
-                                Padding(
+                                widget.type == ATTENDEE && recommended_events.length != 0
+                                ?  Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(30, 10, 30, 10),
                                   child: Container(
                                     width: screenWidth - 60,
                                     child: Text(
-                                      "Recommended events",
+                                      "Similar events",
                                       style: GoogleFonts.raleway(
                                           color: Colors.yellow[800],
                                           fontWeight: FontWeight.w500,
@@ -846,7 +845,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                     ),
                                   ),
                                 ) : Container(),
-                                widget.type == ATTENDEE 
+                                widget.type == ATTENDEE && recommended_events.length != 0
                                 ? Container(
                                   height: 260,
                                   child: ListView.builder(
