@@ -103,13 +103,15 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
     // Line Graph Data
     var line_labels = widget.lineGraph["labels"];
     var line_data = widget.lineGraph["data"];
+
     setState(() {
       for (int i = 0; i < line_labels.length; i++) {
-        if (line_data[i] > 0 ){
-          EventsAndAttendees obj = EventsAndAttendees(i, line_data[i]);
-          data_line.add(obj);
-        }
+        // if (line_data[i] > 0) {
+        EventsAndAttendees obj = EventsAndAttendees(i, line_data[i]);
+        data_line.add(obj);
+        // }
       }
+      print("Data Line" + data_line.length.toString());
     });
     // data_line = [
     //   EventsAndAttendees(0, 200),
@@ -259,53 +261,51 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
               Container(
                   padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                   alignment: Alignment.centerRight,
-                  child : Material(
-                    color: Colors.yellow[800],
-                    elevation: 10,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    child: InkWell(
+                  child: Material(
+                      color: Colors.yellow[800],
+                      elevation: 10,
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                    onTap: () async {
-                      setState(() {
-                        loading = true;
-                      });
-                      SharedPreferences sharedPreferences =
-                          await SharedPreferences.getInstance();
-                      var response = await http.post(
-                          'https://rpk-happenings.herokuapp.com/subs/${int.parse(sharedPreferences.getString("id"))}');
-                      if (response.statusCode == 200) {
-                        print("Subscribed");
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Home(type: ORGANISATION)));
-                        Fluttertoast.showToast(
-                            msg: "User is successfully subscribed");
-                      } else {
-                        print(response.body);
-                      }
-                      setState(() {
-                        loading = false;
-                      });
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 100,
-                      decoration: BoxDecoration(
+                      child: InkWell(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(color: YELLOW),
-                        color: Colors.transparent,
-                      ),
-                      child: Center(
-                          child: Text("Buy Now",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold))),
-                  ),
-                )
-              )
-            )
+                        onTap: () async {
+                          setState(() {
+                            loading = true;
+                          });
+                          SharedPreferences sharedPreferences =
+                              await SharedPreferences.getInstance();
+                          var response = await http.post(
+                              'https://rpk-happenings.herokuapp.com/subs/${int.parse(sharedPreferences.getString("id"))}');
+                          if (response.statusCode == 200) {
+                            print("Subscribed");
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Home(type: ORGANISATION)));
+                            Fluttertoast.showToast(
+                                msg: "User is successfully subscribed");
+                          } else {
+                            print(response.body);
+                          }
+                          setState(() {
+                            loading = false;
+                          });
+                        },
+                        child: Container(
+                          height: 40,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            border: Border.all(color: YELLOW),
+                            color: Colors.transparent,
+                          ),
+                          child: Center(
+                              child: Text("Buy Now",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold))),
+                        ),
+                      )))
             ],
           ),
         ));
@@ -635,386 +635,393 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
     // print("Printing Data");
     // print(dataMap);
     // print(data);
-    // print(data_line);
+    print(data_line);
 
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
     customTickFormatter = charts.BasicNumericTickFormatterSpec((num value) {
       // var d = ;
       print(value);
-      return widget.lineGraph["labels"][value.toInt()];
+      int index = value.toInt();
+      if (index >= 0 && index < widget.lineGraph['labels'].length){
+      return widget.lineGraph["labels"][value.toInt() ];
+      }
     });
 
     return SafeArea(
       child: Scaffold(
-        body: loading 
-        ? Container(
-        height: screenHeight,
-        width: screenWidth,
-        color: BACKGROUND,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Subscribing",style: GoogleFonts.raleway(color:YELLOW, fontSize: 20,)),
-              CircularProgressIndicator(),
-            ],
-          ),
-        ),
-      )
-      :widget.organisation.subscription
-            ? Stack(children: [
-                Container(
-                  color: BACKGROUND,
+        body: loading
+            ? Container(
+                height: screenHeight,
+                width: screenWidth,
+                color: BACKGROUND,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Subscribing",
+                          style: GoogleFonts.raleway(
+                            color: YELLOW,
+                            fontSize: 20,
+                          )),
+                      CircularProgressIndicator(),
+                    ],
+                  ),
                 ),
-                Container(
-                    child: ListView(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0, right: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 20.0),
-                                  child: Image.asset(
-                                    "assets/logo.png",
-                                    height: 25,
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 4, top: 20),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text(
-                                        "HAPPEN",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.w800,
-                                            fontStyle: FontStyle.italic),
-                                      ),
-                                      Text(
-                                        "INGS",
-                                        style: TextStyle(
-                                            color: Color(0xffFFA700),
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.w800,
-                                            fontStyle: FontStyle.italic),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(width: 2, color: Colors.white),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: Image.network(
-                                      widget.organisation.imageUrl,
-                                      height: 40,
-                                      width: 40,
-                                      fit: BoxFit.fill,
-                                    )),
-                              ),
-                          ),
-                        ],
-                      ),
+              )
+            : widget.organisation.subscription
+                ? Stack(children: [
+                    Container(
+                      color: BACKGROUND,
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Stack(
-                        children: [
-                          Row(
+                    Container(
+                        child: ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0, right: 20),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                children: [
-                                  organiserCard(
-                                      10,
-                                      80,
-                                      10,
-                                      10,
-                                      "${widget.no_of_events}",
-                                      "Events",
-                                      "tL",
-                                      null),
-                                  SizedBox(
-                                    height: 20,
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: Image.asset(
+                                        "assets/logo.png",
+                                        height: 25,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 4, top: 20),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "HAPPEN",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.w800,
+                                                fontStyle: FontStyle.italic),
+                                          ),
+                                          Text(
+                                            "INGS",
+                                            style: TextStyle(
+                                                color: Color(0xffFFA700),
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.w800,
+                                                fontStyle: FontStyle.italic),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 2, color: Colors.white),
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
-                                  organiserCard(
-                                      10,
-                                      10,
-                                      10,
-                                      80,
-                                      "${widget.revenue} +",
-                                      "Revenue",
-                                      "bL",
-                                      FontAwesomeIcons.rupeeSign),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  organiserCard(
-                                      80,
-                                      10,
-                                      10,
-                                      10,
-                                      "${widget.attendees} +",
-                                      "Attendees",
-                                      "tR",
-                                      FontAwesomeIcons.userFriends),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  organiserCard(
-                                      10,
-                                      10,
-                                      80,
-                                      10,
-                                      "${widget.org_reviews} +",
-                                      "Reviews",
-                                      "bR",
-                                      FontAwesomeIcons.comments),
-                                ],
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(30),
+                                      child: Image.network(
+                                        widget.organisation.imageUrl,
+                                        height: 40,
+                                        width: 40,
+                                        fit: BoxFit.fill,
+                                      )),
+                                ),
                               ),
                             ],
                           ),
-                          Container(
-                              width: screenWidth - 40,
-                              height: 220,
-                              child: Center(
-                                child: Material(
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Stack(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    children: [
+                                      organiserCard(
+                                          10,
+                                          80,
+                                          10,
+                                          10,
+                                          "${widget.no_of_events}",
+                                          "Events",
+                                          "tL",
+                                          null),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      organiserCard(
+                                          10,
+                                          10,
+                                          10,
+                                          80,
+                                          "${widget.revenue} +",
+                                          "Revenue",
+                                          "bL",
+                                          FontAwesomeIcons.rupeeSign),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      organiserCard(
+                                          80,
+                                          10,
+                                          10,
+                                          10,
+                                          "${widget.attendees} +",
+                                          "Attendees",
+                                          "tR",
+                                          FontAwesomeIcons.userFriends),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      organiserCard(
+                                          10,
+                                          10,
+                                          80,
+                                          10,
+                                          "${widget.org_reviews} +",
+                                          "Reviews",
+                                          "bR",
+                                          FontAwesomeIcons.comments),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                width: screenWidth - 40,
+                                height: 220,
+                                child: Center(
+                                    child: Material(
                                   elevation: 5,
                                   color: BACKGROUND,
                                   shadowColor: Colors.black,
                                   borderRadius:
-                                        BorderRadius.all(Radius.circular(30)),
+                                      BorderRadius.all(Radius.circular(30)),
                                   child: Container(
-                                  width: screenWidth * 0.5,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    color: BACKGROUND,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30)),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Center(
-                                      child: AutoSizeText(
-                                        widget.organisation.name,
-                                        maxLines: 2,
-                                        style: TextStyle(
-                                            color: YELLOW,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 30),
+                                    width: screenWidth * 0.5,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: BACKGROUND,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                        child: AutoSizeText(
+                                          widget.organisation.name,
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                              color: YELLOW,
+                                              fontStyle: FontStyle.italic,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 30),
+                                        ),
                                       ),
                                     ),
                                   ),
+                                )),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        dataMap.length == 0
+                            ? Container()
+                            : PieChart(
+                                dataMap: dataMap,
+                                animationDuration: Duration(milliseconds: 5000),
+                                chartLegendSpacing: 40,
+                                chartRadius: 150,
+                                colorList: pieChartColors,
+                                centerText: widget.no_of_events.toString(),
+                                initialAngleInDegree: -90,
+                                chartType: ChartType.ring,
+                                ringStrokeWidth: 60,
+                                legendOptions: LegendOptions(
+                                  showLegendsInRow: false,
+                                  legendPosition: LegendPosition.left,
+                                  showLegends: true,
+                                  legendShape: BoxShape.circle,
+                                  legendTextStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
                                 ),
-                                )
+                                chartValuesOptions: ChartValuesOptions(
+                                  showChartValueBackground: true,
+                                  showChartValues: true,
+                                  showChartValuesInPercentage: true,
+                                  showChartValuesOutside: true,
+                                ),
                               ),
-                            )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    dataMap.length == 0
-                        ? Container()
-                        : PieChart(
-                            dataMap: dataMap,
-                            animationDuration: Duration(milliseconds: 5000),
-                            chartLegendSpacing: 40,
-                            chartRadius: 150,
-                            colorList: pieChartColors,
-                            centerText: widget.no_of_events.toString(),
-                            initialAngleInDegree: -90,
-                            chartType: ChartType.ring,
-                            ringStrokeWidth: 60,
-                            legendOptions: LegendOptions(
-                              showLegendsInRow: false,
-                              legendPosition: LegendPosition.left,
-                              showLegends: true,
-                              legendShape: BoxShape.circle,
-                              legendTextStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                            chartValuesOptions: ChartValuesOptions(
-                              showChartValueBackground: true,
-                              showChartValues: true,
-                              showChartValuesInPercentage: true,
-                              showChartValuesOutside: true,
-                            ),
-                          ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    dataMap.length == 0
-                        ? Container()
-                        :Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: screenWidth * 0.9,
-                          child: AutoSizeText(
-                            "Figure shows category wise events count in a pie diagram with total event count at center.",
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontStyle: FontStyle.italic),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    widget.no_of_events == null || widget.no_of_events == 0
-                        ? Container()
-                        : Container(
-                            height: 300,
-                            child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Container(
-                                  child: buildBarGraph(),
-                                )),
-                          ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    data_line.length == 0
-                        ? Container()
-                        : Container(
-                            height: 300,
-                            child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Container(
-                                  child: drawLineGraph(),
-                                )),
-                          ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    pos_data.length == 0
-                        ? Container()
-                        : Container(
-                            height: 300,
-                            child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Container(
-                                  child: drawGroupGraph(),
-                                )),
-                          )
-                  ],
-                ))
-              ])
-            : Container(
-                width: screenWidth,
-                height: screenHeight,
-                color: BACKGROUND,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0, right: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 20.0),
-                                  child: Image.asset(
-                                    "assets/logo.png",
-                                    height: 25,
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 4, top: 20),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text(
-                                        "HAPPEN",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.w800,
-                                            fontStyle: FontStyle.italic),
-                                      ),
-                                      Text(
-                                        "INGS",
-                                        style: TextStyle(
-                                            color: Color(0xffFFA700),
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.w800,
-                                            fontStyle: FontStyle.italic),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                          Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(width: 3, color: Colors.white),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: Image.network(
-                                      widget.organisation.imageUrl,
-                                      height: 40,
-                                      width: 40,
-                                      fit: BoxFit.fill,
+                        SizedBox(
+                          height: 30,
+                        ),
+                        dataMap.length == 0
+                            ? Container()
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: screenWidth * 0.9,
+                                    child: AutoSizeText(
+                                      "Figure shows category wise events count in a pie diagram with total event count at center.",
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                  )
+                                ],
+                              ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        widget.no_of_events == null || widget.no_of_events == 0
+                            ? Container()
+                            : Container(
+                                height: 300,
+                                child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      child: buildBarGraph(),
+                                    )),
+                              ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        data_line.length == 0
+                            ? Container()
+                            : Container(
+                                height: 300,
+                                child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      child: drawLineGraph(),
+                                    )),
+                              ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        pos_data.length == 0
+                            ? Container()
+                            : Container(
+                                height: 300,
+                                child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      child: drawGroupGraph(),
                                     )),
                               )
-                            )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Container(
-                        child : Text("Looks like you haven't subscribed yet...",style :GoogleFonts.raleway(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic))
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    subscriptionCard(),
-                    SizedBox(
-                      height: 40,
-                    ),
-                  ],
-                )),
+                      ],
+                    ))
+                  ])
+                : Container(
+                    width: screenWidth,
+                    height: screenHeight,
+                    color: BACKGROUND,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0, right: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: Image.asset(
+                                        "assets/logo.png",
+                                        height: 25,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 4, top: 20),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "HAPPEN",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.w800,
+                                                fontStyle: FontStyle.italic),
+                                          ),
+                                          Text(
+                                            "INGS",
+                                            style: TextStyle(
+                                                color: Color(0xffFFA700),
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.w800,
+                                                fontStyle: FontStyle.italic),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                              Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 3, color: Colors.white),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(30),
+                                        child: Image.network(
+                                          widget.organisation.imageUrl,
+                                          height: 40,
+                                          width: 40,
+                                          fit: BoxFit.fill,
+                                        )),
+                                  ))
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Container(
+                              child: Text(
+                                  "Looks like you haven't subscribed yet...",
+                                  style: GoogleFonts.raleway(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      fontStyle: FontStyle.italic))),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        subscriptionCard(),
+                        SizedBox(
+                          height: 40,
+                        ),
+                      ],
+                    )),
       ),
     );
   }

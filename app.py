@@ -861,7 +861,7 @@ class Recommend(Resource):
             categories = []
             locations = []
             for e in events:
-                if (e.start_date - datetime.now()).minutes > 0:
+                if (e.start_date - datetime.datetime.now()).minutes > 0:
                     all_events[e.id] = {"location" : e.location, 'category' : e.category,'startdate' : str(e.start_date.day),'enddate' : str(e.end_date.day),'cost' : e.entry_amount}
                     if e.location not in locations:
                         locations.append(e.location)
@@ -900,7 +900,7 @@ class Recommend(Resource):
                 attendee = Attendee.query.filter_by(user_id = sim).first()
                 sim_user_events = attendee.events
                 for e in sim_user_events:
-                    if e not in attendee_events and (e.start_date - datetime.now()).minutes > 0 :
+                    if e not in attendee_events and (e.start_date - datetime.datetime.now()).minutes > 0 :
                         recommended_events.append(addEvent(e))
 
             return {

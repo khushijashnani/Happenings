@@ -73,7 +73,7 @@ class _SearchEventListState extends State<SearchEventList> {
                           child: AutoSizeText(
                             startdate == enddate
                                 ? startdate
-                                : date.toString() + " - " + startdate,
+                                : date.toString() + " - " + enddate,
                             maxLines: 1,
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.7),

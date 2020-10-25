@@ -472,7 +472,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                           )
                         : Container(
                             width: screenWidth,
-                            height: 55,
+                            height: 70,
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                             child: Material(
                               elevation: 5,
@@ -743,7 +743,7 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
               onPressed: () {
                 uploadImages();
               },
-              label: Text('Register',
+              label: Text('Update',
                   style: TextStyle(color: BACKGROUND)),
               icon: Icon(Icons.update),
               backgroundColor: Colors.yellow[800],
