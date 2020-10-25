@@ -93,7 +93,8 @@ class _AttendeeListState extends State<AttendeeList> {
                       CircularProgressIndicator()
                     ],
                   ))
-              : SingleChildScrollView(
+              : Material(
+                child: SingleChildScrollView(
                         child: Column(
                           children: [
                             Container(
@@ -192,6 +193,7 @@ class _AttendeeListState extends State<AttendeeList> {
                           ],
                         ),
                       ),
+              ),
           floatingActionButton:
               d.isAfter(widget.startDate) && d.isBefore(widget.endDate)
                   ?

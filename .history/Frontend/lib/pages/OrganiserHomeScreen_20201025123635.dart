@@ -105,10 +105,8 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
     var line_data = widget.lineGraph["data"];
     setState(() {
       for (int i = 0; i < line_labels.length; i++) {
-        if (line_data[i] > 0 ){
-          EventsAndAttendees obj = EventsAndAttendees(i, line_data[i]);
-          data_line.add(obj);
-        }
+        EventsAndAttendees obj = EventsAndAttendees(i, line_data[i]);
+        data_line.add(obj);
       }
     });
     // data_line = [
@@ -260,7 +258,7 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
                   padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                   alignment: Alignment.centerRight,
                   child : Material(
-                    color: Colors.yellow[800],
+                    
                     elevation: 10,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     child: InkWell(
@@ -623,25 +621,24 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print(widget.pieData);
-    // print(widget.barGraph);
-    // print(widget.lineGraph);
-    // print(widget.groupBarGraph);
-    // print("Printing in build context");
-    // print("Data Map" + dataMap.length.toString());
-    // print("Data Line" + data_line.length.toString());
-    // print("Group Bar Graph" + pos_data.length.toString());
-    // print("Bar Grpaph" + data.length.toString());
-    // print("Printing Data");
-    // print(dataMap);
-    // print(data);
-    // print(data_line);
+    print(widget.pieData);
+    print(widget.barGraph);
+    print(widget.lineGraph);
+    print(widget.groupBarGraph);
+    print("Printing in build context");
+    print("Data Map" + dataMap.length.toString());
+    print("Data Line" + data_line.length.toString());
+    print("Group Bar Graph" + pos_data.length.toString());
+    print("Bar Grpaph" + data.length.toString());
+    print("Printing Data");
+    print(dataMap);
+    print(data);
+    print(data_line);
 
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
     customTickFormatter = charts.BasicNumericTickFormatterSpec((num value) {
       // var d = ;
-      print(value);
       return widget.lineGraph["labels"][value.toInt()];
     });
 
@@ -994,16 +991,15 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: Container(
-                        child : Text("Looks like you haven't subscribed yet...",style :GoogleFonts.raleway(
+                        child : Text("Looks like you haven't subscribed...",style :GoogleFonts.raleway(
                           color: Colors.white,
                           fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic))
+                          fontWeight: FontWeight.w500))
                       ),
                     ),
                     SizedBox(

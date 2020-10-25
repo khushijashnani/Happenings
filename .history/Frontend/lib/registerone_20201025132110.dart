@@ -106,6 +106,9 @@ class _RegisterPart1State extends State<RegisterPart1> {
         print(phone_no);
         index++;
       }
+
+      aadhar_no = textLines[index].split(" ")[0] + textLines[index].split(" ")[1] + textLines[index].split(" ")[2];
+      print(aadhar_no);
       return true;
     });
   }
@@ -180,7 +183,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Uploading Profile Image",
+                          Text("Verifying Aadhar...",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20)),
                           SizedBox(

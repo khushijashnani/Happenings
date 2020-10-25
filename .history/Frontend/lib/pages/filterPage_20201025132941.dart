@@ -330,19 +330,8 @@ class _FilterPageState extends State<FilterPage> {
                   filterApplied ? filterCards() : Container(),
                   SizedBox(height: 20,),
 
-                  filtered.length == 0 ? Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search, color: Colors.yellow[800]),
-                        Text(
-                          "No events match your filters..",
-                          style: TextStyle(
-                            color: Colors.white
-                          )
-                        ),
-                      ],
-                    ),
+                  filtered.length == 0 ? Text(
+                    "No events match your filters.."
                   ) : ListView.builder(
                     shrinkWrap: true,
                     primary: false,

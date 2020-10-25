@@ -544,7 +544,7 @@ class _EventsListState extends State<EventsList> {
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Container(
-                        child : Text("Looks like you haven't subscribed...\nTo subscribe go to the dashboard.",style :GoogleFonts.raleway(
+                        child : Text("Looks like you haven't subscribed...\n To subscribe go to the dashboard.",style :GoogleFonts.raleway(
                           color: Colors.white,
                           fontStyle: FontStyle.italic,
                           fontSize: 20,
@@ -553,7 +553,7 @@ class _EventsListState extends State<EventsList> {
                     ),
                     //subscriptionCard(),
                     SizedBox(
-                      height: 20,
+                      height: 40,
                     ),
                   ],
                 )),

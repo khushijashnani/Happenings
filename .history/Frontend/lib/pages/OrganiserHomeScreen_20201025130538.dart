@@ -105,10 +105,8 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
     var line_data = widget.lineGraph["data"];
     setState(() {
       for (int i = 0; i < line_labels.length; i++) {
-        if (line_data[i] > 0 ){
-          EventsAndAttendees obj = EventsAndAttendees(i, line_data[i]);
-          data_line.add(obj);
-        }
+        EventsAndAttendees obj = EventsAndAttendees(i, line_data[i]);
+        data_line.add(obj);
       }
     });
     // data_line = [

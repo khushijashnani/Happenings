@@ -334,7 +334,7 @@ class _FilterPageState extends State<FilterPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search, color: Colors.yellow[800]),
+                        Icon(Icons.search, color: Colors.white),
                         Text(
                           "No events match your filters..",
                           style: TextStyle(

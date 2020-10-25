@@ -93,7 +93,8 @@ class _AttendeeListState extends State<AttendeeList> {
                       CircularProgressIndicator()
                     ],
                   ))
-              : SingleChildScrollView(
+              : Material(
+                child: SingleChildScrollView(
                         child: Column(
                           children: [
                             Container(
@@ -128,11 +129,11 @@ class _AttendeeListState extends State<AttendeeList> {
                               child: names.length == 0 ? Center(
                                 child: Text(
                                   "There are no registrations yet..",
-                                  style: GoogleFonts.raleway(
+                                  GoogleFonts.raleway(
                                                                 color:
                                                                     Colors.white,
                                                                 fontSize: 16)),
-                                  
+                                  ),
                                 ) : ListWheelScrollView.useDelegate(
                                 itemExtent: 100,
                                 // physics: FixedExtentScrollPhysics(),
@@ -192,6 +193,7 @@ class _AttendeeListState extends State<AttendeeList> {
                           ],
                         ),
                       ),
+              ),
           floatingActionButton:
               d.isAfter(widget.startDate) && d.isBefore(widget.endDate)
                   ?

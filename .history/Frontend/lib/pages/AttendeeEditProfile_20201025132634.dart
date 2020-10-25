@@ -185,7 +185,69 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                     ),
                     SizedBox(height: 20),
 
+                    showName
+                    ? 
                     Container(
+                        width: screenWidth,
+                        height: 60,
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: Container(
+                                  width: screenWidth - 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: new BorderRadius.circular(25.0),
+                                    color: CARD,
+                                  ),
+                                  child: TextFormField(
+                                    initialValue: name.text,
+                                    maxLines: 1,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        name.text = value;
+                                        cName = true;
+                                      });
+                                      
+                                    },
+                                    style: TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(Icons.account_circle,
+                                          color: Colors.white),
+                                      border: new OutlineInputBorder(
+                                        borderRadius: new BorderRadius.circular(25.0),
+                                        borderSide: new BorderSide(color: CARD),
+                                      ),
+                                      labelStyle: TextStyle(color: Colors.yellow[800]),
+                                      hintText: "Name",
+                                      hintStyle: TextStyle(color: Colors.white),
+                                    ),
+                                  )
+                                ),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                child: Material(
+                                  color: CARD,
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                                  child: InkWell(
+                                    onTap: (){
+                                      setState((){
+                                        showName = false;
+                                      });
+                                    },
+                                    child: Icon(Icons.check_circle, color: Colors.white,),
+                                  )
+                                )
+
+                              )
+                            ],
+                          ),
+                      )
+                     : Container(
                         width: screenWidth,
                         height: 55,
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -206,6 +268,14 @@ class _AttendeeEditProfileState extends State<AttendeeEditProfile> {
                                     color: Colors.white,
                                     fontSize: 16
                                   )
+                                ),
+                                trailing: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      showName = false;
+                                    });
+                                  },
+                                  child: Container(),
                                 ),
                                 leading:
                                     Icon(Icons.account_circle, color: Colors.white),

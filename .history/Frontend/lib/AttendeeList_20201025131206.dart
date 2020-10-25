@@ -94,104 +94,100 @@ class _AttendeeListState extends State<AttendeeList> {
                     ],
                   ))
               : SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Container(
-                              alignment: Alignment.topLeft,
-                              padding: EdgeInsets.all(25),
-                              child: Row(
-                                children: [
-                                  InkWell(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 10),
-                                        child: Icon(
-                                          Icons.arrow_back_ios,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                      )),
-                                  Text(
-                                    "Attendee List",
-                                    style: GoogleFonts.raleway(
-                                        color: Colors.yellow[800],
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 500,
-                              child: names.length == 0 ? Center(
-                                child: Text(
-                                  "There are no registrations yet..",
+                      child: Column(
+                        children: [
+                          Container(
+                            alignment: Alignment.topLeft,
+                            padding: EdgeInsets.all(25),
+                            child: Row(
+                              children: [
+                                InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 10),
+                                      child: Icon(
+                                        Icons.arrow_back_ios,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    )),
+                                Text(
+                                  "Attendee List",
                                   style: GoogleFonts.raleway(
-                                                                color:
-                                                                    Colors.white,
-                                                                fontSize: 16)),
-                                  
-                                ) : ListWheelScrollView.useDelegate(
-                                itemExtent: 100,
-                                // physics: FixedExtentScrollPhysics(),
-                                childDelegate: ListWheelChildBuilderDelegate(
-                                    childCount: names.length,
-                                    builder: (context, index) {
-                                      return Container(
-                                          width: screenWidth,
-                                          height: 55,
-                                          padding: const EdgeInsets.fromLTRB(
-                                              20, 0, 20, 0),
-                                          child: Material(
-                                            elevation: 5,
-                                            shadowColor: Colors.black,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(25)),
-                                            color: CARD,
-                                            child: Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(25)),
-                                                    color: CARD),
-                                                child: Center(
-                                                  child: ListTile(
-                                                    title: Text(names[index],
-                                                        style:
-                                                            GoogleFonts.raleway(
-                                                                color:
-                                                                    Colors.white,
-                                                                fontSize: 16)),
-                                                    trailing: InkWell(
-                                                      //   onTap: () {
-                                                      //     print("hello");
-                                                      //     _pickImage(ImageSource.camera);
-                                                      // setState(() {
-                                                      //   showName = true;
-                                                      // });
-                                                      //   },
-                                                      child: status[index]
-                                                          ? Icon(
-                                                              Icons.check_circle,
-                                                              size: 30,
-                                                              color: Colors.green)
-                                                          : Container(
-                                                              height: 0,
-                                                              width: 0),
-                                                    ),
-                                                    leading: Icon(Icons.person,
-                                                        color: Colors.white),
-                                                  ),
-                                                )),
-                                          ));
-                                    }),
-                              ),
+                                      color: Colors.yellow[800],
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          Container(
+                            height: 500,
+                            child: names.length == 0 ? Center(
+                              child: Text(
+                                "There are no registrations yet.."
+                              )
+                            ) : ListWheelScrollView.useDelegate(
+                              itemExtent: 100,
+                              // physics: FixedExtentScrollPhysics(),
+                              childDelegate: ListWheelChildBuilderDelegate(
+                                  childCount: names.length,
+                                  builder: (context, index) {
+                                    return Container(
+                                        width: screenWidth,
+                                        height: 55,
+                                        padding: const EdgeInsets.fromLTRB(
+                                            20, 0, 20, 0),
+                                        child: Material(
+                                          elevation: 5,
+                                          shadowColor: Colors.black,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(25)),
+                                          color: CARD,
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(25)),
+                                                  color: CARD),
+                                              child: Center(
+                                                child: ListTile(
+                                                  title: Text(names[index],
+                                                      style:
+                                                          GoogleFonts.raleway(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 16)),
+                                                  trailing: InkWell(
+                                                    //   onTap: () {
+                                                    //     print("hello");
+                                                    //     _pickImage(ImageSource.camera);
+                                                    // setState(() {
+                                                    //   showName = true;
+                                                    // });
+                                                    //   },
+                                                    child: status[index]
+                                                        ? Icon(
+                                                            Icons.check_circle,
+                                                            size: 30,
+                                                            color: Colors.green)
+                                                        : Container(
+                                                            height: 0,
+                                                            width: 0),
+                                                  ),
+                                                  leading: Icon(Icons.person,
+                                                      color: Colors.white),
+                                                ),
+                                              )),
+                                        ));
+                                  }),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
           floatingActionButton:
               d.isAfter(widget.startDate) && d.isBefore(widget.endDate)
                   ?

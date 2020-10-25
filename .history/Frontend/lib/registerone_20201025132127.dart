@@ -180,7 +180,7 @@ class _RegisterPart1State extends State<RegisterPart1> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Uploading Profile Image",
+                          Text("Verifying Aadhar...",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20)),
                           SizedBox(
