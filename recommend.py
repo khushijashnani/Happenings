@@ -37,12 +37,14 @@ def contentBasedRecommendations(events, locations, categories, event_id, n):
         e = getEventList(event['location'], event['category'], event['cost'], event['startdate'], event['enddate'], locations, categories)
         all_events.append((id, e))
     if len(all_events) > 0:
+        print("all events not zero")
         data = pd.DataFrame(all_events[0][1], rows, [all_events[0][0]])
         for i in range(1, len(all_events)):
             data[all_events[i][0]] = all_events[i][1]
         recommended_events = getRecommendations(data, event_id, all_events, n)
         return [event[0] for event in recommended_events]
     else:
+        print("all events is zero")
         return []
 
 def getRecommendations(data, event_id, all_events, n):
