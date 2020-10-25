@@ -1407,7 +1407,7 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                               child: AutoSizeText(
                                   startdate == enddate
                                       ? startdate
-                                      : date.toString() + " - " + startdate,
+                                      : date.toString() + " - " + enddate,
                                   maxLines: 1,
                                   style: TextStyle(
                                     color: Colors.grey,
