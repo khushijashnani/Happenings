@@ -54,6 +54,7 @@ def getRecommendations(data, event_id, all_events, n):
     for i in range(len(cols)):
         id = cols[i]
         if id != event_id:
+            print("Corr value : {}".format(corr_data[id]))
             if corr_data[id] > 0.4:
                 sim_events.append((id, corr_data[id]))
         
