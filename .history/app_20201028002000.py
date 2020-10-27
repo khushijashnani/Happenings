@@ -989,7 +989,7 @@ BLACKLIST = []
 
 api = Api(app)
 api.add_resource(UserLogin, "/login")
-# api.add_resource(AadharApi, '/verification')
+api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
 api.add_resource(Events, '/events')
 api.add_resource(UserDetails, "/<string:type>/<int:user_id>")
