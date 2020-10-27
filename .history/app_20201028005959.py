@@ -925,8 +925,6 @@ class DeleteStatus(Resource):
 
     def delete(self, user_id, event_id):
         status = Status.query.filter_by(attendee_id = user_id, event_id = event_id).first()
-        event = Event.query.get(event_id)
-        event.current_count = event.current_count - 1
         db.session.delete(status)
         db.session.commit()
 
