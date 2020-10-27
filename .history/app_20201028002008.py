@@ -925,8 +925,10 @@ class DeleteStatus(Resource):
 
     def delete(self, user_id, event_id):
         status = Status.query.filter_by(attendee_id = user_id, event_id = event_id).first()
+
+        user = Attendee.query.get(user_id)
         event = Event.query.get(event_id)
-        event.current_count = event.current_count - 1
+        event.attendee.remove(user)
         db.session.delete(status)
         db.session.commit()
 
@@ -987,7 +989,7 @@ BLACKLIST = []
 
 api = Api(app)
 api.add_resource(UserLogin, "/login")
-# api.add_resource(AadharApi, '/verification')
+api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
 api.add_resource(Events, '/events')
 api.add_resource(UserDetails, "/<string:type>/<int:user_id>")

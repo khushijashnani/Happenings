@@ -492,24 +492,24 @@ class FaceRecognition(Resource):
         del statusList
         return data
 
-# class AadharApi(Resource):
-#     def post(self):
-#         data = request.get_json()
-#         print(data)
-#         url = data["url"]
-#         url_response = urllib.request.urlopen(url)
-#         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
-#         img = cv2.imdecode(img_array, -1)
-#         #cv2.imshow("OCR", img)
-#         text = pytesseract.image_to_string(img)
-#         print(text)
-#         aadharData = getAadharData(text)
-#         print(aadharData)
-#         verification = aadharNumVerify(aadharData["Aadhar"])
-#         print(verification)
-#         # cv2.imshow("OCR", img)
-#         # cv2.waitKey(0)
-#         return {"verification": verification, 'aadhar_details': aadharData}
+class AadharApi(Resource):
+    def post(self):
+        data = request.get_json()
+        print(data)
+        url = data["url"]
+        url_response = urllib.request.urlopen(url)
+        img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
+        img = cv2.imdecode(img_array, -1)
+        #cv2.imshow("OCR", img)
+        text = pytesseract.image_to_string(img)
+        print(text)
+        aadharData = getAadharData(text)
+        print(aadharData)
+        verification = aadharNumVerify(aadharData["Aadhar"])
+        print(verification)
+        # cv2.imshow("OCR", img)
+        # cv2.waitKey(0)
+        return {"verification": verification, 'aadhar_details': aadharData}
 
 
 class UserRegister(Resource):
@@ -651,7 +651,6 @@ class ClassicGet(Resource):
         #type = data['type']
         #resource = data['resource']
         print(type, resource, id)
-        date = datetime.datetime.now()
 
         if type == ATTENDEE:
             user = Attendee.query.get(id)
@@ -674,11 +673,11 @@ class ClassicGet(Resource):
                 count = 0
                 d = []
                 for event in eventList:
-                    if event not in user_events and (event.start_date - date).seconds >= 3600:
+                    if event not in user_events:
                         d.append(event)
                         count += 1
 
-                    if count == 5:
+                    if count == 10:
                         break
         else:
             user = Organisation.query.get(id)
@@ -916,21 +915,6 @@ class Recommend(Resource):
         #     "locations" : locations
         # }
 
-class DeleteStatus(Resource):
-
-    def get(self, user_id, event_id):
-
-        status = Status.query.filter_by(attendee_id = user_id, event_id = event_id).first()
-        return addEvent(status)
-
-    def delete(self, user_id, event_id):
-        status = Status.query.filter_by(attendee_id = user_id, event_id = event_id).first()
-        event = Event.query.get(event_id)
-        event.current_count = event.current_count - 1
-        db.session.delete(status)
-        db.session.commit()
-
-        return {"message" : "Deleted Succesfully"}
 
 
 @jwt.token_in_blacklist_loader
@@ -987,7 +971,7 @@ BLACKLIST = []
 
 api = Api(app)
 api.add_resource(UserLogin, "/login")
-# api.add_resource(AadharApi, '/verification')
+api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
 api.add_resource(Events, '/events')
 api.add_resource(UserDetails, "/<string:type>/<int:user_id>")
@@ -1005,7 +989,6 @@ api.add_resource(FaceRecognition, '/validate_attendee/<int:event_id>')
 api.add_resource(Recommend, '/recommedations/<string:type>/<int:user_id>/<int:event_id>')
 api.add_resource(Subscription,'/subs/<int:org_id>')
 api.add_resource(GetOrg, '/org_name/<int:org_id>')
-api.add_resource(DeleteStatus, '/status/<int:user_id>/<int:event_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)

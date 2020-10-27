@@ -70,21 +70,21 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             favourite = favs.contains(int.parse(widget.event.id));
           });
           print(registered);
-          // int event_id = int.parse(widget.event.id);
-          // var response = await http.get(
-          //     'https://rpk-happenings.herokuapp.com/recommedations/content_based/${attendee_id}/${event_id}');
-          // if (response.statusCode == 200) {
-          //   var data = json.decode(response.body);
-          //   print(data);
-          //   setState(() {
-          //     for (Map l in data) {
-          //       recommended_events.add(Event.fromMap(l));
-          //     }
-          //     print(recommended_events);
-          //   });
-          // } else {
-          //   print(response.body);
-          // }
+          int event_id = int.parse(widget.event.id);
+          var response = await http.get(
+              'https://rpk-happenings.herokuapp.com/recommedations/content_based/${attendee_id}/${event_id}');
+          if (response.statusCode == 200) {
+            var data = json.decode(response.body);
+            print(data);
+            setState(() {
+              for (Map l in data) {
+                recommended_events.add(Event.fromMap(l));
+              }
+              print(recommended_events);
+            });
+          } else {
+            print(response.body);
+          }
         } else {
           Fluttertoast.showToast(msg: registers.body);
         }

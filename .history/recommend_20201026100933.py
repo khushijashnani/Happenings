@@ -26,7 +26,7 @@ def getSimilarUsers(data,n,user_id):
         similarUsers.append(simUser[0])
     return similarUsers
 
-weekDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+weekDays = ['Mon','Tues','Wed','Thurs','Fri','Sat','Sun']
 
 def contentBasedRecommendations(events, locations, categories, event_id, n):
     rows = []
