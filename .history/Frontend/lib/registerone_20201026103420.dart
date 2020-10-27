@@ -78,8 +78,8 @@ class _RegisterPart1State extends State<RegisterPart1> {
       }
       print(index);
       print(textLines);
-      List<String> names = textLines[index - 1].split(" ");
-      name = names[0] + " " + names[names.length - 1];
+
+      name = textLines[index - 1].split(" ")[0] + " " + textLines[index - 1].split(" ")[2];
       print(name);
 
       String year = textLines[index].split(":")[1];
@@ -93,9 +93,9 @@ class _RegisterPart1State extends State<RegisterPart1> {
 
       print(textLines[index]);
       if (textLines[index].toLowerCase().contains("female")) {
-        gender = "Female";
-      } else {
         gender = "Male";
+      } else {
+        gender = "Female";
       }
       //gender = textLines[index].split("/")[1].trim();
       print(gender);

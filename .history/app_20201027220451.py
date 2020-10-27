@@ -651,7 +651,6 @@ class ClassicGet(Resource):
         #type = data['type']
         #resource = data['resource']
         print(type, resource, id)
-        date = datetime.datetime.now()
 
         if type == ATTENDEE:
             user = Attendee.query.get(id)
@@ -674,11 +673,11 @@ class ClassicGet(Resource):
                 count = 0
                 d = []
                 for event in eventList:
-                    if event not in user_events and (event.start_date - date).seconds >= 3600:
+                    if event not in user_events:
                         d.append(event)
                         count += 1
 
-                    if count == 5:
+                    if count == 10:
                         break
         else:
             user = Organisation.query.get(id)

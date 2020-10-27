@@ -41,8 +41,7 @@ class _FilterPageState extends State<FilterPage> {
       setState(() {
         for (Map l in data) {
           DateTime startDate = DateTime.parse(l['start_date']);
-          Duration diff = startDate.difference(currentDate);
-          if (diff.inMinutes > 60){
+          if (currentDate.isBefore(startDate)){
             events.add(Event.fromMap(l));
             filtered.add(Event.fromMap(l));
           }

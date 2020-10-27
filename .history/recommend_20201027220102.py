@@ -34,7 +34,7 @@ def contentBasedRecommendations(events, locations, categories, event_id, n):
     rows.append('Cost')
     all_events = []
     for id, event in events.items():
-        e = getEventList(event['location'], event['category'], event['cost'], event['startdate'], event['enddate'], locations, categories)
+        e = getEventList(event['location'], event['category'], event['cost'], event['startdate'].strftime("%a"), event['enddate'].strftime("%a"), locations, categories)
         all_events.append((id, e))
     if len(all_events) > 0:
         print("all events not zero")
