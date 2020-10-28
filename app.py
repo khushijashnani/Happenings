@@ -892,7 +892,7 @@ class Recommend(Resource):
                 "eventID" : user_events,
                 "rating" : user_ratings
             }
-            attendee_sim = Attendee.query.filter_by(user_id=user_id).first()
+            attendee_sim = Attendee.query.filter_by(id=user_id).first()
             attendee_events = []
             attendee_events = attendee_sim.events
             recommended_events = []
