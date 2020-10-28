@@ -49,7 +49,7 @@ def contentBasedRecommendations(events, locations, categories, event_id, n):
 
 def getRecommendations(data, event_id, all_events, n):
 
-    corr_data = data.corr()['event_id']
+    corr_data = data.corr()[event_id]
     cols = list(data.columns)
     sim_events = []
 

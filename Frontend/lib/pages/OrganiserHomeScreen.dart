@@ -848,7 +848,7 @@ class _OrganiserHomeScreenState extends State<OrganiserHomeScreen> {
                                 dataMap: dataMap,
                                 animationDuration: Duration(milliseconds: 5000),
                                 chartLegendSpacing: 40,
-                                chartRadius: 150,
+                                chartRadius: 105,
                                 colorList: pieChartColors,
                                 centerText: widget.no_of_events.toString(),
                                 initialAngleInDegree: -90,

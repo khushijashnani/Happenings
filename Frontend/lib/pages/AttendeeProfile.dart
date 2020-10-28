@@ -625,22 +625,22 @@ class _AttendeeProfileState extends State<AttendeeProfile>
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           itemCount: widget.allEvents.length,
           itemBuilder: (context, index) {
-            if (widget.allEvents[index].endDate
-                    .difference(DateTime.now())
-                    .inDays <=
-                0) {
-              return Stack(
-                children: [
-                  eventCard(widget.allEvents[index]),
-                  Container(
-                    height: 160,
-                    color: CARD,
-                  )
-                ],
-              );
-            } else {
+            // if (widget.allEvents[index].endDate
+            //         .difference(DateTime.now())
+            //         .inDays <=
+            //     0) {
+            //   return Stack(
+            //     children: [
+            //       eventCard(widget.allEvents[index]),
+            //       Container(
+            //         height: 160,
+            //         color: CARD,
+            //       )
+            //     ],
+            //   );
+            // } else {
               return eventCard(widget.allEvents[index]);
-            }
+            // }
           }),
     );
   }
