@@ -302,10 +302,10 @@ class _AttendeeHomeScreenState extends State<AttendeeHomeScreen> {
                           ],
                         ),
                         Spacer(),
-                        Icon(
-                          Icons.search,
-                          color: Colors.white,
-                        ),
+                        // Icon(
+                        //   Icons.search,
+                        //   color: Colors.white,
+                        // ),
                         SizedBox(
                           width: 16,
                         ),
