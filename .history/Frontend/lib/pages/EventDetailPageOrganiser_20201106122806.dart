@@ -842,17 +842,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                   ),
                                 ) : Container(),
                                 widget.type == ATTENDEE && recommended_events.length != 0
-                                ? Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: Container(
-                                    height: 260,
-                                    child: ListView.builder(
-                                      itemCount: recommended_events.length,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (context, index) {
-                                        return recommendedEventCard(index);
-                                      },
-                                    ),
+                                ? Container(
+                                  height: 260,
+                                  child: ListView.builder(
+                                    itemCount: recommended_events.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (context, index) {
+                                      return recommendedEventCard(index);
+                                    },
                                   ),
                                 ) : Container(),
                                 SizedBox(height: 70),

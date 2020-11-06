@@ -849,65 +849,6 @@ class UserLogout(Resource):
         return {"message": "Successfully logged out"}, 200
 
 
-class Recommend(Resource):
-    def get(self, type, user_id, event_id):
-        events = Event.query.all()
-        content = {}
-
-        if type.lower() == 'content_based':
-            all_events = {}
-            categories = []
-            locations = []
-            for e in events:
-                if (e.start_date - datetime.datetime.now()).seconds >= 3600:
-                    all_events[e.id] = {"location": e.location, 'category': e.category, 'startdate': e.start_date.strftime(
-                        "%a"), 'enddate': e.end_date.strftime("%a"), 'cost': e.entry_amount}
-                    if e.location not in locations:
-                        locations.append(e.location)
-                    if e.category not in categories:
-                        categories.append(e.category)
-            content_based_recommendations_ids = contentBasedRecommendations(
-                all_events, locations, categories, event_id, 3)
-            content_based_recommendations_events = []
-            for id in content_based_recommendations_ids:
-                e1 = Event.query.get(id)
-                content_based_recommendations_events.append(addEvent(e1))
-
-            return {'recommended_events': content_based_recommendations_events}
-
-        else:
-            users = Attendee.query.all()
-            user_id = []
-            user_events = []
-            user_ratings = []
-            for u in users:
-                user_reviews = u.reviews
-                for e in user_reviews:
-                    user_id.append(e.attendee_id)
-                    user_events.append(e.event_id)
-                    user_ratings.append(e.rating)
-            data = {
-                "userID": user_id,
-                "eventID": user_events,
-                "rating": user_ratings
-            }
-            attendee_sim = Attendee.query.filter_by(user_id=user_id).first()
-            attendee_events = []
-            attendee_events = attendee_sim.events
-            recommended_events = []
-            similar_users = getSimilarUsers(data, 3, user_id)
-            for sim in similar_users:
-                attendee = Attendee.query.filter_by(user_id=sim).first()
-                sim_user_events = attendee.events
-                for e in sim_user_events:
-                    if e not in attendee_events and (e.start_date - datetime.datetime.now()).seconds >= 3600:
-                        recommended_events.append(addEvent(e))
-
-            return {
-                "recommended_events": recommended_events,
-            }
-
-
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     return decrypted_token['jti'] in BLACKLIST
@@ -951,7 +892,6 @@ BLACKLIST = []
 
 api = Api(app)
 api.add_resource(UserLogin, "/login")
-api.add_resource(AadharApi, '/verification')
 api.add_resource(UserRegister, "/register")
 api.add_resource(Events, '/events')
 api.add_resource(UserDetails, "/<string:type>/<int:user_id>")
@@ -966,8 +906,6 @@ api.add_resource(GetEvent, '/event/<int:event_id>')
 
 api.add_resource(UserLogout, '/logout')
 api.add_resource(FaceRecognition, '/validate_attendee/<int:event_id>')
-api.add_resource(
-    Recommend, '/recommedations/<string:type>/<int:user_id>/<int:event_id>')
 api.add_resource(Subscription, '/subs/<int:org_id>')
 api.add_resource(GetOrg, '/org_name/<int:org_id>')
 

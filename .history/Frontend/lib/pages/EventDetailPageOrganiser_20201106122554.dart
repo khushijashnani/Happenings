@@ -78,8 +78,8 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
             print(data);
             setState(() {
               for (Map l in data) {
-                print(l);
-                recommended_events.add(Event.fromMap(l));
+                print(l);r
+                // recommended_events.add(Event.fromMap(l));
               }
               print(recommended_events);
             });
@@ -143,6 +143,11 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
       Fluttertoast.showToast(msg: response.body);
     }
   }
+
+  // Future<void> getRecommendedEvents() async {
+    
+    
+  // }
 
   @override
   void initState() {
@@ -842,17 +847,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                   ),
                                 ) : Container(),
                                 widget.type == ATTENDEE && recommended_events.length != 0
-                                ? Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: Container(
-                                    height: 260,
-                                    child: ListView.builder(
-                                      itemCount: recommended_events.length,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (context, index) {
-                                        return recommendedEventCard(index);
-                                      },
-                                    ),
+                                ? Container(
+                                  height: 260,
+                                  child: ListView.builder(
+                                    itemCount: recommended_events.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (context, index) {
+                                      return recommendedEventCard(index);
+                                    },
                                   ),
                                 ) : Container(),
                                 SizedBox(height: 70),
