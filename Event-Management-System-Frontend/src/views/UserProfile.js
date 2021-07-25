@@ -63,7 +63,7 @@ class UserProfile extends React.Component {
   }
   async updateDetails() {
     this.setState({ ...this.state, loading: true })
-    const res = await axios.put(`https://cors-anywhere.herokuapp.com/https://rpk-happenings.herokuapp.com/ORGANISATION/${sessionStorage.getItem(
+    const res = await axios.put(`https://rpk-happenings.herokuapp.com/ORGANISATION/${sessionStorage.getItem(
       'organisationid'
     )}`, {
       address: this.state.address,

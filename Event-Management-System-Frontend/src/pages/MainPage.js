@@ -12,7 +12,7 @@ class MainPage extends Component {
     async componentDidMount() {
         const res = await axios
             .get(
-                `https://cors-anywhere.herokuapp.com/https://rpk-happenings.herokuapp.com/ORGANISATION/${sessionStorage.getItem(
+                `https://rpk-happenings.herokuapp.com/ORGANISATION/${sessionStorage.getItem(
                     'organisationid'
                 )}`,
                 { headers: { Authorization: sessionStorage.getItem('Authorization') } }

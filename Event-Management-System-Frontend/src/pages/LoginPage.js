@@ -60,7 +60,7 @@ class LoginPage extends React.Component {
         console.log(user);
         const res = await axios
             .post(
-                'https://cors-anywhere.herokuapp.com/https://rpk-happenings.herokuapp.com/login',
+                'https://rpk-happenings.herokuapp.com/login',
                 user
             )
             .then((response) => {
@@ -196,8 +196,8 @@ class LoginPage extends React.Component {
                                                     Sign In
                                                 </Button>
                                             ) : (
-                                                    <Lottie options={loadingjson} height={45} width={45} />
-                                                )}
+                                                <Lottie options={loadingjson} height={45} width={45} />
+                                            )}
 
                                         </div>
                                     </CardFooter>

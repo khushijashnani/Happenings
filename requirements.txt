@@ -16,3 +16,4 @@ Flask-Mail
 face_recognition
 dlib
 scikit-surprise
+flask-cors
