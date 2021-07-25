@@ -74,13 +74,13 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
           var response = await http.get(
               'https://rpk-happenings.herokuapp.com/recommedations/content_based/${attendee_id}/${event_id}');
           if (response.statusCode == 200) {
-            var data = json.decode(response.body)['recommended_events'];
+            var data = json.decode(response.body);
             print(data);
             setState(() {
-              for (Map l in data) {
-                print(l);
-                recommended_events.add(Event.fromMap(l));
-              }
+              // for (Map l in data) {
+              //   print(l);
+              //   // recommended_events.add(Event.fromMap(l));
+              // }
               print(recommended_events);
             });
           } else {
@@ -143,6 +143,11 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
       Fluttertoast.showToast(msg: response.body);
     }
   }
+
+  // Future<void> getRecommendedEvents() async {
+    
+    
+  // }
 
   @override
   void initState() {
@@ -842,17 +847,14 @@ class _EventDetailPageOrganiserState extends State<EventDetailPageOrganiser> {
                                   ),
                                 ) : Container(),
                                 widget.type == ATTENDEE && recommended_events.length != 0
-                                ? Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: Container(
-                                    height: 260,
-                                    child: ListView.builder(
-                                      itemCount: recommended_events.length,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (context, index) {
-                                        return recommendedEventCard(index);
-                                      },
-                                    ),
+                                ? Container(
+                                  height: 260,
+                                  child: ListView.builder(
+                                    itemCount: recommended_events.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (context, index) {
+                                      return recommendedEventCard(index);
+                                    },
                                   ),
                                 ) : Container(),
                                 SizedBox(height: 70),
