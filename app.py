@@ -24,8 +24,8 @@ from recommend import getSimilarUsers
 from recommend import contentBasedRecommendations
 
 app = Flask(__name__)
-app.config['CORS_HEADERS'] = 'Content-Type'
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+# app.config['CORS_HEADERS'] = 'Content-Type'
+# cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = 'assembler'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -398,7 +398,8 @@ def deleteFromDatabase(objectname):
 #####################  API'S  ########################
 
 class FaceRecognition(Resource):
-    # @cross_origin(support_credentials=True)
+
+    @cross_origin(support_credentials=True)
     def post(self, event_id):
 
         
@@ -461,7 +462,8 @@ class FaceRecognition(Resource):
         del nameList
 
         return result
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def get(self, event_id):
 
         # event = Event.query.get(event_id)
@@ -516,7 +518,8 @@ class FaceRecognition(Resource):
 
 
 class UserRegister(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def post(self):
         data = request.get_json()
 
@@ -550,7 +553,8 @@ class UserRegister(Resource):
         return {'message': 'User created successfully'}
 
 class UserLogin(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def post(self):
         data = request.get_json()
         print(data)
@@ -580,7 +584,8 @@ def addEvent(row):
     return d
 
 class GetEvent(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def get(self, event_id):
         # data = request.get_json()
         # event_id = int(data['event_id'])
@@ -605,7 +610,8 @@ class GetEvent(Resource):
 
 
 class EventApi(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def post(self):
 
         data = request.get_json()
@@ -625,7 +631,8 @@ class EventApi(Resource):
         )
         addToDatabase(event)
         return addEvent(event)
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def put(self):
         data = request.get_json()
         event_id = data["event_id"]
@@ -649,7 +656,8 @@ class EventApi(Resource):
 
 
 class ClassicGet(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def get(self, type, id, resource):
         data = request.get_json()
         #type = data['type']
@@ -697,7 +705,8 @@ class ClassicGet(Resource):
 
 
 class Events(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def get(self):
         events = Event.query.all()
 
@@ -709,7 +718,8 @@ class Events(Resource):
 
 
 class UserDetails(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def get(self, user_id, type):
         if type == ATTENDEE:
             user = Attendee.query.get(user_id)
@@ -723,7 +733,7 @@ class UserDetails(Resource):
 
         return details
     
-    # @cross_origin(origin='*', support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     def put(self, user_id, type):
         data = request.get_json()
         if type == ATTENDEE:
@@ -754,7 +764,8 @@ class UserDetails(Resource):
 
 
 class ManageReviews(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def post(self, user_id):
 
         data = request.get_json()
@@ -790,13 +801,15 @@ class ManageReviews(Resource):
 
 
 class ManageFavourites(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def post(self, user_id, event_id):
         favourite = Favourites(user_id, event_id)
         addToDatabase(favourite)
         del favourite
         return {'message': 'Favourite added'}
-    # @cross_origin(origin='*', support_credentials=True)
+
+    @cross_origin(origin='*', support_credentials=True)
     def delete(self, user_id, event_id):
         favourite = Favourites.query.filter_by(
             attendee_id=user_id, event_id=event_id).first()
@@ -805,7 +818,7 @@ class ManageFavourites(Resource):
         return {'message': 'Favourite removed'}
 
 class Subscription(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     def post(self, org_id):
         org = Organisation.query.get(org_id)
         org.subscription = True
@@ -814,7 +827,7 @@ class Subscription(Resource):
         return {"message":"Subscribed"}
 
 class RegisterForEvent(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     def post(self, user_id, event_id):
         #data = request.get_json()
         #img = data["url"]
@@ -845,14 +858,14 @@ class RegisterForEvent(Resource):
         return {'message': 'Successfully registered for Event'}
 
 class GetOrg(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     def get(self, org_id):
         org = Organisation.query.get(org_id)
         return {"org_name" : org.name}
 
 
 class UserLogout(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     @jwt_required
     def post(self):
         jti = get_raw_jwt()['jti']
@@ -861,7 +874,7 @@ class UserLogout(Resource):
 
 
 class Recommend(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     def get(self, type, user_id, event_id):
         events = Event.query.all()
         content = {}
@@ -926,7 +939,7 @@ class Recommend(Resource):
         # }
 
 class DeleteStatus(Resource):
-    # @cross_origin(origin='*', support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     def get(self, user_id, event_id):
 
         status = Status.query.filter_by(attendee_id = user_id, event_id = event_id).first()
