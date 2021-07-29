@@ -24,6 +24,7 @@ from recommend import getSimilarUsers
 from recommend import contentBasedRecommendations
 
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app)
 app.config['SECRET_KEY'] = 'assembler'
 
@@ -397,7 +398,7 @@ def deleteFromDatabase(objectname):
 #####################  API'S  ########################
 
 class FaceRecognition(Resource):
-    @cross_origin(support_credentials=True)
+    @cross_origin(origin='*', support_credentials=True)
     def post(self, event_id):
 
         
@@ -549,6 +550,7 @@ class UserRegister(Resource):
         return {'message': 'User created successfully'}
 
 class UserLogin(Resource):
+
     @cross_origin(origin='*', support_credentials=True)
     def post(self):
         data = request.get_json()
