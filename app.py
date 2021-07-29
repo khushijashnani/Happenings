@@ -24,6 +24,7 @@ from recommend import getSimilarUsers
 from recommend import contentBasedRecommendations
 
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app)
 app.config['SECRET_KEY'] = 'assembler'
 
